@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yonder — Land Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f2f0eb;
+      --bg-card: #e8e6e1;
+      --text: #1a1a18;
+      --muted: #6b6b68;
+      --border: rgba(0,0,0,0.08);
+      --orange: #c84b0a;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 58px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-icon { width: 20px; height: 20px; }
+
+    .logo-name {
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 400;
+    }
+    .nav-links a:hover { opacity: 0.7; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-signin {
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0 12px;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(0,0,0,0.22);
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 72px 28px 52px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 560px;
+      margin-bottom: 28px;
+      color: var(--text);
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 22px;
+      font-size: 14.5px;
+      font-weight: 500;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ── MAIN SCREENSHOT BLOCK ── */
+    .hero-screenshot {
+      margin: 0 28px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Landscape painting bg — CSS gradient approximation */
+    .painting-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(180,160,110,0.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 40%, rgba(140,160,130,0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(100,120,90,0.25) 0%, transparent 40%),
+        linear-gradient(180deg, rgba(190,185,165,0.4) 0%, rgba(160,175,150,0.3) 50%, rgba(130,145,120,0.35) 100%);
+      z-index: 0;
+    }
+
+    .screenshot-inner {
+      position: relative;
+      z-index: 1;
+      padding: 36px 24px 0 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* App window */
+    .app-window {
+      background: #fff;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.12);
+      width: 100%;
+      max-width: 900px;
+      overflow: hidden;
+    }
+
+    .app-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: #f0eeea;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .app-titlebar span { font-size: 12px; color: #999; margin-left: auto; }
+
+    .adot { width: 10px; height: 10px; border-radius: 50%; background: rgba(0,0,0,0.15); }
+
+    .app-body {
+      display: grid;
+      grid-template-columns: 210px 1fr 1fr;
+      min-height: 320px;
+      font-size: 12.5px;
+    }
+
+    /* sidebar */
+    .app-sidebar {
+      background: #f7f6f3;
+      border-right: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .app-s-section {
+      padding: 14px 12px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+
+    .app-s-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .app-s-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 6px 7px;
+      border-radius: 5px;
+      margin-bottom: 1px;
+    }
+
+    .app-s-item.sel { background: rgba(0,0,0,0.05); }
+
+    .mini-spin {
+      width: 11px; height: 11px; flex-shrink: 0; margin-top: 1px;
+      border: 1.3px solid rgba(0,0,0,0.1);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .mini-check {
+      width: 11px; height: 11px; flex-shrink: 0; margin-top: 1px;
+      border: 1.3px solid rgba(0,0,0,0.2); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mini-check::after {
+      content: '';
+      width: 4px; height: 2.5px;
+      border-left: 1px solid #555; border-bottom: 1px solid #555;
+      transform: rotate(-45deg) translate(0.3px, -0.3px);
+    }
+
+    .app-s-name { font-size: 12px; font-weight: 500; color: #2a2a28; line-height: 1.3; }
+    .app-s-sub { font-size: 10.5px; color: #999; margin-top: 1px; }
+    .app-s-time { font-size: 10.5px; color: #bbb; margin-left: auto; flex-shrink: 0; }
+
+    /* chat panel */
+    .app-chat {
+      border-right: 1px solid rgba(0,0,0,0.08);
+      display: flex; flex-direction: column;
+    }
+
+    .app-chat-header {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      font-size: 12.5px; font-weight: 500; color: #2a2a28;
+    }
+
+    .app-chat-body {
+      flex: 1; padding: 14px;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+
+    .chat-prompt {
+      background: #f0eeea;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 12px; color: #444; line-height: 1.5;
+    }
+
+    .chat-action {
+      font-size: 11.5px; color: #aaa;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .chat-link { color: var(--orange); }
+
+    .chat-thought { font-size: 11.5px; color: #bbb; }
+
+    .chat-response { font-size: 12px; color: #555; line-height: 1.6; }
+
+    .chat-file {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #f0eeea; border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 4px; padding: 4px 8px;
+      font-size: 11px; color: #666; font-family: monospace;
+    }
+
+    .chat-file-diff { color: var(--orange); }
+    .chat-file-diff2 { color: #4a9a4a; }
+
+    /* preview panel */
+    .app-preview {
+      background: #fff;
+      padding: 20px 18px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .preview-url-bar {
+      display: flex; align-items: center; gap: 8px;
+      background: #f5f4f0; border-radius: 5px; padding: 5px 10px;
+      font-size: 11px; color: #888;
+    }
+
+    .preview-site-title {
+      font-family: Georgia, serif; font-style: italic;
+      font-size: 15px; color: #2a2a28; font-weight: 400;
+    }
+
+    .preview-body-text { font-size: 11px; color: #777; line-height: 1.6; }
+
+    .preview-highlight {
+      background: rgba(200,75,10,0.08);
+      border: 1px solid rgba(200,75,10,0.2);
+      border-radius: 3px; padding: 4px 7px;
+      font-size: 11px; color: #888;
+    }
+
+    .preview-tag { font-size: 10px; color: var(--orange); }
+
+    .preview-table { font-size: 11px; }
+    .preview-row {
+      display: flex; gap: 12px;
+      padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+      color: #888;
+    }
+    .preview-row .yr { color: #bbb; min-width: 36px; }
+    .preview-row .title { flex: 1; color: #555; }
+    .preview-row .status { color: #aaa; }
+
+    /* ── FEATURE ROWS ── */
+    .feature-block {
+      margin: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      min-height: 520px;
+      overflow: hidden;
+    }
+
+    .feature-block.reverse {
+      grid-template-columns: 1fr 380px;
+    }
+
+    .feature-text {
+      padding: 60px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .feature-block.reverse .feature-text {
+      order: 2;
+    }
+
+    .feature-block.reverse .feature-visual {
+      order: 1;
+    }
+
+    .feature-title {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .feature-desc {
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .feature-link {
+      font-size: 14px;
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .feature-visual {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* painting bg for feature blocks */
+    .painting-warm {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 40% 50%, rgba(195,175,130,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse at 75% 30%, rgba(150,170,140,0.4) 0%, transparent 50%),
+        linear-gradient(160deg, rgba(200,190,160,0.6) 0%, rgba(160,175,150,0.4) 100%);
+    }
+
+    .painting-cool {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 60% 40%, rgba(140,160,150,0.5) 0%, transparent 55%),
+        radial-gradient(ellipse at 30% 70%, rgba(160,175,130,0.4) 0%, transparent 50%),
+        linear-gradient(160deg, rgba(170,180,165,0.5) 0%, rgba(145,160,145,0.4) 100%);
+    }
+
+    .feature-window {
+      position: relative; z-index: 1;
+      margin: 32px 0 0 32px;
+      background: #fff;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.14);
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .fw-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 9px 12px;
+      background: #f0eeea; border-bottom: 1px solid rgba(0,0,0,0.08);
+      font-size: 11.5px; color: #aaa;
+    }
+
+    .fw-bar .fdot { width: 9px; height: 9px; border-radius: 50%; background: rgba(0,0,0,0.14); }
+    .fw-bar .ftitle { margin: 0 auto; }
+
+    .fw-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* mini agent UI */
+    .agent-row {
+      display: flex; gap: 8px;
+      padding: 10px 12px;
+      background: #faf9f7; border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 6px;
+    }
+
+    .agent-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, #c8b87a, #a08040);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: #fff; font-weight: 600;
+    }
+
+    .agent-text { flex: 1; }
+    .agent-name { font-size: 11.5px; font-weight: 600; color: #333; margin-bottom: 2px; }
+    .agent-msg { font-size: 11.5px; color: #666; line-height: 1.5; }
+    .agent-time { font-size: 10.5px; color: #bbb; }
+
+    /* map widget */
+    .mini-map {
+      border: 1px solid rgba(0,0,0,0.08); border-radius: 6px;
+      overflow: hidden; position: relative;
+    }
+
+    .mini-map-bg {
+      height: 160px;
+      background:
+        linear-gradient(to bottom, rgba(200,210,190,0.8), rgba(180,195,170,0.8)),
+        repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0,0,0,0.04) 20px),
+        repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0,0,0,0.04) 20px);
+    }
+
+    .mini-map-pin {
+      position: absolute;
+      top: 40%; left: 55%;
+      width: 10px; height: 10px;
+      background: var(--orange);
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(200,75,10,0.2);
+    }
+
+    .mini-map-card {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 10.5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      min-width: 110px;
+    }
+
+    .mini-map-card .mc-title { font-weight: 600; color: #2a2a28; margin-bottom: 4px; }
+    .mini-map-card .mc-row { color: #888; display: flex; justify-content: space-between; gap: 8px; }
+    .mini-map-card .mc-val { color: #444; font-weight: 500; }
+    .mini-map-tag {
+      display: inline-block; margin-top: 5px;
+      background: rgba(74,154,74,0.1); color: #4a9a4a;
+      border-radius: 3px; padding: 1px 5px; font-size: 9.5px; font-weight: 600;
+    }
+
+    /* constraint panel */
+    .constraint-panel {
+      border: 1px solid rgba(0,0,0,0.08); border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .cp-header {
+      padding: 8px 12px;
+      background: #f5f4f0;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      font-size: 11.5px; font-weight: 600; color: #444;
+    }
+
+    .cp-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      font-size: 11.5px;
+    }
+
+    .cp-row:last-child { border-bottom: none; }
+    .cp-key { color: #888; }
+    .cp-val { font-weight: 500; color: #333; }
+    .cp-good { color: #4a9a4a; }
+    .cp-warn { color: var(--orange); }
+
+    /* tracker panel */
+    .tracker-panel {
+      border: 1px solid rgba(0,0,0,0.08); border-radius: 6px; overflow: hidden;
+    }
+
+    .tp-header {
+      padding: 8px 12px;
+      background: #f5f4f0; border-bottom: 1px solid rgba(0,0,0,0.08);
+      font-size: 11.5px; font-weight: 600; color: #444;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .tp-badge {
+      background: rgba(200,75,10,0.1); color: var(--orange);
+      border-radius: 3px; padding: 1px 6px; font-size: 10px; font-weight: 600;
+    }
+
+    .tp-row {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 9px 12px; border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-size: 11.5px;
+    }
+
+    .tp-row:last-child { border-bottom: none; }
+    .tp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); margin-top: 3px; flex-shrink: 0; }
+    .tp-dot.grey { background: #ccc; }
+    .tp-text { flex: 1; color: #555; line-height: 1.4; }
+    .tp-time { font-size: 10.5px; color: #bbb; flex-shrink: 0; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials {
+      padding: 80px 28px;
+    }
+
+    .testimonials h2 {
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin-bottom: 40px;
+      color: var(--text);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .testimonial {
+      background: var(--bg);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .t-quote {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .t-person {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .t-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--bg-card), #ccc);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; color: #666;
+    }
+
+    .t-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .t-role { font-size: 12px; color: var(--muted); }
+
+    /* ── FRONTIER / FEATURE CARDS ── */
+    .frontier {
+      padding: 0 28px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .frontier h2 {
+      font-size: clamp(22px, 3.5vw, 32px);
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      padding: 60px 0 32px;
+      color: var(--text);
+    }
+
+    .frontier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 80px;
+    }
+
+    .frontier-card {
+      background: var(--bg);
+      padding: 24px 22px 0;
+      display: flex; flex-direction: column;
+    }
+
+    .fc-title { font-size: 14.5px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .fc-desc { font-size: 13.5px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .fc-link { font-size: 13.5px; color: var(--orange); text-decoration: none; font-weight: 500; margin-bottom: 18px; }
+
+    .fc-visual {
+      flex: 1;
+      background: var(--bg-card);
+      border-radius: 6px 6px 0 0;
+      min-height: 180px;
+      position: relative;
+      overflow: hidden;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+
+    /* ── PRICING ── */
+    .pricing {
+      padding: 80px 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .pricing h2 {
+      font-size: clamp(22px, 3.5vw, 32px);
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      margin-bottom: 8px;
+    }
+
+    .pricing-sub {
+      font-size: 14.5px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .plan {
+      background: var(--bg);
+      padding: 28px 24px;
+    }
+
+    .plan.featured {
+      background: #1a1a18;
+      color: #fff;
+    }
+
+    .plan-badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: rgba(200,75,10,0.1);
+      border: 1px solid rgba(200,75,10,0.2);
+      border-radius: 999px; padding: 2px 9px;
+      margin-bottom: 14px;
+    }
+
+    .plan-name {
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+
+    .plan.featured .plan-name { color: rgba(255,255,255,0.45); }
+
+    .plan-price {
+      font-size: 44px; font-weight: 500;
+      letter-spacing: -0.03em; line-height: 1;
+      margin-bottom: 4px; color: var(--text);
+    }
+
+    .plan.featured .plan-price { color: #fff; }
+
+    .plan-per { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .plan.featured .plan-per { color: rgba(255,255,255,0.4); }
+
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+    .plan.featured .plan-divider { background: rgba(255,255,255,0.1); }
+
+    .plan-feature {
+      display: flex; align-items: flex-start; gap: 9px;
+      font-size: 13.5px; color: var(--muted); margin-bottom: 10px; line-height: 1.4;
+    }
+
+    .plan.featured .plan-feature { color: rgba(255,255,255,0.55); }
+
+    .pf-check {
+      width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px;
+      border: 1px solid rgba(0,0,0,0.18); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pf-check::after {
+      content: '';
+      width: 4.5px; height: 2.5px;
+      border-left: 1px solid #888; border-bottom: 1px solid #888;
+      transform: rotate(-45deg) translate(0.3px, -0.3px);
+    }
+
+    .plan.featured .pf-check { border-color: rgba(255,255,255,0.2); }
+    .plan.featured .pf-check::after { border-color: rgba(255,255,255,0.5); }
+
+    .plan-btn {
+      display: block; width: 100%; text-align: center;
+      padding: 11px; border-radius: 999px;
+      font-size: 14px; font-weight: 500; font-family: 'Geist', sans-serif;
+      cursor: pointer; text-decoration: none; margin-top: 22px;
+      border: 1px solid rgba(0,0,0,0.18); color: var(--text);
+      background: transparent; transition: background 0.15s;
+    }
+    .plan-btn:hover { background: rgba(0,0,0,0.05); }
+
+    .plan.featured .plan-btn {
+      background: #fff; color: #1a1a18; border-color: transparent;
+    }
+
+    .pricing-note {
+      margin-top: 18px; font-size: 12.5px; color: var(--muted); text-align: center;
+    }
+    .pricing-note a { color: var(--orange); text-decoration: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 28px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+
+    .footer-logo {
+      font-size: 13px; font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .app-body { grid-template-columns: 1fr; }
+      .app-sidebar { display: none; }
+      .app-preview { display: none; }
+      .feature-block, .feature-block.reverse { grid-template-columns: 1fr; }
+      .feature-block.reverse .feature-text { order: 1; }
+      .feature-block.reverse .feature-visual { order: 2; }
+      .feature-visual { min-height: 280px; }
+      .testimonial-grid, .frontier-grid, .pricing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="#">
+      <svg class="logo-icon" viewBox="0 0 20 20" fill="none">
+        <rect x="0.5" y="0.5" width="19" height="19" rx="4" stroke="rgba(0,0,0,0.3)"/>
+        <path d="M5 15L10 6L15 15" stroke="#1a1a18" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7 12H13" stroke="#1a1a18" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+      </svg>
+      <span class="logo-name">Yonder</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">Product</a>
+      <a href="#who">Who it's for</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Blog</a>
+    </div>
+    <div class="nav-right">
+      <a class="nav-signin" href="#">Sign in</a>
+      <a class="btn-outline" href="#">Contact sales</a>
+      <a class="btn-dark" href="#">Request access ↓</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Built to make you extraordinarily fast at finding land.</h1>
+    <a class="hero-cta" href="#">Try Yonder free ↓</a>
+  </div>
+
+  <!-- MAIN SCREENSHOT -->
+  <div class="hero-screenshot">
+    <div class="painting-bg"></div>
+    <div class="screenshot-inner">
+      <div class="app-window">
+        <div class="app-titlebar">
+          <span class="adot"></span><span class="adot"></span><span class="adot"></span>
+          <span>Yonder</span>
+        </div>
+        <div class="app-body">
+          <div class="app-sidebar">
+            <div class="app-s-section">
+              <div class="app-s-label">In progress 2</div>
+              <div class="app-s-item">
+                <div class="mini-spin"></div>
+                <div>
+                  <div class="app-s-name">Alentejo rural plots</div>
+                  <div class="app-s-sub">Scanning registry…</div>
+                </div>
+              </div>
+              <div class="app-s-item">
+                <div class="mini-spin"></div>
+                <div>
+                  <div class="app-s-name">Solar suitability — Évora</div>
+                  <div class="app-s-sub">Running model…</div>
+                </div>
+              </div>
+            </div>
+            <div class="app-s-section">
+              <div class="app-s-label">Ready for review 4</div>
+              <div class="app-s-item sel">
+                <div class="mini-check"></div>
+                <div style="flex:1">
+                  <div class="app-s-name">Herdade do Outeiro</div>
+                  <div class="app-s-sub">28ha · REN clear · €890K</div>
+                </div>
+                <div class="app-s-time">now</div>
+              </div>
+              <div class="app-s-item">
+                <div class="mini-check"></div>
+                <div style="flex:1">
+                  <div class="app-s-name">Barcelos cluster</div>
+                  <div class="app-s-sub">3 plots · PDM rezone risk</div>
+                </div>
+                <div class="app-s-time">14m</div>
+              </div>
+              <div class="app-s-item">
+                <div class="mini-check"></div>
+                <div style="flex:1">
+                  <div class="app-s-name">Setúbal coastal rustic</div>
+                  <div class="app-s-sub">AUGI constraint flagged</div>
+                </div>
+                <div class="app-s-time">1h</div>
+              </div>
+              <div class="app-s-item">
+                <div class="mini-check"></div>
+                <div style="flex:1">
+                  <div class="app-s-name">Algarve scrubland 4ha</div>
+                  <div class="app-s-sub">Tourism zone potential</div>
+                </div>
+                <div class="app-s-time">2h</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-chat">
+            <div class="app-chat-header">Herdade do Outeiro</div>
+            <div class="app-chat-body">
+              <div class="chat-prompt">find rustic plots over 20ha near Évora, REN-clear, price under €1M</div>
+              <div class="chat-action">Read <span class="chat-link">cadastre-evora</span></div>
+              <div class="chat-action">Read <span class="chat-link">pdm-evora-2023.pdf</span></div>
+              <div class="chat-thought">Thought 4s</div>
+              <div class="chat-response">I found a strong match. Herdade do Outeiro (28.4 ha) is classified Agrícola, outside REN and RAN constraints, with an estimated value of €890K. Last ownership change 2019.</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <span class="chat-file">
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><rect x="0.5" y="0.5" width="8" height="8" rx="1" stroke="currentColor" stroke-width="0.8"/></svg>
+                  plot/outeiro.json <span class="chat-file-diff">+52</span> <span style="color:#bbb">-0</span>
+                </span>
+                <span class="chat-file">
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><rect x="0.5" y="0.5" width="8" height="8" rx="1" stroke="currentColor" stroke-width="0.8"/></svg>
+                  report/viability.pdf <span class="chat-file-diff2">+18</span> <span style="color:#bbb">-0</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-preview">
+            <div class="preview-url-bar">
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="4" stroke="#aaa" stroke-width="0.8"/></svg>
+              yonder.app/plot/outeiro
+            </div>
+            <div class="preview-site-title">Herdade do Outeiro</div>
+            <div class="preview-body-text">28.4 ha · Évora district · Classified Agrícola<br/>Outside REN · Outside RAN · No AUGI flag</div>
+            <div class="preview-highlight">
+              <div class="preview-tag">✓ Viable — high confidence</div>
+            </div>
+            <div class="preview-table">
+              <div class="preview-row"><span class="yr">Zone</span><span class="title">Agrícola (PDM 2023)</span><span class="status" style="color:#4a9a4a">Clear</span></div>
+              <div class="preview-row"><span class="yr">REN</span><span class="title">National Ecological Reserve</span><span class="status" style="color:#4a9a4a">Clear</span></div>
+              <div class="preview-row"><span class="yr">RAN</span><span class="title">Agricultural Reserve</span><span class="status" style="color:#4a9a4a">Clear</span></div>
+              <div class="preview-row"><span class="yr">Est.</span><span class="title">Market valuation</span><span class="status">€890K</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials">
+    <h2>The new way to find land.</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <div class="t-quote">"We screened 400 plots across Alentejo in a week. Previously that would've taken a team of surveyors two months. Yonder changed how we operate."</div>
+        <div class="t-person">
+          <div class="t-avatar">DL</div>
+          <div>
+            <div class="t-name">Diogo Leal</div>
+            <div class="t-role">Partner, FindLand Portugal</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">"The constraint layer alone is worth it. Knowing REN/RAN status before we even call a notary saves us thousands in due diligence costs per deal."</div>
+        <div class="t-person">
+          <div class="t-avatar">MF</div>
+          <div>
+            <div class="t-name">Maria Ferreira</div>
+            <div class="t-role">Investment Director, Lucas Fox Portugal</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">"Solar site selection used to take weeks of manual GIS work. Yonder gets us to a shortlist of viable plots in an afternoon — irradiance, grid distance, REN all included."</div>
+        <div class="t-person">
+          <div class="t-avatar">JS</div>
+          <div>
+            <div class="t-name">João Santos</div>
+            <div class="t-role">Development Lead, Iberian Solar Group</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">"Our Spain desk now moves three times faster on site acquisition. Yonder's cadastral data for Andalucía is genuinely better than anything we could pull from public sources."</div>
+        <div class="t-person">
+          <div class="t-avatar">CR</div>
+          <div>
+            <div class="t-name">Carlos Ruiz</div>
+            <div class="t-role">Head of Acquisitions, Dils Spain</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">"I use Yonder's Tracker to monitor 60 plots I have a long-term interest in. The moment zoning changes or an ownership transfer happens — I know before anyone else."</div>
+        <div class="t-person">
+          <div class="t-avatar">AV</div>
+          <div>
+            <div class="t-name">Ana Valente</div>
+            <div class="t-role">Independent Land Investor</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <div class="t-quote">"First-layer constraint analysis used to be our most time-consuming task. Now Yonder flags AUGI, REN, and ownership issues before a lawyer opens a single file."</div>
+        <div class="t-person">
+          <div class="t-avatar">PB</div>
+          <div>
+            <div class="t-name">Pedro Braga</div>
+            <div class="t-role">Real Estate Counsel, Lisbon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE: AI search -->
+  <div class="feature-block" id="how">
+    <div class="feature-text">
+      <div class="feature-title">Agents turn queries into land intelligence</div>
+      <div class="feature-desc">Type what you need in plain language. Yonder reads cadastral registries, planning documents, and constraint layers — then hands you a ranked shortlist with a viability score for each plot.</div>
+      <a class="feature-link" href="#">Learn about Yonder Search →</a>
+    </div>
+    <div class="feature-visual">
+      <div class="painting-warm"></div>
+      <div class="feature-window">
+        <div class="fw-bar">
+          <span class="fdot"></span><span class="fdot"></span><span class="fdot"></span>
+          <span class="ftitle">Yonder — Search</span>
+        </div>
+        <div class="fw-body">
+          <div class="constraint-panel">
+            <div class="cp-header">Herdade do Outeiro — Constraint summary</div>
+            <div class="cp-row"><span class="cp-key">Classification</span><span class="cp-val">Agrícola (PDM)</span></div>
+            <div class="cp-row"><span class="cp-key">REN status</span><span class="cp-val cp-good">Clear ✓</span></div>
+            <div class="cp-row"><span class="cp-key">RAN status</span><span class="cp-val cp-good">Clear ✓</span></div>
+            <div class="cp-row"><span class="cp-key">AUGI flag</span><span class="cp-val cp-good">None ✓</span></div>
+            <div class="cp-row"><span class="cp-key">Area</span><span class="cp-val">28.4 ha</span></div>
+            <div class="cp-row"><span class="cp-key">Est. value</span><span class="cp-val">€890,000</span></div>
+            <div class="cp-row"><span class="cp-key">Last ownership change</span><span class="cp-val">2019</span></div>
+          </div>
+          <div class="mini-map">
+            <div class="mini-map-bg"></div>
+            <div class="mini-map-pin"></div>
+            <div class="mini-map-card">
+              <div class="mc-title">Outeiro, Évora</div>
+              <div class="mc-row"><span>Area</span><span class="mc-val">28.4ha</span></div>
+              <div class="mc-row"><span>Zone</span><span class="mc-val">Agrícola</span></div>
+              <div class="mini-map-tag">Viable</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE: Tracker -->
+  <div class="feature-block reverse">
+    <div class="feature-text">
+      <div class="feature-title">Tracker — monitor plots, get alerts</div>
+      <div class="feature-desc">Watch any plot for zoning changes, ownership transfers, or planning applications. Be the first to know when a plot you've been watching becomes available or viable.</div>
+      <a class="feature-link" href="#">Learn about Tracker →</a>
+    </div>
+    <div class="feature-visual">
+      <div class="painting-cool"></div>
+      <div class="feature-window">
+        <div class="fw-bar">
+          <span class="fdot"></span><span class="fdot"></span><span class="fdot"></span>
+          <span class="ftitle">Yonder — Tracker</span>
+        </div>
+        <div class="fw-body">
+          <div class="tracker-panel">
+            <div class="tp-header">
+              Watching 62 plots
+              <span class="tp-badge">3 new alerts</span>
+            </div>
+            <div class="tp-row">
+              <div class="tp-dot"></div>
+              <div class="tp-text"><strong>Herdade do Carmo</strong> — zoning reclassified from Florestal → Agrícola</div>
+              <div class="tp-time">2h ago</div>
+            </div>
+            <div class="tp-row">
+              <div class="tp-dot"></div>
+              <div class="tp-text"><strong>Barcelos plot #4</strong> — ownership transfer registered at Conservatória</div>
+              <div class="tp-time">6h ago</div>
+            </div>
+            <div class="tp-row">
+              <div class="tp-dot"></div>
+              <div class="tp-text"><strong>Évora Norte cluster</strong> — new PDM consultation open, comment deadline 14 Apr</div>
+              <div class="tp-time">1d ago</div>
+            </div>
+            <div class="tp-row">
+              <div class="tp-dot grey"></div>
+              <div class="tp-text"><strong>Setúbal coastal 12ha</strong> — no changes</div>
+              <div class="tp-time">3d ago</div>
+            </div>
+            <div class="tp-row">
+              <div class="tp-dot grey"></div>
+              <div class="tp-text"><strong>Algarve scrubland</strong> — no changes</div>
+              <div class="tp-time">3d ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRONTIER / WHO ITS FOR -->
+  <div class="frontier" id="who">
+    <h2>Stay ahead in every market</h2>
+    <div class="frontier-grid">
+      <div class="frontier-card">
+        <div class="fc-title">Real estate investors &amp; developers</div>
+        <div class="fc-desc">Screen hundreds of plots in the time it takes to visit one. Find off-market land before it hits portals.</div>
+        <a class="fc-link" href="#">Explore for investors ↗</a>
+        <div class="fc-visual" style="background:linear-gradient(160deg,#e8e6e0,#d8d5ce);">
+          <div style="padding:16px;width:100%">
+            <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Pipeline</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="background:#fff;border-radius:4px;padding:7px 10px;font-size:11px;color:#555;display:flex;justify-content:space-between;"><span>Herdade do Outeiro</span><span style="color:#4a9a4a;font-weight:500">€890K</span></div>
+              <div style="background:#fff;border-radius:4px;padding:7px 10px;font-size:11px;color:#555;display:flex;justify-content:space-between;"><span>Barcelos cluster ×3</span><span style="color:#555;font-weight:500">€240K</span></div>
+              <div style="background:#fff;border-radius:4px;padding:7px 10px;font-size:11px;color:#555;display:flex;justify-content:space-between;"><span>Alentejo Norte 45ha</span><span style="color:#c84b0a;font-weight:500">Reviewing</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frontier-card">
+        <div class="fc-title">Solar &amp; energy developers</div>
+        <div class="fc-desc">Layer solar irradiance, grid proximity, and REN constraints to find viable renewable energy sites at scale.</div>
+        <a class="fc-link" href="#">Explore for energy ↗</a>
+        <div class="fc-visual" style="background:linear-gradient(160deg,#e5e8e0,#d5dace);">
+          <div style="padding:16px;width:100%">
+            <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Solar screening</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="background:#fff;border-radius:4px;padding:8px 10px;font-size:11px;color:#555">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Évora Norte 80ha</span><span style="color:#4a9a4a">4.8 kWh/m²</span></div>
+                <div style="height:4px;background:#eee;border-radius:2px"><div style="width:82%;height:100%;background:#c84b0a;border-radius:2px"></div></div>
+              </div>
+              <div style="background:#fff;border-radius:4px;padding:8px 10px;font-size:11px;color:#555">
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Alentejo Sul 120ha</span><span style="color:#4a9a4a">5.1 kWh/m²</span></div>
+                <div style="height:4px;background:#eee;border-radius:2px"><div style="width:91%;height:100%;background:#c84b0a;border-radius:2px"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="frontier-card">
+        <div class="fc-title">Agents &amp; legal advisors</div>
+        <div class="fc-desc">Automate the first layer of constraint analysis. Surface REN, RAN, and AUGI flags before a lawyer opens a file.</div>
+        <a class="fc-link" href="#">Explore for advisors ↗</a>
+        <div class="fc-visual" style="background:linear-gradient(160deg,#e2e4e0,#d4d6d2);">
+          <div style="padding:16px;width:100%">
+            <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Due diligence report</div>
+            <div style="background:#fff;border-radius:4px;padding:10px;font-size:11px;color:#555;display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;justify-content:space-between"><span style="color:#888">REN clear</span><span style="color:#4a9a4a">✓</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#888">RAN clear</span><span style="color:#4a9a4a">✓</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#888">AUGI flag</span><span style="color:#4a9a4a">None</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#888">Owner match</span><span style="color:#c84b0a">Verify</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing" id="pricing">
+    <h2>Start exploring. Scale when you're ready.</h2>
+    <p class="pricing-sub">No setup fees. No long-term contracts. Cancel any time.</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">€29</div>
+        <div class="plan-per">/ month per user</div>
+        <div class="plan-divider"></div>
+        <div class="plan-feature"><span class="pf-check"></span>50 plot searches / month</div>
+        <div class="plan-feature"><span class="pf-check"></span>Basic constraint overview</div>
+        <div class="plan-feature"><span class="pf-check"></span>PDF export</div>
+        <div class="plan-feature"><span class="pf-check"></span>Portugal &amp; Spain coverage</div>
+        <div class="plan-feature"><span class="pf-check"></span>Email support</div>
+        <a class="plan-btn" href="#">Get started</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-badge">Most popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">€99</div>
+        <div class="plan-per">/ month per user</div>
+        <div class="plan-divider"></div>
+        <div class="plan-feature"><span class="pf-check"></span>Unlimited searches</div>
+        <div class="plan-feature"><span class="pf-check"></span>Full zoning &amp; constraint layer</div>
+        <div class="plan-feature"><span class="pf-check"></span>Tracker — monitor plot changes</div>
+        <div class="plan-feature"><span class="pf-check"></span>Outreach tools included</div>
+        <div class="plan-feature"><span class="pf-check"></span>Project pipeline dashboard</div>
+        <div class="plan-feature"><span class="pf-check"></span>Priority support</div>
+        <a class="plan-btn" href="#">Get started</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Reports</div>
+        <div class="plan-price">€499</div>
+        <div class="plan-per">/ month per user</div>
+        <div class="plan-divider"></div>
+        <div class="plan-feature"><span class="pf-check"></span>Everything in Pro</div>
+        <div class="plan-feature"><span class="pf-check"></span>Deep-dive intelligence reports</div>
+        <div class="plan-feature"><span class="pf-check"></span>Valuation modelling</div>
+        <div class="plan-feature"><span class="pf-check"></span>API access</div>
+        <div class="plan-feature"><span class="pf-check"></span>Dedicated account manager</div>
+        <a class="plan-btn" href="#">Talk to us</a>
+      </div>
+    </div>
+    <p class="pricing-note">Transaction fees apply on closed deals — <a href="#">2% agent fee, capped at €10,000.</a></p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Yonder · LiveYonder B.V.</div>
+    <div class="footer-links">
+      <a href="#">Product</a>
+      <a href="#">Pricing</a>
+      <a href="#">Blog</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>
