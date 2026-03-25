@@ -1,3 +1,5 @@
+import { SiteNav } from "./components/SiteNav";
+
 export default function Home() {
   const features = [
     { num: "01", title: "All data layers ingested, not just one.", desc: "Zoning plans, PDM, building regulations, cadastre, land registries, GIS land-use data — Yonder pulls from every source, not just the easy ones.", screen: "layers" },
@@ -138,33 +140,7 @@ export default function Home() {
     <div className="relative min-h-screen bg-[#F9F9F9] text-[#1a1a18] font-sans overflow-x-hidden">
       <div className="cadastral-grid fixed inset-0 -z-20 opacity-[0.12] pointer-events-none" aria-hidden />
 
-      {/* NAV */}
-      <nav className="sticky top-0 z-[100] border-b border-black/[0.08] bg-[#F9F9F9]">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-12">
-          <a href="#" className="flex items-center gap-2.5 text-[#1a1a18] no-underline">
-          {/* Cadastre blocks logo — 2x2 land parcels */}
-          <div className="flex h-5 w-5 shrink-0 overflow-hidden rounded-[4px] bg-[#1a1a18] p-[2px]">
-            <div className="grid h-full w-full grid-cols-2 grid-rows-2 gap-[1px]">
-              <div className="bg-white" />
-              <div className="bg-[#4a4a4a]" />
-              <div className="bg-[#a8a8a8]" />
-              <div className="bg-[#c84b0a]" />
-            </div>
-          </div>
-          <span className="text-[13px] font-semibold tracking-[0.06em] uppercase">Yonder</span>
-        </a>
-        <div className="hidden items-center gap-6 md:flex">
-          <a href="#product" className="text-[13px] font-medium text-[#1a1a18] no-underline transition-colors hover:text-[#c84b0a]">Product</a>
-          <a href="#who" className="text-[13px] font-medium text-[#1a1a18] no-underline transition-colors hover:text-[#c84b0a]">For who</a>
-          <a href="#coverage" className="text-[13px] font-medium text-[#1a1a18] no-underline transition-colors hover:text-[#c84b0a]">Coverage</a>
-          <a href="#pricing" className="text-[13px] font-medium text-[#1a1a18] no-underline transition-colors hover:text-[#c84b0a]">Pricing</a>
-        </div>
-        <div className="flex items-center gap-3">
-          <a href="#" className="text-[13px] font-medium text-[#1a1a18] no-underline">Sign in</a>
-          <a href="#" className="inline-flex items-center gap-1 rounded-full border-none bg-[#1a1a18] px-4 py-2 text-[13px] font-medium text-white no-underline">Get access</a>
-        </div>
-        </div>
-      </nav>
+      <SiteNav />
 
       <main className="relative mx-auto max-w-6xl px-5 sm:px-6 lg:px-12">
       {/* HERO */}

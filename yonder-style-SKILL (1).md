@@ -1,6 +1,8 @@
-# YONDER DESIGN SYSTEM — Style Skill
-> Save this file as `yonder-style-SKILL.md` on your machine.  
-> Reference it in any new conversation: *"Use the Yonder style skill"* and paste this in, or upload the file.
+# YONDER DESIGN SYSTEM — Style Skill (legacy draft)
+
+> **Deprecated for implementation.** Use **`yonder-style-SKILL.md`** in this repo instead — it matches `app/globals.css` and the live site (`#F9F9F9`, shared nav, etc.).
+>
+> This file kept for history; early spec used warm paper (`#f2f0eb`) that the shipped site did not adopt.
 
 ---
 

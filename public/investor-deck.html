@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yonder — Investor Deck</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap');</style>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F9F9F9;
+  --surface: #ffffff;
+  --card: #F9F9F9;
+  --ink: #1a1a18;
+  --muted: #6b6b68;
+  --border: rgba(0,0,0,0.08);
+  --orange: #c84b0a;
+  --white: #ffffff;
+  /* Match app/globals.css */
+  --text-hero: clamp(32px, 6vw, 48px);
+  --text-h2: clamp(22px, 3.2vw, 30px);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.deck-toc {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(249,249,249,0.98); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.deck-toc-inner {
+  max-width: 1152px; margin: 0 auto; padding: 14px 48px;
+  display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center;
+}
+.deck-toc a { font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: none; transition: color .15s; }
+.deck-toc a:hover { color: var(--orange); }
+
+.btn-pill {
+  border-radius: 999px; padding: 10px 24px; font-size: 14px; font-weight: 500; font-family: inherit;
+  cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: opacity .15s, border-color .15s, color .15s;
+}
+.btn-pill.outline { background: transparent; border: 1px solid rgba(0,0,0,0.15); color: var(--muted); }
+.btn-pill.outline:hover { border-color: rgba(0,0,0,0.25); color: var(--ink); }
+.btn-pill.dark { background: var(--ink); color: #fff; border: none; }
+.btn-pill.dark:hover { opacity: 0.92; }
+
+/* LAYOUT — max-w-6xl aligned */
+.wrap { max-width: 1152px; margin: 0 auto; padding: 0 48px; }
+section { padding: 64px 0 52px; border-top: 1px solid var(--border); }
+
+.eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 10px;
+}
+
+h2 { font-size: var(--text-h2); font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; color: var(--ink); }
+h2 em { font-style: italic; }
+h2.light { color: #fff; }
+.lead { font-size: 15px; color: var(--muted); line-height: 1.6; }
+.lead.light { color: rgba(255,255,255,0.62); }
+.rule { width: 28px; height: 1px; background: var(--border); margin: 20px 0; }
+.rule.orange { background: var(--orange); }
+
+/* GRID */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+
+/* UNIFIED BORDER GRID */
+.ugrid { background:var(--border); display:grid; gap:1px; border-radius:10px; overflow:hidden; margin-top:28px; }
+.ugrid.c2 { grid-template-columns:1fr 1fr; }
+.ugrid.c3 { grid-template-columns:1fr 1fr 1fr; }
+.ugrid.c4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.uc { background: var(--surface); padding: 26px 24px; }
+.uc.dark { background: var(--ink); }
+.uc.card { background: var(--surface); border: 1px solid var(--border); }
+
+/* HERO */
+#hero { background: var(--bg); padding: 40px 0 8px; border-top: none; }
+#hero h1 {
+  font-size: var(--text-hero); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15;
+  color: var(--ink); margin-bottom: 16px;
+}
+#hero h1 em { font-style: italic; color: var(--orange); }
+#hero .lead { margin-bottom: 28px; max-width: 520px; }
+
+/* APP BLOCK — neutral chrome like homepage screenshot */
+.app-wrap { margin-top: 40px; }
+.app-outer {
+  border-radius: 12px 12px 0 0; border: 1px solid var(--border); border-bottom: none;
+  overflow: hidden; box-shadow: 0 8px 48px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+}
+.app-painting {
+  padding: 28px 24px 0;
+  background: #f0f0f0;
+}
+.app-win { background: #fff; border-radius: 8px 8px 0 0; overflow: hidden; min-height: 400px; }
+.app-bar { background: #fafafa; padding: 10px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border); }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.app-bar-title { font-size: 13px; color: #888; font-weight: 500; margin: 0 auto; }
+.app-cols { display: grid; grid-template-columns: 220px 1fr; min-height: 360px; }
+.app-side { background: #F5F5F5; border-right: 1px solid var(--border); padding: 16px; }
+.side-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #888; margin: 10px 0 6px 4px; }
+.side-label:first-child { margin-top: 0; }
+.side-item { padding: 9px 10px; border-radius: 8px; margin-bottom: 3px; font-size: 13px; color: var(--ink); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.side-item.active { background: #fff; border: 1px solid var(--border); }
+.side-sub { font-size: 13px; color: var(--muted); font-weight: 400; }
+.spin { width:13px;height:13px;border-radius:50%;border:2px solid rgba(0,0,0,0.08);border-top-color:var(--orange);flex-shrink:0; }
+.chk { width:15px;height:15px;border-radius:4px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0; }
+.chk.done { background:var(--ink);color:#fff;border-color:var(--ink); }
+.app-main { padding:20px; }
+.app-search { background:var(--ink);border-radius:8px;padding:11px 14px;color:rgba(255,255,255,0.45);font-size:13px;font-family:inherit;display:flex;align-items:center;gap:8px;margin-bottom:14px; }
+.filter-row { display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap; }
+.chip { background:#f0f0f0;border:1px solid transparent;border-radius:999px;padding:5px 11px;font-size:11px;color:var(--ink);font-weight:500; }
+.chip.on { background:rgba(200,75,10,0.08);border-color:rgba(200,75,10,0.25);color:var(--orange); }
+.res-count { font-size:13px;color:var(--muted);margin-bottom:10px; }
+.res-item { background:#fff;border:1px solid var(--border);border-radius:8px;padding:11px 13px;margin-bottom:6px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start; }
+.res-name { font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px; }
+.res-tags { display:flex;gap:4px;flex-wrap:wrap; }
+.res-tag { font-size:11px;color:var(--muted);background:#f0f0f0;padding:3px 7px;border-radius:4px; }
+.res-tag.clear { color:#16a34a;background:rgba(22,163,74,0.08); }
+.res-price { font-size:13px;font-weight:600;color:var(--ink); }
+
+/* PROBLEM CARDS */
+.prob-cards { display:flex;flex-direction:column;gap:8px; }
+.pcard {
+  background: var(--surface); border: 1px dashed rgba(0,0,0,0.18);
+  padding: 22px 24px; display: grid; grid-template-columns: 28px 1fr; gap: 18px; align-items: start;
+  background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+.pcard-n { font-size: 28px; color: #ccc; font-weight: 500; letter-spacing: -0.02em; line-height: 1; margin-top: 0; }
+.pcard-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.pcard-body { font-size: 15px; color: var(--muted); line-height: 1.58; }
+.callout-dark { background:var(--ink);border-radius:8px;padding:24px 28px;margin-top:1px; }
+.callout-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,75,10,0.9); margin-bottom: 10px; }
+.callout-quote { font-size: 15px; color: rgba(255,255,255,0.85); line-height: 1.6; font-style: italic; }
+
+/* STAT */
+.stat-val { font-size: clamp(32px, 4vw, 42px); font-weight: 500; letter-spacing: -0.03em; color: var(--ink); line-height: 1; margin-bottom: 6px; }
+.stat-val em { font-style: normal; color: var(--orange); font-size: 0.52em; }
+.stat-label { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+/* SOL STEPS */
+.sol-steps { display:flex;flex-direction:column;gap:1px; }
+.sol-step { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:20px 24px;display:grid;grid-template-columns:32px 1fr;gap:16px;align-items:start; }
+.sol-n { font-size:18px;color:var(--orange);font-weight:500;letter-spacing:-0.02em;line-height:1;margin-top:2px; }
+.sol-title { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 4px; }
+.sol-body { font-size: 14px; color: rgba(255,255,255,0.62); line-height: 1.55; }
+
+/* ENGINE PANEL */
+.engine-panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.engine-head { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.engine-row { display:grid;grid-template-columns:110px 1fr;border-bottom:1px solid var(--border); }
+.engine-row:last-child { border-bottom:none; }
+.engine-lbl { padding: 12px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-right: 1px solid var(--border); display: flex; align-items: center; }
+.engine-val { padding: 12px 16px; font-size: 14px; color: var(--ink); line-height: 1.55; }
+.engine-val strong { font-weight:500; }
+.engine-row.hl .engine-val { font-weight:500;background:rgba(200,75,10,0.04); }
+.qbox { background:var(--ink);border-radius:8px;padding:22px 26px;margin-top:20px; }
+.qbox-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,75,10,0.9); margin-bottom: 8px; }
+.qbox-text { font-size: 15px; color: rgba(255,255,255,0.88); line-height: 1.5; font-style: italic; margin-bottom: 14px; }
+.qbox-step { font-size: 14px; color: rgba(255,255,255,0.55); padding-left: 16px; position: relative; line-height: 1.5; margin-bottom: 7px; }
+.qbox-step::before { content:'→';position:absolute;left:0;color:var(--orange); }
+
+/* MARKET */
+.mkt-plots { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 28px 32px; margin-top: 28px; }
+.mkt-plots-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.mkt-plots-grid { display:grid;grid-template-columns:1fr 1fr 1fr; }
+.mkt-pc { padding: 0 22px 0 0; border-right: 1px solid var(--border); }
+.mkt-pc:last-child { border-right: none; padding-right: 0; }
+.mkt-pc:not(:first-child) { padding-left: 22px; }
+.mkt-pval { font-size: clamp(28px, 3.5vw, 38px); font-weight: 500; letter-spacing: -0.03em; color: var(--ink); line-height: 1; margin-bottom: 7px; }
+.mkt-pval em { font-size: 18px; font-style: normal; color: var(--orange); }
+.mkt-psub { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.mkt-funnel { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; margin-top: 1px; }
+.mkt-arrow { display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); padding: 0 8px; background: #fff; border: 1px solid var(--border); border-left: none; border-right: none; }
+.mkt-fc { border: 1px solid var(--border); padding: 24px 26px; }
+.mkt-fc.tam,.mkt-fc.sam { background: #fff; }
+.mkt-fc.sce { background:var(--ink); }
+.mkt-fc-lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.mkt-fc.sce .mkt-fc-lbl { color:rgba(200,75,10,0.85); }
+.mkt-fc-val { font-size:clamp(26px,3vw,34px);font-weight:500;letter-spacing:-0.03em;color:var(--ink);line-height:1;margin-bottom:10px; }
+.mkt-fc.sce .mkt-fc-val { color:#fff; }
+.mkt-fc-desc { font-size: 14px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+.mkt-fc.sce .mkt-fc-desc { color:rgba(255,255,255,0.55); }
+.mkt-fc-note { font-size:12px;font-weight:600;color:var(--orange);border-top:1px solid var(--border);padding-top:8px; }
+.mkt-fc.sce .mkt-fc-note { border-color:rgba(255,255,255,0.07); }
+
+/* TOKEN TIERS */
+.token-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 28px; background: #fff; }
+.token-head { padding: 16px 22px; border-bottom: 1px solid var(--border); background: #fff; }
+.token-head-lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+.token-head-desc { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.token-tiers { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; background: #fff; }
+.ttier { padding: 22px 20px; border-right: 1px solid var(--border); background: #fff; }
+.ttier:last-child { border-right: none; }
+.ttier.active { background: rgba(200,75,10,0.06); border-top: 2px solid var(--orange); }
+.ttier-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+.ttier-price { font-size: clamp(26px, 3vw, 34px); font-weight: 500; letter-spacing: -0.03em; color: var(--ink); line-height: 1; margin-bottom: 3px; }
+.ttier-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.ttier-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.ttier-desc { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.token-bottom { border-top: 1px solid var(--border); padding: 16px 22px; background: var(--ink); display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+.token-bottom-text { font-size: 14px; color: rgba(255,255,255,0.62); line-height: 1.55; }
+.token-bottom-text strong { color:#fff;font-weight:500; }
+.token-bottom-num { font-size:40px;font-weight:500;letter-spacing:-0.03em;color:var(--orange);line-height:1;text-align:right; }
+.token-bottom-num-sub { font-size:12px;color:rgba(255,255,255,0.35);text-align:right;margin-top:3px; }
+
+/* GTM PHASES */
+.gtm-phase { display:grid;grid-template-columns:180px 1fr;border:1px solid var(--border);overflow:hidden;margin-bottom:1px;border-radius:0; }
+.gtm-phase:first-child { border-radius:10px 10px 0 0; }
+.gtm-phase:last-child { border-radius:0 0 10px 10px;margin-bottom:0; }
+.gtm-label-col { padding:28px 22px;display:flex;flex-direction:column;justify-content:space-between; }
+.gtm-phase-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.gtm-phase-name { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; font-style: italic; }
+.gtm-phase-sub { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 16px; opacity: 0.45; }
+.gtm-content { background: #fff; padding: 28px 32px; }
+.gtm-content-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.gtm-cells { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); }
+.gtm-cell { background: #F9F9F9; padding: 18px; }
+.gtm-cell-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+.gtm-cell-text { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.gtm-cell-text strong { color:var(--ink);font-weight:500; }
+
+/* FORECAST TABLE */
+.fc-wrap { border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:28px; }
+.fc-head { display:grid;grid-template-columns:200px 1fr 1fr 1fr 1fr;background:var(--ink); }
+.fc-hc { padding: 12px 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.38); border-right: 1px solid rgba(255,255,255,0.06); }
+.fc-hc:last-child { border-right:none; }
+.fc-hc.hl { color:var(--orange); }
+.fc-row { display:grid;grid-template-columns:200px 1fr 1fr 1fr 1fr;border-top:1px solid var(--border); }
+.fc-lbl { padding: 12px 18px; font-size: 14px; color: var(--muted); border-right: 1px solid var(--border); display: flex; align-items: center; background: #F9F9F9; }
+.fc-cell { padding: 12px 18px; font-size: 14px; font-weight: 500; color: var(--ink); border-right: 1px solid var(--border); display: flex; align-items: center; background: #fff; }
+.fc-cell:last-child { border-right:none; }
+.fc-cell.hl { background:rgba(200,75,10,0.06);color:var(--orange);font-weight:600; }
+.fc-row.total .fc-lbl { font-weight:600;color:var(--ink);background:var(--bg); }
+.fc-row.total .fc-cell { background:var(--bg);font-weight:600; }
+.fc-row.total .fc-cell.hl { background:rgba(200,75,10,0.09); }
+.fc-row.grand .fc-lbl { background:var(--ink);color:rgba(255,255,255,0.55);font-weight:500;border-color:rgba(255,255,255,0.06); }
+.fc-row.grand .fc-cell { background:var(--ink);color:#fff;border-color:rgba(255,255,255,0.06); }
+.fc-row.grand .fc-cell.hl { background:rgba(200,75,10,0.18); }
+
+/* TRACTION */
+#traction { background:var(--ink);border-top:none; }
+.traction-inner { display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:start; }
+.traction-stats { display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.07);border-radius:10px;overflow:hidden;margin-top:32px; }
+.tc { background:var(--ink);padding:28px 24px; }
+.tc-val { font-size:clamp(36px,4vw,48px);font-weight:500;letter-spacing:-0.03em;color:#fff;line-height:1;margin-bottom:7px; }
+.tc-val em { font-style:normal;color:var(--orange);font-size:0.5em; }
+.tc-lbl { font-size: 14px; color: rgba(255,255,255,0.48); line-height: 1.5; }
+.traction-checks { display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.07);border-radius:10px;overflow:hidden;margin-top:16px; }
+.tv-row { background: rgba(255,255,255,0.04); padding: 14px 18px; display: flex; gap: 10px; align-items: start; font-size: 14px; color: rgba(255,255,255,0.68); line-height: 1.55; }
+.tv-icon { color:var(--orange);flex-shrink:0;font-size:13px;margin-top:2px; }
+.tv-row strong { color:#fff;font-weight:500; }
+
+/* ROADMAP */
+.rm-stages { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 28px; }
+.rm-stage { background: #fff; padding: 26px 24px; }
+.rm-num { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 7px; }
+.rm-title { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 14px; line-height: 1.2; }
+.rm-items { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.rm-items li { font-size: 14px; color: var(--muted); line-height: 1.55; padding-left: 14px; position: relative; }
+.rm-items li::before { content:'—';position:absolute;left:0;color:rgba(200,75,10,0.5);font-size:9px;top:4px; }
+
+/* TEAM */
+.team-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:10px;overflow:hidden;margin-top:28px; }
+.member { background: #fff; display: flex; flex-direction: column; }
+.member-init { height: 140px; background: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 500; color: #fff; letter-spacing: -0.03em; }
+.member-body { padding: 20px 22px; flex: 1; }
+.member-name { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.01em; }
+.member-role { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+.member-bio { font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+/* COMP TABLE */
+.comp-table { width:100%;border-collapse:collapse;margin-top:28px; }
+.comp-table th { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--border); text-align: left; background: #fff; }
+.comp-table td { font-size: 14px; color: var(--ink); padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.55; background: #fff; }
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-sub { color: var(--muted); font-size: 13px; font-weight: 400; }
+.comp-muted { color: var(--muted); font-size: 14px; }
+.comp-table .yrow td { background:rgba(200,75,10,0.04);font-weight:500; }
+.comp-table .yrow td:first-child { border-left:2px solid var(--orange); }
+.cbadge { display:inline-block;background:rgba(200,75,10,0.1);color:var(--orange);border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600;letter-spacing:0.04em; }
+
+/* ASK */
+#ask { background:var(--ink);border-top:none; }
+.ask-inner { display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center; }
+.ask-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 28px 30px; margin-top: 24px; }
+.ask-amount { font-size:clamp(44px,6vw,58px);font-weight:500;letter-spacing:-0.03em;color:#fff;line-height:1;margin-bottom:7px; }
+.ask-sub { font-size: 14px; color: rgba(255,255,255,0.48); line-height: 1.55; }
+.ask-uses { display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.07);border-radius:8px;overflow:hidden;margin-top:1px; }
+.ask-use { background: rgba(255,255,255,0.04); padding: 12px 16px; font-size: 14px; color: rgba(255,255,255,0.65); display: flex; gap: 10px; align-items: start; line-height: 1.55; }
+.ask-use::before { content:'→';color:var(--orange);flex-shrink:0; }
+.ask-actions { display:flex;flex-direction:column;gap:10px; }
+.btn-white { display:block;background:#fff;color:var(--ink);border-radius:999px;padding:16px 28px;font-size:14px;font-weight:500;text-decoration:none;text-align:center;font-family:inherit;transition:opacity .18s; }
+.btn-white:hover { opacity:.88; }
+.btn-outline-w { display:block;background:transparent;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.6);border-radius:999px;padding:15px 28px;font-size:14px;font-weight:500;text-decoration:none;text-align:center;font-family:inherit;transition:border-color .18s,color .18s; }
+.btn-outline-w:hover { border-color:rgba(255,255,255,0.45);color:#fff; }
+.ask-contact { font-size:14px;color:rgba(255,255,255,0.3);text-align:center;margin-top:5px; }
+.ask-contact a { color:rgba(255,255,255,0.5);text-decoration:none; }
+.ask-contact a:hover { color:#fff; }
+
+/* ANIM */
+.fu { opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease; }
+.fu.in { opacity:1;transform:none; }
+.d1{transition-delay:.06s;}.d2{transition-delay:.12s;}.d3{transition-delay:.18s;}.d4{transition-delay:.24s;}
+
+/* FOOTER */
+footer { background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding:0; }
+.footer-inner { max-width:1152px;margin:0 auto;padding:22px 48px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap; }
+.footer-left { display:flex;align-items:center;gap:7px;text-decoration:none; }
+.footer-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.65); letter-spacing: 0.06em; text-transform: uppercase; }
+.footer-copy { font-size:13px;color:rgba(255,255,255,0.28); }
+.footer-link { font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none; }
+.footer-link:hover { color:rgba(255,255,255,0.8); }
+
+@media(max-width:860px){
+  .deck-toc-inner { padding: 12px 20px; }
+  .wrap{padding:0 20px;}
+  section{padding:52px 0 44px;}
+  .footer-inner { padding: 18px 20px; }
+  .grid-2,.traction-inner,.ask-inner{grid-template-columns:1fr;gap:28px;}
+  .ugrid.c3,.ugrid.c4,.rm-stages,.team-grid{grid-template-columns:1fr 1fr;}
+  .token-tiers{grid-template-columns:1fr 1fr;}
+  h2 { font-size: clamp(22px, 5vw, 26px); }
+}
+</style>
+</head>
+<body>
+
+<!-- In-app nav: SiteNav (same as liveyonder.co). -->
+<div class="deck-toc">
+  <div class="deck-toc-inner">
+    <a href="#problem">Problem</a>
+    <a href="#whynow">Why now</a>
+    <a href="#solution">Solution</a>
+    <a href="#product">Product</a>
+    <a href="#moat">Moat</a>
+    <a href="#market">Market</a>
+    <a href="#business">Business</a>
+    <a href="#gtm">GTM</a>
+    <a href="#forecast">Forecast</a>
+    <a href="#traction">Traction</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#team">Team</a>
+    <a href="#ask">Ask</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap">
+    <div class="eyebrow fu">Land AI · Europe</div>
+    <h1 class="fu d1">Unlock the full<br>potential of <em>land.</em></h1>
+    <p class="lead fu d2">Yonder is the agent-native land data layer — turning fragmented, machine-unreadable land data into instant, actionable intelligence for buyers, builders, and investors across Europe.</p>
+    <div class="fu d3" style="display:flex;gap:12px;margin-bottom:64px;">
+      <a href="#ask" class="btn-pill dark">Request deck →</a>
+      <a href="#problem" class="btn-pill outline">See the pitch</a>
+    </div>
+    <div class="app-wrap fu d4">
+      <div class="app-outer">
+        <div class="app-painting">
+          <div class="app-win">
+            <div class="app-bar">
+              <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+              <div class="app-bar-title">Yonder — Land Agent</div>
+            </div>
+            <div class="app-cols">
+              <div class="app-side">
+                <div class="side-label">Your Project</div>
+                <div class="side-item active"><div class="chk done">✓</div><div><div>Area search Alentejo</div><div class="side-sub">120 plots · Analyze all</div></div></div>
+                <div class="side-label">In Progress 2</div>
+                <div class="side-item"><div class="spin"></div><div><div>Alentejo rural plots</div><div class="side-sub">Scanning registry...</div></div></div>
+                <div class="side-item"><div class="spin"></div><div><div>Solar suitability — Évora</div><div class="side-sub">Running model...</div></div></div>
+                <div class="side-label">Ready for Review 4</div>
+                <div class="side-item active"><div class="chk done">✓</div><div><div>Herdade do Outeiro</div><div class="side-sub">28ha · REN clear · €890K</div></div></div>
+                <div class="side-item"><div class="chk"></div><div><div>Barcelos cluster</div><div class="side-sub">3 plots · PDM rezone risk</div></div></div>
+                <div class="side-item"><div class="chk"></div><div><div>Setúbal coastal rustic</div><div class="side-sub">AUGI constraint flagged</div></div></div>
+              </div>
+              <div class="app-main">
+                <div class="app-search">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  find rustic plots over 20ha near Évora, REN-clear, price under €1M
+                </div>
+                <div class="filter-row">
+                  <div class="chip on">Location: Évora ×</div>
+                  <div class="chip on">Price: €1000 – ∞ ×</div>
+                  <div class="chip on">Size: 20ha+ ×</div>
+                  <div class="chip">REN clear</div>
+                </div>
+                <div class="res-count">120 plots in drawn area</div>
+                <div class="res-item"><div><div class="res-name">Herdade do Outeiro</div><div class="res-tags"><div class="res-tag">28ha</div><div class="res-tag clear">REN clear</div><div class="res-tag">PDM: Agricultural</div></div></div><div class="res-price">€890K</div></div>
+                <div class="res-item"><div><div class="res-name">Monte da Defesa</div><div class="res-tags"><div class="res-tag">34ha</div><div class="res-tag clear">REN clear</div><div class="res-tag">Grid: 2.1km</div></div></div><div class="res-price">€1.1M</div></div>
+                <div class="res-item"><div><div class="res-name">Herdade Vale Formoso</div><div class="res-tags"><div class="res-tag">22ha</div><div class="res-tag" style="color:#b45309;background:rgba(180,83,9,0.08);">RAN partial</div><div class="res-tag">Solar viable</div></div></div><div class="res-price">€620K</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <div class="eyebrow fu">The Problem</div>
+        <h2 class="fu d1">Vacant land is one<br>of the largest <em>untapped</em><br>asset classes.</h2>
+        <div class="rule fu d2"></div>
+        <p class="lead fu d3">Millions of plots sit idle — unused, misused, or misunderstood. Not because there's no demand. Because the data is broken.</p>
+        <p class="lead fu d4" style="margin-top:14px;">Land data is a maze of disconnected systems. Zoning, cadastre, building regulations, utilities — multiple sources, hundreds of pages of dense technical data. None of it connected. None of it machine-readable.</p>
+        <p class="lead fu d4" style="margin-top:14px;">So the question "can I build here? Solar? Rural tourism? A data centre?" — has no fast answer. The opportunity is invisible.</p>
+      </div>
+      <div>
+        <div class="prob-cards fu d1">
+          <div class="pcard"><div class="pcard-n">1</div><div><div class="pcard-title">High entropy data</div><div class="pcard-body">Land data is unstructured, multimodal, fragmented and disconnected. PDFs, maps, registries, emails. Municipal plans locked in 500-page non-searchable documents. None of it works together.</div></div></div>
+          <div class="pcard"><div class="pcard-n">2</div><div><div class="pcard-title">AI cannot reason reliably</div><div class="pcard-body">Without a structured data layer, AI models hallucinate on land queries. The models are ready. The data substrate is not.</div></div></div>
+          <div class="pcard"><div class="pcard-n">3</div><div><div class="pcard-title">Institutions cannot scale diligence</div><div class="pcard-body">Solar developers, housing funds, ESG investors spend months manually checking plots — only to find disqualifying red flags an AI could spot in seconds.</div></div></div>
+          <div class="pcard"><div class="pcard-n">4</div><div><div class="pcard-title">Users fall back to manual checks</div><div class="pcard-body">Without this layer, every buyer defaults to architects, lawyers, and consultants. The market hasn't changed in decades.</div></div></div>
+        </div>
+        <div class="callout-dark fu d2">
+          <div class="callout-eyebrow">— a16z Big Ideas 2026</div>
+          <div class="callout-quote">"The limiting factor for AI companies is now data entropy — the steady decay of freshness, structure, and truth inside the unstructured universe."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section id="whynow">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <div class="eyebrow fu">Why Now</div>
+        <h2 class="fu d1">Growth in demand,<br><em>finite</em> supply.</h2>
+        <div class="rule fu d2"></div>
+        <p class="lead fu d3">Every major global transition — solar energy, regenerative agriculture, data centers, affordable housing — starts with a specific plot of land. Capital is flowing. But the land to deploy it on is invisible.</p>
+        <p class="lead fu d4" style="margin-top:14px;">AI models are ready. Context is the bottleneck. Land is finite. Diligence doesn't scale. This is exactly the moment a structured data layer changes everything.</p>
+      </div>
+      <div>
+        <div class="ugrid c2 fu d2" style="margin-top:0;">
+          <div class="uc card"><div class="stat-val">€540B<em>+</em></div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">EU climate funding</div><div class="stat-label">Net-zero mandates driving massive demand for land that meets solar, wind, and conservation criteria.</div></div>
+          <div class="uc card"><div class="stat-val">€400–600B</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Solar & energy infra</div><div class="stat-label">Doubling solar capacity requires flat, unprotected plots near grid lines — screened at scale.</div></div>
+          <div class="uc card"><div class="stat-val">€300B<em>+</em></div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Rural tourism & second homes</div><div class="stat-label">Post-pandemic demand for land-backed living — eco-stays, prefab homes, retreat projects.</div></div>
+          <div class="uc card"><div class="stat-val">€3.5T</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Wealth transfer</div><div class="stat-label">New generation of land buyers with capital and no legacy tools — ready for an AI-native experience.</div></div>
+        </div>
+        <div class="callout-dark fu d3" style="margin-top:1px;"><div class="callout-eyebrow" style="margin-bottom:8px;">Context is the bottleneck</div><div style="font-size:15px;color:rgba(255,255,255,0.7);line-height:1.65;"><strong style="color:#fff;font-weight:500;">AI models are ready.</strong> Yonder builds the context layer — the missing substrate that makes land legible to machines and actionable for humans.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution" style="background:var(--ink);border-top:none;">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <div class="eyebrow fu" style="color:rgba(200,75,10,0.85);">The Solution</div>
+        <h2 class="light fu d1">Yonder is the<br>agent-native data<br>layer for <em>land.</em></h2>
+        <div class="rule orange fu d2"></div>
+        <p class="lead light fu d3">"I want to do X with this land." Yonder finds suitable plots, retrieves relevant land data, interprets rules and constraints, and generates a clear AI land report — before money is spent.</p>
+        <p class="lead light fu d4" style="margin-top:14px;">Yonder turns fragmented land data into a single workflow. From intent, to context, to action.</p>
+      </div>
+      <div class="sol-steps fu d2">
+        <div class="sol-step"><div class="sol-n">01</div><div><div class="sol-title">Search land (intent)</div><div class="sol-body">Find plots by need — solar farm, data center, agricultural project, prefab development. Filter by distance to grid, roads, water. Natural language. No form to fill in.</div></div></div>
+        <div class="sol-step"><div class="sol-n">02</div><div><div class="sol-title">Missing data (context)</div><div class="sol-body">Yonder plugs into local land databases — cadastre, registry, zoning. Enriches with our AI engine. Interprets rules and constraints. Generates an instant land report.</div></div></div>
+        <div class="sol-step"><div class="sol-n">03</div><div><div class="sol-title">Local experts (action)</div><div class="sol-body">Route to vetted experts — legal checks, permits, development. Clear insight before money is spent. The right human at the right moment.</div></div></div>
+        <div class="sol-step"><div class="sol-n">04</div><div><div class="sol-title">Result: clear decisions, fast</div><div class="sol-body">Time to certainty reduced from 3 weeks to 3 minutes. AI handles the heavy work — registry data, zoning rules, area insights — so buyers can act with confidence.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <div class="eyebrow fu">Product</div>
+        <h2 class="fu d1">The Land AI<br><em>Agent.</em></h2>
+        <div class="rule fu d2"></div>
+        <p class="lead fu d3">"I want to do X with this land." Yonder finds suitable plots, retrieves relevant land data, interprets rules and constraints, and generates a clear AI land report — before money is spent.</p>
+        <div class="qbox fu d4">
+          <div class="qbox-label">Buyer query example</div>
+          <div class="qbox-text">"Find 3 flat plots near Évora, suitable for a small solar farm, under €150K."</div>
+          <div class="qbox-step">AI filters 500K+ plots against criteria in seconds</div>
+          <div class="qbox-step">Returns verified, ranked results with zoning analysis</div>
+          <div class="qbox-step">PDM data, grid access, slope, environmental status</div>
+          <div class="qbox-step">Legal and permit experts pre-linked to each result</div>
+        </div>
+      </div>
+      <div class="fu d2">
+        <div class="engine-panel">
+          <div class="engine-head"><div class="dot g" style="width:8px;height:8px;"></div>Land AI Engine · What we process per plot</div>
+          <div class="engine-row"><div class="engine-lbl">Registry</div><div class="engine-val"><strong>Ownership, legal status, notarial history</strong> — verified across cadastre and land registries</div></div>
+          <div class="engine-row"><div class="engine-lbl">Zoning</div><div class="engine-val"><strong>Municipal plans, REN, RAN, conservation overlays</strong> — cross-referenced for legal precedence</div></div>
+          <div class="engine-row"><div class="engine-lbl">Infrastructure</div><div class="engine-val"><strong>Road access, water, grid connectivity, soil type</strong> — scored for development viability</div></div>
+          <div class="engine-row"><div class="engine-lbl">Context</div><div class="engine-val"><strong>Ocean, transport, terrain, amenities</strong> — proximity data for use-case matching</div></div>
+          <div class="engine-row"><div class="engine-lbl">Use-cases</div><div class="engine-val"><strong>Solar · Data centers · Agriculture · Prefab · Tourism</strong> — each plot scored per demand segment</div></div>
+          <div class="engine-row hl"><div class="engine-lbl">Output</div><div class="engine-val">Full AI land report — verified, promptable, matched to demand</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOAT -->
+<section id="moat">
+  <div class="wrap">
+    <div class="eyebrow fu">Defensive Moat</div>
+    <div class="grid-2" style="margin-bottom:0;">
+      <div>
+        <h2 class="fu d1">Not a wrapper.<br>A <em>walled garden</em><br>of data.</h2>
+        <div class="rule fu d2"></div>
+        <p class="lead fu d3">The moat isn't the AI — it's the structured, verified, local land data that general LLMs cannot access. We've turned high-entropy public records into an exclusive proprietary asset. OpenAI can't prompt this into existence.</p>
+        <div class="fu d3" style="margin-top:28px;display:flex;flex-direction:column;gap:18px;">
+          <div style="display:flex;gap:12px;"><div style="color:var(--orange);font-size:16px;flex-shrink:0;margin-top:1px;">↑</div><div><div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px;">Every plot normalised makes the model smarter</div><div style="font-size:13px;color:var(--muted);line-height:1.65;">More structured data → better AI accuracy → better matches → more buyers trust Yonder → more agents join → more plots normalised.</div></div></div>
+          <div style="display:flex;gap:12px;"><div style="color:var(--orange);font-size:16px;flex-shrink:0;margin-top:1px;">↑</div><div><div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px;">Every expert interaction trains the matching engine</div><div style="font-size:13px;color:var(--muted);line-height:1.65;">Unlike brownfield competitors retrofitting AI onto old portals, Yonder is built greenfield — compounding from day one.</div></div></div>
+          <div style="display:flex;gap:12px;"><div style="color:var(--orange);font-size:16px;flex-shrink:0;margin-top:1px;">↑</div><div><div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px;">Walled garden, not open web</div><div style="font-size:13px;color:var(--muted);line-height:1.65;">The most defensible AI companies build walled gardens around proprietary data not available on the open web. That's exactly what Yonder is.</div></div></div>
+          <div style="border-top:1px solid var(--border);padding-top:16px;font-size:13px;color:var(--muted);line-height:1.65;font-style:italic;"><strong style="color:var(--ink);font-style:normal;font-weight:500;">The complexity is the moat.</strong> Each cycle raises the barrier for new entrants. Brownfield players are catching up to yesterday. We're building tomorrow.</div>
+        </div>
+      </div>
+      <div class="fu d2">
+        <div class="callout-dark" style="margin-bottom:24px;">
+          <div class="callout-eyebrow">Why the market stays stuck</div>
+          <div class="callout-quote">"Current listings generate questions realtors can't answer — too fragmented, too expensive, too slow. Potential stays untapped. The engine stays clogged. Yonder is the oil that makes it run."</div>
+        </div>
+        <table class="comp-table">
+          <thead><tr><th>Competitor</th><th>Approach</th><th>Yonder advantage</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Portals & realtors</strong><br><span class="comp-sub">Idealista, Imovirtual</span></td><td class="comp-muted">Listings without intelligence. Buyers ask; realtors can't answer.</td><td class="comp-muted">No AI layer, no data substrate</td></tr>
+            <tr><td><strong>UK Land Portals</strong><br><span class="comp-sub">e.g. LandTech</span></td><td class="comp-muted">AI on top of organised UK data. No play for high-entropy mainland EU.</td><td class="comp-muted">UK-only. Built environment focus.</td></tr>
+            <tr><td><strong>Gov / GIS Portals</strong><br><span class="comp-sub">Cadastre, PDM, INIAV</span></td><td class="comp-muted">Require a "PhD in GIS". Not machine-readable. Not actionable.</td><td class="comp-muted">Static. Disconnected.</td></tr>
+            <tr><td><strong>Generic LLMs</strong><br><span class="comp-sub">ChatGPT, Gemini</span></td><td class="comp-muted">Great at prose. Dangerous for land law. No grounding.</td><td class="comp-muted">Hallucination risk. No accountability.</td></tr>
+            <tr class="yrow"><td><strong>Yonder</strong> <span class="cbadge">greenfield</span></td><td>Hybrid RAG on proprietary structured land data. 15–20% higher accuracy.</td><td><span style="color:var(--orange);font-weight:500;">End-to-end · Agent-native · EU-first</span></td></tr>
+          </tbody>
+        </table>
+        <div class="ugrid c3 fu d3" style="margin-top:16px;">
+          <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Moat 1</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Multimodal data substrate</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">Years of work digitising 500-page PDFs. OpenAI can't prompt this into existence.</div></div>
+          <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Moat 2</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Labor substitution</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">€2K manual study in 4 weeks → 3 minutes at €0.02 marginal cost.</div></div>
+          <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Moat 3</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Local regulatory depth</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">RAN overrides REN, municipal plans have exceptions. Our engine knows the precedence.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market">
+  <div class="wrap">
+    <div class="eyebrow fu">Market Opportunity</div>
+    <h2 class="fu d1">The plots are there.<br>The data <em>isn't.</em></h2>
+    <div class="rule fu d2"></div>
+    <p class="lead fu d3" style="max-width:620px;">Southern Europe has millions of urban and rustic plots — listed and unlisted. What's missing is a machine-readable layer that makes them legible, searchable, and actionable.</p>
+    <div class="mkt-plots fu d1">
+      <div class="mkt-plots-label">The physical basis — plots in Southern Europe</div>
+      <div class="mkt-plots-grid">
+        <div class="mkt-pc"><div class="mkt-pval">2M</div><div class="mkt-psub">Urban plots<br>Listed + unlisted, avg ~€300K value</div></div>
+        <div class="mkt-pc"><div class="mkt-pval">7M<em>+</em></div><div class="mkt-psub">Rustic / unknown plots<br>Largely invisible to any platform today</div></div>
+        <div class="mkt-pc"><div class="mkt-pval">9M<em>+</em></div><div class="mkt-psub">Total plots with no unified<br>AI-readable data layer</div></div>
+      </div>
+    </div>
+    <div class="mkt-funnel fu d2">
+      <div class="mkt-fc tam"><div class="mkt-fc-lbl">TAM · Total Addressable Market</div><div class="mkt-fc-val">€600B</div><div class="mkt-fc-desc">Land value — Southern Europe urban plots. €50T+ worldwide including agriculture. Source: Savills.</div><div class="mkt-fc-note">€18B annual agent fee pool (3%)</div></div>
+      <div class="mkt-arrow">→</div>
+      <div class="mkt-fc sam"><div class="mkt-fc-lbl">SAM · Serviceable Addressable Market</div><div class="mkt-fc-val">€120B+</div><div class="mkt-fc-desc">~20% of annual land flow actively transacted. Yonder operates at 2% capped at €10K.</div><div class="mkt-fc-note">Active plots across PT, ES, EU</div></div>
+      <div class="mkt-arrow">→</div>
+      <div class="mkt-fc sce"><div class="mkt-fc-lbl">Our Goal · Y3</div><div class="mkt-fc-val">1,025 <span style="font-size:15px;color:rgba(255,255,255,0.4);">agents</span></div><div class="mkt-fc-desc" style="margin-bottom:12px;">Portugal → Spain → EU. Revenue across four token tiers:</div><div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;justify-content:space-between;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:6px;"><span style="color:rgba(255,255,255,0.45);">Browse · €29/mo</span><span style="color:#fff;font-weight:500;">€122K</span></div><div style="display:flex;justify-content:space-between;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:6px;"><span style="color:rgba(255,255,255,0.45);">Land Agent · €99/mo</span><span style="color:#fff;font-weight:500;">€756K</span></div><div style="display:flex;justify-content:space-between;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.07);padding-bottom:6px;"><span style="color:rgba(255,255,255,0.45);">Deep reports · €499</span><span style="color:#fff;font-weight:500;">€180K</span></div><div style="display:flex;justify-content:space-between;font-size:14px;"><span style="color:rgba(255,255,255,0.45);">Buying agent · 2%</span><span style="color:var(--orange);font-weight:600;">€211K</span></div></div><div class="mkt-fc-note" style="margin-top:12px;">€1.37M Y3 revenue · €2.1M ARR run rate at M36</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS MODEL -->
+<section id="business">
+  <div class="wrap">
+    <div class="eyebrow fu">Business Model</div>
+    <h2 class="fu d1">One model.<br><em>Tokenized</em> search.</h2>
+    <div class="rule fu d2"></div>
+    <p class="lead fu d3" style="max-width:680px;margin-bottom:0;">Yonder is one product with one underlying mechanism: tokenized land intelligence. The price point reflects depth of use — casual browse, active agent, deep diligence, or enterprise scale. Same engine, different fuel levels. Write code once, sell intelligence infinitely.</p>
+    <div class="token-wrap fu d2">
+      <div class="token-head"><div class="token-head-lbl">One engine · Four depths of use</div><div class="token-head-desc">Every tier draws from the same tokenized land intelligence layer. Customers choose the depth they need — the model scales with them.</div></div>
+      <div class="token-tiers">
+        <div class="ttier"><div class="ttier-tag">Browse</div><div class="ttier-price">€29</div><div class="ttier-sub">per month</div><div class="ttier-title">Casual Search</div><div class="ttier-desc">Search the full plot database, apply filters, basic AI summaries. For individuals exploring options.</div></div>
+        <div class="ttier active"><div class="ttier-tag">Land Agent</div><div class="ttier-price">€99</div><div class="ttier-sub">per month + token credits</div><div class="ttier-title">Active Buyers & Agents</div><div class="ttier-desc">Full search, deep AI analysis, batch scanning, export. For realtors, developers, and serious buyers running multiple evaluations.</div></div>
+        <div class="ttier"><div class="ttier-tag">Deep DD</div><div class="ttier-price">€499</div><div class="ttier-sub">per report</div><div class="ttier-title">Full Due Diligence</div><div class="ttier-desc">Complete per-plot analysis — zoning, registry, feasibility, expert connections. Replaces a €2K architect preliminary study.</div></div>
+        <div class="ttier"><div class="ttier-tag">Enterprise</div><div class="ttier-price" style="font-size:26px;">€999+</div><div class="ttier-sub">per year · contact us</div><div class="ttier-title">Institutional Scale</div><div class="ttier-desc">API access, white-label reports, team seats, private dashboards. For solar developers, housing funds, and land banking institutions.</div></div>
+      </div>
+      <div class="token-bottom"><div><div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,75,10,0.9);margin-bottom:8px;">End of funnel · Transaction commission</div><div class="token-bottom-text">As trust compounds, the natural next step is Yonder acting as <strong>buying agent</strong> — coordinating legal, permits, and closing end-to-end. <strong>2% of deal value, capped at €10K.</strong> Activates after the €499 report.</div></div><div><div class="token-bottom-num">€10K</div><div class="token-bottom-num-sub">max per deal</div></div></div>
+    </div>
+    <div style="background:#fff;border:1px solid rgba(0,0,0,0.08);border-top:none;border-radius:0 0 10px 10px;padding:14px 22px;font-size:14px;color:var(--muted);font-style:italic;" class="fu d3">One architecture. EBITDA margins expand as volume scales — no proportional cost increase per additional token consumed.</div>
+  </div>
+</section>
+
+<!-- GTM -->
+<section id="gtm">
+  <div class="wrap">
+    <div class="eyebrow fu">Go-To-Market</div>
+    <h2 class="fu d1">Capturing 7M+ land plots<br>with a <em>tool-first</em> GTM.</h2>
+    <div class="rule fu d2"></div>
+    <p class="lead fu d3" style="max-width:640px;margin-bottom:40px;">Three compounding phases that turn Yonder from a tool into the infrastructure layer of the land market. Phase 1 captures buyer intent at zero CAC. Phase 2 builds the data moat. Phase 3 converts that moat into aggressive B2B revenue.</p>
+    <div class="fu d2">
+      <div class="gtm-phase">
+        <div class="gtm-label-col" style="background:var(--ink);"><div><div class="gtm-phase-tag" style="color:var(--orange);">Phase 1</div><div class="gtm-phase-name" style="color:#fff;">The Trojan<br>Horse</div></div><div class="gtm-phase-sub" style="color:rgba(255,255,255,0.35);">Zero CAC acquisition</div></div>
+        <div class="gtm-content"><div class="gtm-content-label">Infiltrate existing traffic by solving the realtor's biggest pain point</div><div class="gtm-cells"><div class="gtm-cell"><div class="gtm-cell-tag">The Utility</div><div class="gtm-cell-text">Deploy the Free Land AI Widget across <strong>1M+ active listings</strong> — embedded into realtor sites.</div></div><div class="gtm-cell"><div class="gtm-cell-tag">The Hook</div><div class="gtm-cell-text">Automate <strong>80% of repetitive buyer questions</strong> — zoning, utility access, soil types, buildability.</div></div><div class="gtm-cell"><div class="gtm-cell-tag">The Result</div><div class="gtm-cell-text">Yonder becomes the <strong>"Intel Inside"</strong> of every land listing — capturing high-intent buyer data at zero CAC.</div></div></div></div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-label-col" style="background:var(--orange);"><div><div class="gtm-phase-tag" style="color:rgba(255,255,255,0.6);">Phase 2</div><div class="gtm-phase-name" style="color:#fff;">The Expert<br>Ecosystem</div></div><div class="gtm-phase-sub" style="color:rgba(255,255,255,0.4);">Land Wikipedia</div></div>
+        <div class="gtm-content"><div class="gtm-content-label">Build a defensible data moat through local partnerships</div><div class="gtm-cells"><div class="gtm-cell"><div class="gtm-cell-tag">Localised pSEO</div><div class="gtm-cell-text">Programmatically generate <strong>7M+ landing pages</strong> — one per plot — indexed for Google Search and LLMs.</div></div><div class="gtm-cell"><div class="gtm-cell-tag">Specialist Hub</div><div class="gtm-cell-text">Onboard architects, solar developers, and legal pros as <strong>Verified Specialists</strong>.</div></div><div class="gtm-cell"><div class="gtm-cell-tag">The Trade</div><div class="gtm-cell-text">Experts contribute local knowledge — receive <strong>pre-qualified leads</strong> in return.</div></div></div></div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-label-col" style="background:var(--muted);"><div><div class="gtm-phase-tag" style="color:rgba(255,255,255,0.5);">Phase 3</div><div class="gtm-phase-name" style="color:#fff;">The Automated<br>Scale Engine</div></div><div class="gtm-phase-sub" style="color:rgba(255,255,255,0.3);">B2B at scale</div></div>
+        <div class="gtm-content"><div class="gtm-content-label">Aggressive, low-overhead expansion into B2B sectors</div><div class="gtm-cells"><div class="gtm-cell"><div class="gtm-cell-tag">Programmatic Outbound</div><div class="gtm-cell-text">Automated outreach to solar firms, prefab builders, developers the <strong>moment a matching plot hits the market.</strong></div></div><div class="gtm-cell"><div class="gtm-cell-tag">The Feedback Loop</div><div class="gtm-cell-text">Buyer demand from Phase 1 funnels directly to Phase 2 partners — a <strong>self-sustaining referral network.</strong></div></div><div class="gtm-cell"><div class="gtm-cell-tag">Standardised Reports</div><div class="gtm-cell-text">Convert "chat" into revenue through paid <strong>deep-dive feasibility audits</strong> for commercial projects.</div></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORECAST -->
+<section id="forecast">
+  <div class="wrap">
+    <div class="eyebrow fu">Financial Forecast</div>
+    <h2 class="fu d1">Agents deployed.<br><em>Revenue</em> compounding.</h2>
+    <div class="rule fu d2"></div>
+    <p class="lead fu d3" style="max-width:640px;">Year 1 proves the model in Portugal with 100 agents. Year 2 scales into Spain with 400. Year 3 is when the transaction fee starts to compound alongside subscriptions — 1,000 agents deployed.</p>
+    <div class="fc-wrap fu d2">
+      <div class="fc-head"><div class="fc-hc"></div><div class="fc-hc">Year 1</div><div class="fc-hc">Year 2</div><div class="fc-hc hl">Year 3</div><div class="fc-hc" style="color:rgba(255,255,255,0.2);">3-Year Total</div></div>
+      <div class="fc-row"><div class="fc-lbl">Active agents</div><div class="fc-cell">~100</div><div class="fc-cell">~400</div><div class="fc-cell hl">1,025</div><div class="fc-cell" style="color:var(--muted);background:var(--bg);">—</div></div>
+      <div class="fc-row"><div class="fc-lbl">Browse · €29/mo</div><div class="fc-cell">€12K</div><div class="fc-cell">€39K</div><div class="fc-cell hl">€122K</div><div class="fc-cell" style="color:var(--muted);">€173K</div></div>
+      <div class="fc-row"><div class="fc-lbl">Land Agent · €99/mo</div><div class="fc-cell">€49K</div><div class="fc-cell">€228K</div><div class="fc-cell hl">€756K</div><div class="fc-cell" style="color:var(--muted);">€1.03M</div></div>
+      <div class="fc-row"><div class="fc-lbl">Deep DD · €499</div><div class="fc-cell">€28K</div><div class="fc-cell">€72K</div><div class="fc-cell hl">€180K</div><div class="fc-cell" style="color:var(--muted);">€280K</div></div>
+      <div class="fc-row"><div class="fc-lbl">Enterprise</div><div class="fc-cell">€18K</div><div class="fc-cell">€65K</div><div class="fc-cell hl">€101K</div><div class="fc-cell" style="color:var(--muted);">€184K</div></div>
+      <div class="fc-row"><div class="fc-lbl">Buying agent · 2%</div><div class="fc-cell">€34K</div><div class="fc-cell">€91K</div><div class="fc-cell hl">€211K</div><div class="fc-cell" style="color:var(--muted);">€336K</div></div>
+      <div class="fc-row total"><div class="fc-lbl">Total revenue</div><div class="fc-cell">€141K</div><div class="fc-cell">€495K</div><div class="fc-cell hl">€1.37M</div><div class="fc-cell" style="font-weight:600;">€2.01M</div></div>
+      <div class="fc-row"><div class="fc-lbl">Total costs</div><div class="fc-cell">€384K</div><div class="fc-cell">€384K</div><div class="fc-cell hl">€384K</div><div class="fc-cell" style="color:var(--muted);">€1.15M</div></div>
+      <div class="fc-row grand"><div class="fc-lbl">Net revenue</div><div class="fc-cell" style="color:rgba(255,255,255,0.35);">−€243K</div><div class="fc-cell" style="color:#4ade80;">+€111K</div><div class="fc-cell hl">+€986K</div><div class="fc-cell" style="color:#4ade80;">+€854K</div></div>
+    </div>
+    <div class="ugrid c4 fu d3">
+      <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Y3 ARR run rate</div><div class="stat-val" style="font-size:32px;">€2.1M</div><div class="stat-label">Month 36 MRR × 12</div></div>
+      <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Active agents · M36</div><div class="stat-val" style="font-size:32px;">1,025</div><div class="stat-label">Across PT, ES + EU</div></div>
+      <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Enterprise clients</div><div class="stat-val" style="font-size:32px;">9</div><div class="stat-label">Signed by month 36</div></div>
+      <div class="uc dark"><div class="eyebrow" style="color:rgba(200,75,10,0.85);margin-bottom:6px;">Buying agent deals</div><div class="stat-val" style="font-size:32px;color:#fff;">34</div><div class="stat-label" style="color:rgba(255,255,255,0.4);">Total transactions · 3yr</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACTION -->
+<section id="traction">
+  <div class="wrap">
+    <div class="traction-inner">
+      <div>
+        <div class="eyebrow fu" style="color:rgba(200,75,10,0.85);">Traction</div>
+        <h2 class="light fu d1">Where we stand<br><em>today.</em></h2>
+        <div class="rule orange fu d2"></div>
+        <p class="lead light fu d3">Portugal live. Spain operational. Two LOIs signed. Pipeline growing.</p>
+        <div class="traction-checks fu d4">
+          <div class="tv-row"><div class="tv-icon">✓</div><div><strong>MVP live</strong> — ingesting Portuguese Cadastre (DGT) and PDM zoning rules. Automated land parcel analysis in production.</div></div>
+          <div class="tv-row"><div class="tv-icon">✓</div><div><strong>LOI signed with Find A Land</strong> — Portugal's leading legal land check service. Running Yonder as their land intelligence layer.</div></div>
+          <div class="tv-row"><div class="tv-icon">✓</div><div><strong>LOI signed with Lucas Fox / Dils</strong> — largest realtors across Spain, Portugal, Italy, Germany. Using Yonder as land search engine for developer clients.</div></div>
+          <div class="tv-row"><div class="tv-icon">✓</div><div><strong>Active B2B pipeline</strong> — solar developers, data warehousing companies, warehouse operators, property developers.</div></div>
+          <div class="tv-row"><div class="tv-icon">✓</div><div><strong>4 Spanish regions operational</strong> — land agent ready to scale locally in both markets.</div></div>
+        </div>
+      </div>
+      <div class="traction-stats fu d2">
+        <div class="tc"><div class="tc-val">90K<em>+</em></div><div class="tc-lbl">Plots indexed & structured in Portugal</div></div>
+        <div class="tc"><div class="tc-val">60K</div><div class="tc-lbl">Plots enriched through Land AI engine</div></div>
+        <div class="tc"><div class="tc-val">3<em>sec</em></div><div class="tc-lbl">Full analysis — down from 40s via batch reranking</div></div>
+        <div class="tc"><div class="tc-val">€0.02</div><div class="tc-lbl">Cost per report via Fan-Out/Fan-In parallelization</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="eyebrow fu">Roadmap</div>
+    <h2 class="fu d1">Land first.<br><em>Then</em> transactions.</h2>
+    <div class="rule fu d2"></div>
+    <p class="lead fu d3" style="max-width:640px;">A staged expansion — starting where our data infrastructure is deepest and proven, moving outward with local partnerships that de-risk market entry.</p>
+    <div class="rm-stages fu d2">
+      <div class="rm-stage"><div class="rm-num">Y1 · Now — Portugal</div><div class="rm-title">Build the substrate</div><ul class="rm-items"><li>Launch Land AI search + reports</li><li>Aggregate ~60K plots</li><li>Reach 2K paid plots</li><li>Token tiers live (V1)</li><li>Integrate cadastre, zoning, registry</li><li>Manual-assisted buying agent pilot</li></ul></div>
+      <div class="rm-stage"><div class="rm-num">Y2 · Spain</div><div class="rm-title">Prove the playbook</div><ul class="rm-items"><li>Expand Land AI to Spain</li><li>Aggregate ~100K plots</li><li>Reach 7K paid plots</li><li>Strong B2B usage — developers, brokers</li><li>Buying agent live (V2, limited)</li><li>First cross-border transactions</li></ul></div>
+      <div class="rm-stage"><div class="rm-num">Y3 · Europe</div><div class="rm-title">Own the category</div><ul class="rm-items"><li>Multi-country Land AI</li><li>Aggregate 500K–1M plots</li><li>Reach 20K paid plots</li><li>Buying agent at scale (V2)</li><li>Co-development & project services</li><li>Platform for land + homes + services</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="wrap">
+    <div class="eyebrow fu">Team</div>
+    <h2 class="fu d1">Founders with<br><em>exit experience</em><br>and deep domain.</h2>
+    <div class="rule fu d2"></div>
+    <p class="lead fu d3" style="max-width:640px;">Strong technical leadership in AI and data systems. Deep experience in real estate and land workflows. Proven founders with multiple scaled ventures and exits.</p>
+    <div class="team-grid fu d2">
+      <div class="member"><div class="member-init">T</div><div class="member-body"><div class="member-name">Tim Heineke</div><div class="member-role">Co-founder · General / Product</div><div class="member-bio">3× founder. Built FUGA — music data infrastructure powering 25%+ of the global music industry, acquired by Universal. Founded Yonder after struggling to find suitable land for his own prefab project.</div></div></div>
+      <div class="member"><div class="member-init">A</div><div class="member-body"><div class="member-name">Antonis Yfantis</div><div class="member-role">Co-founder · Technical / AI</div><div class="member-bio">Engineer with 20+ years in software, AI, and data systems. Built the hybrid RAG engine achieving 3-second full land analysis at €0.02/report — a 13× speedup via proprietary batch reranking.</div></div></div>
+      <div class="member"><div class="member-init">W</div><div class="member-body"><div class="member-name">Wessel van der Pol</div><div class="member-role">Co-founder · Sales & Real Estate</div><div class="member-bio">15+ years in real estate, prefab, and construction tech. Deep network in the built environment across Europe. Leads growth, brand, and supply-side partnerships.</div></div></div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:18px;margin-top:24px;font-size:13px;color:var(--muted);font-style:italic;line-height:1.65;" class="fu d3">"Strong technical leadership in AI and data systems. Deep experience in real estate and land workflows — plus proven founders with multiple scaled ventures and exits."</div>
+  </div>
+</section>
+
+<!-- ASK -->
+<section id="ask">
+  <div class="wrap">
+    <div class="ask-inner">
+      <div>
+        <div class="eyebrow fu" style="color:rgba(200,75,10,0.85);">Investment opportunity</div>
+        <h2 class="light fu d1">You are<br><em>invited.</em></h2>
+        <div class="rule orange fu d2"></div>
+        <p class="lead light fu d3">Yonder builds the leading land platform powered by AI. Deep integration into messy, local systems. End-to-end vertical integration, not surface automation. No other platform connects land, data, projects, and services in one flow.</p>
+        <div class="ask-box fu d3">
+          <div class="eyebrow" style="color:rgba(200,75,10,0.85);margin-bottom:8px;">Raising on a SAFE</div>
+          <div class="ask-amount">€750K</div>
+          <div class="ask-sub">Structured as a SAFE / Convertible Note · Minimum ticket €50K</div>
+        </div>
+        <div class="ask-uses fu d4" style="margin-top:8px;">
+          <div class="ask-use">Expand engineering team from one to three engineers</div>
+          <div class="ask-use">Scale to 20K listings — tokens + AI reports</div>
+          <div class="ask-use">Build out auto GTM and inbound content engine</div>
+          <div class="ask-use">Expand into Spain and additional territories</div>
+        </div>
+      </div>
+      <div class="ask-actions fu d2">
+        <a href="mailto:tim@liveyonder.co" class="btn-white">Request the full deck</a>
+        <a href="mailto:tim@liveyonder.co" class="btn-outline-w">Schedule a call</a>
+        <div class="ask-contact"><a href="mailto:tim@liveyonder.co">tim@liveyonder.co</a> · liveyonder.co</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a href="/" class="footer-left">
+      <div class="deck-logo-cadastre" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span><span class="c4"></span></div>
+      <span class="footer-name">Yonder</span>
+    </a>
+    <div class="footer-copy">© 2025 LiveYonder BV · Amsterdam</div>
+    <a href="/" class="footer-link">Marketing site →</a>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.07});
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href');
+    if(!id||id==='#')return;
+    const t=document.querySelector(id);
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+</script>
+</body>
+</html>
