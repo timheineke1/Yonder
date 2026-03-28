@@ -3,7 +3,7 @@ import Link from "next/link";
 /** Minimal chrome for /deck — logo only, back to marketing site. Width matches `public/investor-deck.html` `.wrap` (1152px). */
 export function DeckHeader() {
   return (
-    <header className="sticky top-0 z-[100] border-b border-black/[0.08] bg-[#F9F9F9]">
+    <header className="sticky top-0 z-[100] border-b border-black/[0.08] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex h-12 max-w-[1152px] items-center px-5 sm:px-6 min-[861px]:px-12">
         <Link
           href="/"
