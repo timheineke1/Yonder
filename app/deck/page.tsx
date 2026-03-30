@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 /** Bump when `public/investor-deck.html` changes so browsers (and CDNs) don’t serve a stale iframe document. */
-const INVESTOR_DECK_VERSION = "20260328o";
+const INVESTOR_DECK_VERSION = "20260328r";
 
 export default function DeckPage() {
   const deckSrc =

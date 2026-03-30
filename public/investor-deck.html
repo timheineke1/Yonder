@@ -206,6 +206,19 @@ h2.light { color: #fff; }
 
 /* PROBLEM CARDS */
 .prob-cards { display:flex;flex-direction:column;gap:8px; }
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 48px;
+  row-gap: 8px;
+  align-items: start;
+}
+.problem-intro { grid-column: 1; grid-row: 1 / 4; }
+.problem-grid > .pcard:nth-child(2) { grid-column: 2; grid-row: 1; }
+.problem-grid > .pcard:nth-child(3) { grid-column: 2; grid-row: 2; }
+.problem-grid > .pcard:nth-child(4) { grid-column: 2; grid-row: 3; }
+.problem-grid > .pcard:nth-child(5) { grid-column: 2; grid-row: 4; }
+.problem-grid > .problem-a16z { grid-column: 1; grid-row: 4; margin-top: 0; align-self: start; }
 .pcard {
   background: var(--surface); border: 1px dashed rgba(0,0,0,0.18);
   padding: 22px 24px; display: grid; grid-template-columns: 28px 1fr; gap: 18px; align-items: start;
@@ -386,6 +399,74 @@ h2.light { color: #fff; }
 .comp-table .yrow td:first-child { border-left:2px solid var(--orange); }
 .cbadge { display:inline-block;background:rgba(200,75,10,0.1);color:var(--orange);border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600;letter-spacing:0.04em; }
 
+/* MOAT — narrative + table row, full-width conclusion strip */
+#moat .moat-page-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 48px;
+  row-gap: 0;
+  align-items: start;
+}
+#moat .moat-left-col { grid-column: 1; grid-row: 1; }
+#moat .moat-table-cell {
+  grid-column: 2;
+  grid-row: 1;
+  padding-top: 10.25rem;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  background: #fff;
+  align-self: start;
+}
+#moat .moat-table-cell .comp-table { margin-top: 0; }
+#moat .moat-table-cell .comp-table th:first-child,
+#moat .moat-table-cell .comp-table td:first-child { padding-left: 18px; }
+#moat .moat-table-cell .comp-table th:last-child,
+#moat .moat-table-cell .comp-table td:last-child { padding-right: 18px; }
+#moat .moat-strip-cell {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: 0;
+  border: 1px solid var(--border);
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  background: var(--border);
+}
+#moat .moat-strip-cell.ugrid { margin-top: 0; border-radius: 0 0 10px 10px; }
+#moat .moat-strip-cell .uc.card { min-height: 100%; border: none; border-radius: 0; box-shadow: none; }
+#moat .moat-comp-table th {
+  font-size: var(--body);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  background: #fff;
+  padding-top: 16px;
+  vertical-align: bottom;
+}
+#moat .moat-flywheel { margin-top: 22px; display: flex; flex-direction: column; gap: 18px; }
+#moat .moat-fly-item { display: flex; gap: 12px; align-items: flex-start; }
+#moat .moat-fly-arr {
+  color: var(--orange);
+  font-size: var(--body);
+  flex-shrink: 0;
+  margin-top: 2px;
+  line-height: 1;
+}
+#moat .moat-fly-title { font-size: var(--body); font-weight: 500; color: var(--ink); margin-bottom: 4px; line-height: var(--lh-body); }
+#moat .moat-fly-body { font-size: var(--body); color: var(--muted); line-height: var(--lh-body); }
+#moat .moat-fly-kicker {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: var(--body);
+  color: var(--muted);
+  line-height: var(--lh-body);
+  font-style: italic;
+}
+#moat .moat-fly-kicker strong { color: var(--ink); font-style: normal; font-weight: 500; }
+#moat .moat-callout { margin-top: 24px; }
+
 /* DELTA — one grid row: parcel + 3 scenarios, equal height, aligned value blocks */
 #delta { background: var(--section-alt); }
 .delta-row {
@@ -537,7 +618,17 @@ footer { background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);paddi
   .wrap{padding:0 20px;}
   section{padding:52px 0 44px;}
   .footer-inner { padding: 18px 20px; }
-  .grid-2,.traction-inner,.ask-inner{grid-template-columns:1fr;gap:28px;}
+  .grid-2,.traction-inner,.ask-inner,.problem-grid{grid-template-columns:1fr;gap:28px;}
+  .problem-intro,
+  .problem-grid > .pcard,
+  .problem-grid > .problem-a16z { grid-column: 1; grid-row: auto; }
+  #moat .moat-page-grid { grid-template-columns: 1fr; gap: 28px; }
+  #moat .moat-left-col,
+  #moat .moat-table-cell,
+  #moat .moat-strip-cell { grid-column: 1; grid-row: auto; }
+  #moat .moat-table-cell { padding-top: 0; border-radius: 10px; border-bottom: 1px solid var(--border); }
+  #moat .moat-strip-cell { border-radius: 10px; margin-top: 12px; }
+  #moat .moat-strip-cell.ugrid.c3 { grid-template-columns: 1fr; }
   #product .product-feature-grid {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
@@ -662,8 +753,8 @@ footer { background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);paddi
 <!-- PROBLEM -->
 <section id="problem">
   <div class="wrap">
-    <div class="grid-2">
-      <div>
+    <div class="problem-grid">
+      <div class="problem-intro">
         <div class="eyebrow fu">The Problem</div>
         <h2 class="fu d1">Vacant land is one<br>of the largest <em>untapped</em><br>asset classes.</h2>
         <div class="rule fu d2"></div>
@@ -671,17 +762,13 @@ footer { background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);paddi
         <p class="lead fu d4">Land data is a maze of disconnected systems. Zoning, cadastre, building regulations, utilities — multiple sources, hundreds of pages of dense technical data. None of it connected. None of it machine-readable.</p>
         <p class="lead fu d4">So the question "can I build here? Solar? Rural tourism? A data centre?" — has no fast answer. The opportunity is invisible.</p>
       </div>
-      <div>
-        <div class="prob-cards fu d1">
-          <div class="pcard"><div class="pcard-n">1</div><div><div class="pcard-title">High entropy data</div><div class="pcard-body">Land data is unstructured, multimodal, fragmented and disconnected. PDFs, maps, registries, emails. Municipal plans locked in 500-page non-searchable documents. None of it works together.</div></div></div>
-          <div class="pcard"><div class="pcard-n">2</div><div><div class="pcard-title">AI cannot reason reliably</div><div class="pcard-body">Without a structured data layer, AI models hallucinate on land queries. The models are ready. The data substrate is not.</div></div></div>
-          <div class="pcard"><div class="pcard-n">3</div><div><div class="pcard-title">Institutions cannot scale diligence</div><div class="pcard-body">Solar developers, housing funds, ESG investors spend months manually checking plots — only to find disqualifying red flags an AI could spot in seconds.</div></div></div>
-          <div class="pcard"><div class="pcard-n">4</div><div><div class="pcard-title">Users fall back to manual checks</div><div class="pcard-body">Without this layer, every buyer defaults to architects, lawyers, and consultants. The market hasn't changed in decades.</div></div></div>
-        </div>
-        <div class="callout-dark fu d2">
-          <div class="callout-eyebrow">— a16z Big Ideas 2026</div>
-          <div class="callout-quote">"The limiting factor for AI companies is now data entropy — the steady decay of freshness, structure, and truth inside the unstructured universe."</div>
-        </div>
+      <div class="pcard fu d1"><div class="pcard-n">1</div><div><div class="pcard-title">High entropy data</div><div class="pcard-body">Land data is unstructured, multimodal, fragmented and disconnected. PDFs, maps, registries, emails. Municipal plans locked in 500-page non-searchable documents. None of it works together.</div></div></div>
+      <div class="pcard fu d1"><div class="pcard-n">2</div><div><div class="pcard-title">AI cannot reason reliably</div><div class="pcard-body">Without a structured data layer, AI models hallucinate on land queries. The models are ready. The data substrate is not.</div></div></div>
+      <div class="pcard fu d1"><div class="pcard-n">3</div><div><div class="pcard-title">Institutions cannot scale diligence</div><div class="pcard-body">Solar developers, housing funds, ESG investors spend months manually checking plots — only to find disqualifying red flags an AI could spot in seconds.</div></div></div>
+      <div class="pcard fu d1"><div class="pcard-n">4</div><div><div class="pcard-title">Users fall back to manual checks</div><div class="pcard-body">Without this layer, every buyer defaults to architects, lawyers, and consultants. The market hasn't changed in decades.</div></div></div>
+      <div class="problem-a16z callout-dark fu d2">
+        <div class="callout-eyebrow">— a16z Big Ideas 2026</div>
+        <div class="callout-quote">"The limiting factor for AI companies is now data entropy — the steady decay of freshness, structure, and truth inside the unstructured universe."</div>
       </div>
     </div>
   </div>
@@ -914,24 +1001,42 @@ footer { background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);paddi
 <section id="moat">
   <div class="wrap">
     <div class="eyebrow fu">Defensive Moat</div>
-    <div class="grid-2" style="margin-bottom:0;">
-      <div>
+    <div class="moat-page-grid">
+      <div class="moat-left-col">
         <h2 class="fu d1">Not a wrapper.<br>A <em>walled garden</em><br>of data.</h2>
         <div class="rule fu d2"></div>
-        <p class="lead fu d3">The moat isn't the AI — it's the structured, verified, local land data that general LLMs cannot access. We've turned high-entropy public records into an exclusive proprietary asset. OpenAI can't prompt this into existence.</p>
-        <div class="fu d3" style="margin-top:28px;display:flex;flex-direction:column;gap:18px;">
-          <div style="display:flex;gap:12px;"><div style="color:var(--orange);font-size:16px;flex-shrink:0;margin-top:1px;">↑</div><div><div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px;">Every plot normalised makes the model smarter</div><div style="font-size:13px;color:var(--muted);line-height:1.65;">More structured data → better AI accuracy → better matches → more buyers trust Yonder → more agents join → more plots normalised.</div></div></div>
-          <div style="display:flex;gap:12px;"><div style="color:var(--orange);font-size:16px;flex-shrink:0;margin-top:1px;">↑</div><div><div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px;">Every expert interaction trains the matching engine</div><div style="font-size:13px;color:var(--muted);line-height:1.65;">Unlike brownfield competitors retrofitting AI onto old portals, Yonder is built greenfield — compounding from day one.</div></div></div>
-          <div style="display:flex;gap:12px;"><div style="color:var(--orange);font-size:16px;flex-shrink:0;margin-top:1px;">↑</div><div><div style="font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px;">Walled garden, not open web</div><div style="font-size:13px;color:var(--muted);line-height:1.65;">The most defensible AI companies build walled gardens around proprietary data not available on the open web. That's exactly what Yonder is.</div></div></div>
-          <div style="border-top:1px solid var(--border);padding-top:16px;font-size:13px;color:var(--muted);line-height:1.65;font-style:italic;"><strong style="color:var(--ink);font-style:normal;font-weight:500;">The complexity is the moat.</strong> Each cycle raises the barrier for new entrants. Brownfield players are catching up to yesterday. We're building tomorrow.</div>
+        <p class="lead moat-lead fu d2">The moat isn't the AI — it's the structured, verified, local land data that general LLMs cannot access. We've turned high-entropy public records into an exclusive proprietary asset. OpenAI can't prompt this into existence.</p>
+        <div class="moat-flywheel fu d2">
+          <div class="moat-fly-item">
+            <div class="moat-fly-arr" aria-hidden="true">↑</div>
+            <div>
+              <div class="moat-fly-title">Every plot normalised makes the model smarter</div>
+              <div class="moat-fly-body">More structured data → better AI accuracy → better matches → more buyers trust Yonder → more agents join → more plots normalised.</div>
+            </div>
+          </div>
+          <div class="moat-fly-item">
+            <div class="moat-fly-arr" aria-hidden="true">↑</div>
+            <div>
+              <div class="moat-fly-title">Every expert interaction trains the matching engine</div>
+              <div class="moat-fly-body">Unlike brownfield competitors retrofitting AI onto old portals, Yonder is built greenfield — compounding from day one.</div>
+            </div>
+          </div>
+          <div class="moat-fly-item">
+            <div class="moat-fly-arr" aria-hidden="true">↑</div>
+            <div>
+              <div class="moat-fly-title">Walled garden, not open web</div>
+              <div class="moat-fly-body">The most defensible AI companies build walled gardens around proprietary data not available on the open web. That's exactly what Yonder is.</div>
+            </div>
+          </div>
+          <div class="moat-fly-kicker"><strong>The complexity is the moat.</strong> Each cycle raises the barrier for new entrants. Brownfield players are catching up to yesterday. We're building tomorrow.</div>
         </div>
-      </div>
-      <div class="fu d2">
-        <div class="callout-dark" style="margin-bottom:24px;">
+        <div class="callout-dark moat-callout fu d3">
           <div class="callout-eyebrow">Why the market stays stuck</div>
           <div class="callout-quote">"Current listings generate questions realtors can't answer — too fragmented, too expensive, too slow. Potential stays untapped. The engine stays clogged. Yonder is the oil that makes it run."</div>
         </div>
-        <table class="comp-table">
+      </div>
+      <div class="moat-table-cell">
+        <table class="comp-table moat-comp-table">
           <thead><tr><th>Competitor</th><th>Approach</th><th>Yonder advantage</th></tr></thead>
           <tbody>
             <tr><td><strong>Portals & realtors</strong><br><span class="comp-sub">Idealista, Imovirtual</span></td><td class="comp-muted">Listings without intelligence. Buyers ask; realtors can't answer.</td><td class="comp-muted">No AI layer, no data substrate</td></tr>
@@ -941,11 +1046,11 @@ footer { background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);paddi
             <tr class="yrow"><td><strong>Yonder</strong> <span class="cbadge">greenfield</span></td><td>Hybrid RAG on proprietary structured land data. 15–20% higher accuracy.</td><td><span style="color:var(--orange);font-weight:500;">End-to-end · Agent-native · EU-first</span></td></tr>
           </tbody>
         </table>
-        <div class="ugrid c3 fu d3" style="margin-top:16px;">
-          <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Moat 1</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Multimodal data substrate</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">Years of work digitising 500-page PDFs. OpenAI can't prompt this into existence.</div></div>
-          <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Moat 2</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Labor substitution</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">€2K manual study in 4 weeks → 3 minutes at €0.02 marginal cost.</div></div>
-          <div class="uc card"><div class="eyebrow" style="margin-bottom:6px;">Moat 3</div><div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:5px;">Local regulatory depth</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">RAN overrides REN, municipal plans have exceptions. Our engine knows the precedence.</div></div>
-        </div>
+      </div>
+      <div class="ugrid c3 moat-strip-cell">
+        <div class="uc card"><div class="eyebrow in-card">Moat 1</div><div class="uc-title">Multimodal data substrate</div><div class="uc-body">Years of work digitising 500-page PDFs. OpenAI can't prompt this into existence.</div></div>
+        <div class="uc card"><div class="eyebrow in-card">Moat 2</div><div class="uc-title">Labor substitution</div><div class="uc-body">€2K manual study in 4 weeks → 3 minutes at €0.02 marginal cost.</div></div>
+        <div class="uc card"><div class="eyebrow in-card">Moat 3</div><div class="uc-title">Local regulatory depth</div><div class="uc-body">RAN overrides REN, municipal plans have exceptions. Our engine knows the precedence.</div></div>
       </div>
     </div>
   </div>
