@@ -1,7 +1,9 @@
 # Yonder design skill (canonical)
 
-**Single source of truth for liveyonder.co / this repo.**  
+**Single source of truth for liveyonder.co / this repo — marketing site (`/`).**  
 Implementation lives in **`app/globals.css`** and **`app/page.tsx`**.  
+For **`/explorer`** (chat, map, cards), add **`yonder-product-design-SKILL.md`** — same brand, extended in-app tokens.
+
 When AI or humans add pages (e.g. `/deck`), use these tokens and patterns — not the older warm-paper spec in `yonder-style-SKILL (1).md`.
 
 ---

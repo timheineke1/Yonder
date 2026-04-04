@@ -7,6 +7,17 @@
   --muted: #6b6b68;
   --accent: #3B82F6;
   --orange: #c84b0a;
+  /* App / marketing shared surfaces — explorer chrome */
+  --surface-panel: #f5f5f5;
+  --surface-subtle: #fafafa;
+  --surface-warm: #f8f7f4;
+  --border-default: rgba(0, 0, 0, 0.08);
+  --border-soft: rgba(0, 0, 0, 0.06);
+  --text-tertiary: #888888;
+  --text-hint: #999999;
+  --success: #2d7a2d;
+  --success-bright: #4a9a4a;
+  --online: #22c55e;
   /* Type scale — clean, strong */
   --text-hero: clamp(32px, 6vw, 48px);
   --text-h2: clamp(22px, 3.2vw, 30px);
@@ -36,6 +47,57 @@ body {
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* Explorer — airy chat (light grey chrome), blue accents, mint/amber/blush verdict cards */
+.yonder-explorer-page {
+  --explorer-bg: #ffffff;
+  --explorer-sidebar: #f4f4f4;
+  --explorer-chrome: #ffffff;
+  --explorer-card: #ffffff;
+  --explorer-muted-surface: #f9f9f9;
+  --explorer-input-bg: #ffffff;
+  --explorer-accent: #2563eb;
+  --explorer-success-bg: #dcfce7;
+  --explorer-success-text: #166534;
+  --explorer-success-icon: #16a34a;
+  --explorer-active-row: #eff6ff;
+  --chat-card-positive-bg: #ecfdf5;
+  --chat-card-positive-border: rgba(16, 185, 129, 0.2);
+  --chat-card-caution-bg: #fffbeb;
+  --chat-card-caution-border: rgba(245, 158, 11, 0.25);
+  --chat-card-note-bg: #fdf2f8;
+  --chat-card-note-border: rgba(236, 72, 153, 0.2);
+  --chat-thinking-bg: #f0fdf4;
+  --chat-thinking-border: rgba(16, 185, 129, 0.12);
+  --chat-user-bg: #eff6ff;
+  --chat-user-border: rgba(37, 99, 235, 0.14);
+  --border-default: rgba(0, 0, 0, 0.08);
+  --text-tertiary: #888888;
+  --text-hint: #999999;
+  background-color: var(--explorer-bg);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100dvh;
+}
+
+.yonder-explorer-page .mini-spin,
+.yonder-explorer-page .agent-spin {
+  border-top-color: var(--explorer-accent);
+}
+
+/* Map → List: card grid (2 per row; not scoped to explorer root so it always applies) */
+.ye-map-list-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+@media (max-width: 520px) {
+  .ye-map-list-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @keyframes spin {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SiteNav } from "./components/SiteNav";
 
 export default function Home() {
@@ -160,9 +161,9 @@ export default function Home() {
           Search millions of plots across Europe — listed and unlisted. Get instant answers on zoning, regulations, buildability, and use rights.
         </p>
         <div className="flex flex-wrap items-center gap-4">
-          <a href="#" className="inline-flex items-center gap-2 rounded-full border-none bg-[#1a1a18] px-6 py-2.5 text-[14px] font-medium text-white no-underline">
+          <Link href="/explorer" className="inline-flex items-center gap-2 rounded-full border-none bg-[#1a1a18] px-6 py-2.5 text-[14px] font-medium text-white no-underline">
             Search land →
-          </a>
+          </Link>
           <a href="#product" className="rounded-full border border-black/[0.15] px-5 py-2.5 text-[14px] font-medium text-[#6b6b68] no-underline transition-colors hover:border-black/[0.25] hover:text-[#1a1a18]">See how it works →</a>
         </div>
       </div>
@@ -578,7 +579,7 @@ export default function Home() {
             Free plot analysis — zoning, building rights, permitted uses. We only earn when your land sells.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a href="#" className="rounded-full border border-emerald-600/50 bg-emerald-600 px-4 py-2 text-[13px] font-medium text-white no-underline transition-colors hover:bg-emerald-700">Sign up</a>
+            <Link href="/explorer" className="rounded-full border border-emerald-600/50 bg-emerald-600 px-4 py-2 text-[13px] font-medium text-white no-underline transition-colors hover:bg-emerald-700">Sign up</Link>
             <a href="#" className="rounded-full border border-emerald-600/50 bg-transparent px-4 py-2 text-[13px] font-medium text-emerald-800 no-underline transition-colors hover:bg-emerald-100">Contact us</a>
           </div>
         </div>
@@ -600,7 +601,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <a href="#" className="mt-4 block w-full rounded-full border border-black/[0.18] bg-transparent py-2.5 text-center text-[13px] font-medium text-[#1a1a18] no-underline transition-colors hover:bg-black/[0.05]">Get started</a>
+            <Link href="/explorer" className="mt-4 block w-full rounded-full border border-black/[0.18] bg-transparent py-2.5 text-center text-[13px] font-medium text-[#1a1a18] no-underline transition-colors hover:bg-black/[0.05]">Get started</Link>
           </div>
           <div className="plan featured relative flex flex-col bg-[#1a1a18] p-6 text-white">
             <div className="absolute right-4 top-4 rounded-full border border-[#c84b0a]/25 bg-[#c84b0a]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#c84b0a]">Most popular</div>
@@ -618,7 +619,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <a href="#" className="mt-4 block w-full rounded-full border-none bg-white py-2.5 text-center text-[13px] font-medium text-[#1a1a18] no-underline">Get started</a>
+            <Link href="/explorer" className="mt-4 block w-full rounded-full border-none bg-white py-2.5 text-center text-[13px] font-medium text-[#1a1a18] no-underline">Get started</Link>
           </div>
           <div className="flex flex-col bg-[#F9F9F9] p-6">
             <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6b6b68]">Pro</div>
@@ -656,10 +657,10 @@ export default function Home() {
           <div>
             <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6b6b68]">Product</div>
             <div className="flex flex-col gap-1">
-              <a href="#" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Search land</a>
-              <a href="#" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Browse cadastre</a>
-              <a href="#" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Draw search</a>
-              <a href="#" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Reports</a>
+              <Link href="/explorer" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Search land</Link>
+              <Link href="/explorer" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Browse cadastre</Link>
+              <Link href="/explorer" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Draw search</Link>
+              <Link href="/explorer" className="text-[13px] text-[#6b6b68] no-underline transition-colors hover:text-[#c84b0a]">Reports</Link>
             </div>
           </div>
           <div>
