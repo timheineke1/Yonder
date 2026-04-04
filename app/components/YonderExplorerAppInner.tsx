@@ -47,40 +47,40 @@ const ONLINE = "var(--online)";
 /** SVG stroke/fill — avoid `var()` on SVG attributes (Safari / some clients ignore it). */
 const SVG_MUTED = "#888888";
 
-// Type scale — uses globals.css tokens (same as marketing homepage)
+// Type scale — maps to :root --type-* in globals.css (marketing + explorer)
 const T = {
-  display:  { fontFamily: FF, fontSize: 28, fontWeight: 600, letterSpacing: "-0.02em", color: INK },
-  heading:  { fontFamily: FF, fontSize: 20, fontWeight: 500, color: INK, lineHeight: 1.22 },
-  body:     { fontFamily: FF, fontSize: "var(--text-body)", color: INK, lineHeight: 1.65 },
-  secondary:{ fontFamily: FF, fontSize: "var(--text-body)", color: MID, lineHeight: 1.55 },
-  label:    { fontFamily: FF, fontSize: "var(--text-muted)", color: MID },
-  labelUC:  { fontFamily: FF, fontSize: "var(--text-eyebrow)", fontWeight: 600, color: "var(--text-hint)", letterSpacing: "0.14em", textTransform: "uppercase" as const },
-  mono:     { fontFamily: FFM, fontSize: "var(--text-muted)", color: MID, letterSpacing: "0.04em" },
+  display:  { fontFamily: FF, fontSize: "var(--type-display)", fontWeight: 600, letterSpacing: "-0.02em", color: INK },
+  heading:  { fontFamily: FF, fontSize: "var(--type-title)", fontWeight: 500, color: INK, lineHeight: 1.22 },
+  body:     { fontFamily: FF, fontSize: "var(--type-body)", color: INK, lineHeight: 1.65 },
+  secondary:{ fontFamily: FF, fontSize: "var(--type-body)", color: MID, lineHeight: 1.55 },
+  label:    { fontFamily: FF, fontSize: "var(--type-nav)", color: MID },
+  labelUC:  { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, color: "var(--text-hint)", letterSpacing: "0.14em", textTransform: "uppercase" as const },
+  mono:     { fontFamily: FFM, fontSize: "var(--type-nav)", color: MID, letterSpacing: "0.04em" },
 };
 
-/** Explorer chat — smaller, calmer type (ChatGPT-like density) */
+/** Explorer / chat — denser: app body + caption (same ramp, not ad-hoc px) */
 const TC = {
-  title:   { fontFamily: FF, fontSize: 15, fontWeight: 600, letterSpacing: "-0.02em", color: INK, lineHeight: 1.35 },
-  body:    { fontFamily: FF, fontSize: 13, fontWeight: 400, color: INK, lineHeight: 1.55 },
-  secondary:{ fontFamily: FF, fontSize: 12, color: MID, lineHeight: 1.5 },
-  label:   { fontFamily: FF, fontSize: 11, color: LIGHT },
-  labelUC: { fontFamily: FF, fontSize: 10, fontWeight: 600, color: LIGHT, letterSpacing: "0.1em", textTransform: "uppercase" as const },
-  mono:    { fontFamily: FFM, fontSize: 11, color: MID, letterSpacing: "0.03em" },
+  title:   { fontFamily: FF, fontSize: "var(--type-body)", fontWeight: 600, letterSpacing: "-0.02em", color: INK, lineHeight: 1.35 },
+  body:    { fontFamily: FF, fontSize: "var(--type-app-body)", fontWeight: 400, color: INK, lineHeight: 1.55 },
+  secondary:{ fontFamily: FF, fontSize: "var(--type-app-secondary)", color: MID, lineHeight: 1.5 },
+  label:   { fontFamily: FF, fontSize: "var(--type-caption)", color: LIGHT },
+  labelUC: { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, color: LIGHT, letterSpacing: "0.1em", textTransform: "uppercase" as const },
+  mono:    { fontFamily: FFM, fontSize: "var(--type-mono-sm)", color: MID, letterSpacing: "0.03em" },
 };
 
-/** Pipeline, tables, listing overlay — same type scale + chrome as Search (TC). */
+/** Pipeline, tables — aligns with TC; pageTitle = h3 ramp */
 const TP = {
-  pageTitle: { fontFamily: FF, fontSize: 18, fontWeight: 600, letterSpacing: "-0.02em", color: INK, lineHeight: 1.25 },
-  sectionTitle: { fontFamily: FF, fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", color: INK, lineHeight: 1.3 },
+  pageTitle: { fontFamily: FF, fontSize: "var(--type-h3)", fontWeight: 600, letterSpacing: "-0.02em", color: INK, lineHeight: 1.25 },
+  sectionTitle: { fontFamily: FF, fontSize: "var(--type-body)", fontWeight: 600, letterSpacing: "-0.01em", color: INK, lineHeight: 1.3 },
   body: TC.body,
   secondary: TC.secondary,
   label: TC.label,
   labelUC: TC.labelUC,
   mono: TC.mono,
-  crumb: { fontFamily: FF, fontSize: 12, color: LIGHT },
-  stat: { fontFamily: FF, fontSize: 16, fontWeight: 600, color: INK, lineHeight: 1 },
-  statCap: { fontFamily: FF, fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: LIGHT },
-  tableHead: { fontFamily: FF, fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: LIGHT },
+  crumb: { fontFamily: FF, fontSize: "var(--type-app-secondary)", color: LIGHT },
+  stat: { fontFamily: FF, fontSize: "var(--type-lead)", fontWeight: 600, color: INK, lineHeight: 1 },
+  statCap: { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: LIGHT },
+  tableHead: { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: LIGHT },
 };
 
 // Stage / type tokens kept for logic
@@ -664,16 +664,23 @@ function PipelineSaveModal({ open, count, pipelineName, setPipelineName, onClose
 }
 
 /** Drawn-area hits: list + analyse / save (replaces map bottom overlay). */
-function DrawAreaSelectionSidebar({ lens, rows, onClose, onInspectListing, onInspectParcel, onSaveAll, onAnalyseAll, bulkRunning, bulkDone, projectPlots }) {
+function DrawAreaSelectionSidebar({ lens, rows, onClose, onInspectListing, onInspectParcel, onSaveAll, onAnalyseAll, bulkRunning, bulkDone, projectPlots, mode = "draw" }) {
   const n = rows.length;
+  const pipelineMode = mode === "pipeline";
   return (
     <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 300, background: WHITE, borderLeft: `1px solid ${LIGHTER}`, zIndex: 66, display: "flex", flexDirection: "column", animation: "slideInRight 0.2s ease both", boxShadow: "-4px 0 20px rgba(0,0,0,0.08)" }}>
       <div style={{ padding: "11px 13px", borderBottom: `1px solid ${LIGHTER}`, flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 10, color: ORANGE, fontFamily: FFM, letterSpacing: "0.06em", marginBottom: 2 }}>AREA SEARCH</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: INK, fontFamily: FF, lineHeight: 1.25 }}>{lens === "parcels" ? "Parcels in shape" : "Listings in shape"}</div>
-            <div style={{ fontSize: 11, color: MID, fontFamily: FF, marginTop: 4 }}>{n} {lens === "parcels" ? "parcels" : "listings"} · use List tab for the same set</div>
+            <div style={{ fontSize: 10, color: pipelineMode ? GREEN : ORANGE, fontFamily: FFM, letterSpacing: "0.06em", marginBottom: 2 }}>
+              {pipelineMode ? "PIPELINE" : "AREA SEARCH"}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: INK, fontFamily: FF, lineHeight: 1.25 }}>
+              {pipelineMode ? "Saved plots on map" : lens === "parcels" ? "Parcels in shape" : "Listings in shape"}
+            </div>
+            <div style={{ fontSize: 11, color: MID, fontFamily: FF, marginTop: 4 }}>
+              {n} {lens === "parcels" ? "parcels" : "listings"} · use <strong style={{ fontWeight: 600, color: INK }}>List</strong> tab for the same set
+            </div>
           </div>
           <button type="button" onClick={onClose} style={{ width: 24, height: 24, borderRadius: "50%", border: `1px solid ${LIGHTER}`, background: BG, color: MID, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
         </div>
@@ -682,7 +689,7 @@ function DrawAreaSelectionSidebar({ lens, rows, onClose, onInspectListing, onIns
         {lens === "listings"
           ? rows.map((p, idx) => {
               const lid = plotListingOpenId(p);
-              const inProj = projectPlots.includes(lid);
+              const inProj = projectPlots.some((x) => canonicalPipelineId(x) === canonicalPipelineId(lid));
               return (
                 <button type="button" key={p.id} onClick={() => onInspectListing(p)} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left", background: BG, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px 6px 6px", marginBottom: 6, cursor: "pointer", fontFamily: FF }}>
                   <div style={{ width: 52, height: 52, flexShrink: 0, borderRadius: 7, overflow: "hidden", border: `1px solid ${LIGHTER}`, background: BG2 }}>
@@ -2801,7 +2808,7 @@ const LAYER_GROUPS = [
   { group:"Natura 2000",              color:"#2C5F2D", items:[{id:"natura",        label:"Rede Natura 2000 — ZPE + SIC"}]},
 ];
 
-function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadastreMode,cadastreParcels,onParcelClick,selectedParcelId,onLayerToggle,pinMode,setPinMode,pinMarker,onPinPlaced,onDrawAreaSelectionChange,lassoClearSeq}){
+function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadastreMode,cadastreParcels,onParcelClick,selectedParcelId,onLayerToggle,pinMode,setPinMode,pinMarker,onPinPlaced,onDrawAreaSelectionChange,lassoClearSeq,highlightPlotIds}){
   const mapRef    = useRef(null);
   const canvasRef = useRef(null);
   const pathRef   = useRef([]);
@@ -3157,13 +3164,14 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
         const primary = group.find((q)=>q.id===activePin) || group[0];
         const p = primary;
         const active = !drawMode && group.some((q)=>q.id===activePin);
-        const selected = group.some((q)=>selection.includes(q.id));
+        const dimIds = highlightPlotIds?.length ? highlightPlotIds : selection;
+        const selected = group.some((q)=>dimIds.includes(q.id));
         const probHigh = GREEN_BRIGHT;
         const probMid = "#2563eb";
         const maxScore = Math.max(...group.map((g)=>g.score));
         const tierColor = maxScore>=85?probHigh:maxScore>=70?probMid:MID;
         const glow = maxScore>=85?"22,163,74":maxScore>=70?"37,99,235":"107,107,104";
-        const dim = selection.length>0&&!selected&&!active;
+        const dim = dimIds.length>0&&!selected&&!active;
         return(
           <div key={`cl-${i}-${group.map((g)=>g.id).join("-")}`}
             style={{position:"absolute",left:`${cx}%`,top:`${cy}%`,transform:isCluster?"translate(-50%,-50%)":"translate(-50%,calc(-100% - 2px))",cursor:drawMode?"crosshair":"pointer",zIndex:active?20:selected?15:10,opacity:dim?0.35:1,transition:"opacity 0.25s, transform 0.15s",animation:`pinDrop 0.4s cubic-bezier(.34,1.56,.64,1) both`,animationDelay:`${i*0.06}s`}}
@@ -3867,7 +3875,7 @@ function VerdictMessage({p, projectPlots, onOpenListing, handleAddToProject, hid
     </div>
   );
 }
-function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsToPipeline,projectPlots,onGoToDashboard,onOpenListing,listingSavedScans,persistListingScan,pipelineFocusCanonicalId,onPipelineFocusConsumed}){
+function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsToPipeline,projectPlots,onGoToDashboard,onOpenListing,listingSavedScans,persistListingScan,pipelineFocusCanonicalId,onPipelineFocusConsumed,pipelineOnMapTick=0}){
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(()=>{
     const onResize = ()=>setIsMobile(window.innerWidth<768);
@@ -3951,6 +3959,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
   const [toast,setToast]=useState(null);
   const [activeICP,setActiveICP]=useState(null);
   const messagesEndRef=useRef(null);
+  const ignoreNextEmptyDrawSelectionRef=useRef(false);
   const FREE_LIMIT=10;
 
   const drawAreaEntities=useMemo(()=>{
@@ -3958,26 +3967,63 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
     if(drawAreaSelection.lens==="parcels"){
       return (mapResults.parcels||[]).filter((p)=>drawAreaSelection.ids.includes(p.id));
     }
-    return listingPlotsFiltered.filter((p)=>drawAreaSelection.ids.includes(p.id));
-  },[drawAreaSelection,mapResults.parcels,listingPlotsFiltered,mapResults.kind]);
+    const pool=
+      drawAreaSelection.source==="pipeline" && mapResults.kind==="listings"
+        ? mapResults.plots
+        : listingPlotsFiltered;
+    return pool.filter((p)=>drawAreaSelection.ids.includes(p.id));
+  },[drawAreaSelection,mapResults.parcels,listingPlotsFiltered,mapResults.kind,mapResults.plots]);
 
   const hasDrawArea=drawAreaEntities.length>0;
   const listPrimaryPlots=hasDrawArea&&!cadastreMode&&mapResults.kind==="listings"?drawAreaEntities:listingPlotsFiltered;
   const listContextLabel=hasDrawArea&&!cadastreMode&&mapResults.kind==="listings"
-    ?`Selected area · ${drawAreaEntities.length} listings`
+    ? (drawAreaSelection?.label || `Selected area · ${drawAreaEntities.length} listings`)
     :mapResults.contextLabel;
 
   useEffect(()=>{messagesEndRef.current?.scrollIntoView({behavior:"smooth"});},[messages,isTyping,activePlot,analysisState]);
 
   const onDrawAreaSelectionChange=useCallback((payload)=>{
     if(!payload?.ids?.length){
+      if(ignoreNextEmptyDrawSelectionRef.current){
+        ignoreNextEmptyDrawSelectionRef.current=false;
+        return;
+      }
       setDrawAreaSelection(null);
       setDrawBulkDone(false);
       return;
     }
-    setDrawAreaSelection({ ids:payload.ids, lens:payload.lens });
+    setDrawAreaSelection({ ids:payload.ids, lens:payload.lens, source:"draw" });
     setDrawBulkDone(false);
   },[]);
+
+  useEffect(()=>{
+    if(!pipelineOnMapTick)return;
+    const full=initialNationwideMapResults();
+    lastListingsMapResultsRef.current=full;
+    setCadastreMode(false);
+    setMapResults(full);
+    setListingMapFilters({});
+    setShowPlots(true);
+    const mapIds=mapPlotIdsForPipeline(full.plots,projectPlots);
+    ignoreNextEmptyDrawSelectionRef.current=true;
+    setLassoClearSeq((s)=>s+1);
+    setDrawBulkDone(false);
+    setTimeout(()=>{
+      clearPlotFocus();
+      if(mapIds.length){
+        setDrawAreaSelection({ ids:mapIds, lens:"listings", label:`Pipeline · ${mapIds.length} on map`, source:"pipeline" });
+      }else{
+        setDrawAreaSelection(null);
+        if(projectPlots.length){
+          setToast({ text:"Some saved plots are not on the map inventory (demo). Try Search from a listing ref.", mode:"note" });
+          setTimeout(()=>setToast(null),4500);
+        }
+      }
+      setMobileTab("map");
+      setMapMode("map");
+    },0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- tick + pipeline snapshot intentional
+  },[pipelineOnMapTick]);
 
   function queueSaveToPipeline(rawIds){
     const idArr=(Array.isArray(rawIds)?rawIds:[rawIds]).map(String);
@@ -4284,8 +4330,10 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
       {toast&&(
         <div style={{position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",background:INK,borderRadius:8,padding:"11px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.18)",zIndex:500,display:"flex",alignItems:"center",gap:12,minWidth:280}}>
           <span style={{flex:1,fontSize:15,color:WHITE,fontFamily:FF}}>{typeof toast==="object"&&toast?.text?toast.text:`${toast} saved`}</span>
-          <button onClick={()=>{setToast(null);onGoToDashboard();}} style={{background:ORANGE,border:"none",borderRadius:99,padding:"5px 12px",fontSize:15,fontWeight:500,color:WHITE,cursor:"pointer",fontFamily:FF}}>View →</button>
-          <button onClick={()=>setToast(null)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",cursor:"pointer",fontSize:15}}>✕</button>
+          {typeof toast==="object"&&toast?.mode!=="note"&&(
+            <button type="button" onClick={()=>{setToast(null);onGoToDashboard();}} style={{background:ORANGE,border:"none",borderRadius:99,padding:"5px 12px",fontSize:15,fontWeight:500,color:WHITE,cursor:"pointer",fontFamily:FF}}>View →</button>
+          )}
+          <button type="button" onClick={()=>setToast(null)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",cursor:"pointer",fontSize:15}}>✕</button>
         </div>
       )}
 
@@ -4542,7 +4590,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
                 cursor:"pointer",
                 whiteSpace:"nowrap",
               }}>
-              Area ({drawAreaEntities.length})
+              {drawAreaSelection?.source==="pipeline" ? "Pipeline" : "Area"} ({drawAreaEntities.length})
             </button>
           )}
           <span style={{...T.label,color:LIGHT,whiteSpace:"nowrap"}}>
@@ -4569,7 +4617,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
         <div style={{flex:1,position:"relative",minHeight:0,overflow:"hidden",display:"flex",flexDirection:"column"}}>
           {mapMode==="map"
             ?<PortugalMap plots={mapResults.kind==="listings"?listingPlotsFiltered:[]} activePin={activePin}
-                setActivePin={(id)=>{if(id){const p=listingPlotsFiltered.find(pl=>pl.id===id);if(p)selectPlot(p);}else setActivePin(null);}}
+                setActivePin={(id)=>{if(id){const p=listingPlotsFiltered.find(pl=>pl.id===id)||(mapResults.kind==="listings"?mapResults.plots.find(pl=>pl.id===id):null);if(p)selectPlot(p);}else setActivePin(null);}}
                 showPlots={showPlots} onOpenListing={onOpenListing}
                 cadastreMode={cadastreMode}
                 cadastreParcels={cadastreMode?mapResults.parcels:[]}
@@ -4581,6 +4629,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
                 onPinPlaced={handleMapPinPlaced}
                 onDrawAreaSelectionChange={onDrawAreaSelectionChange}
                 lassoClearSeq={lassoClearSeq}
+                highlightPlotIds={hasDrawArea&&!cadastreMode&&drawAreaSelection?.ids?.length?drawAreaSelection.ids:undefined}
                 onLayerToggle={(id, on)=>{ if(id==="boundaries"||id==="crus"){ setCadastreMode(on); setMapPinMode(false); if(on) setMapResults(parcelCatalogResults()); else { setMapResults(lastListingsMapResultsRef.current); setSelectedParcel(null);} } }}/>
             : cadastreMode
               ? <ParcelMapListView showPlots={showPlots}
@@ -4604,6 +4653,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
           }
           {hasDrawArea&&drawAreaSelection&&(
             <DrawAreaSelectionSidebar
+              mode={drawAreaSelection.source==="pipeline"?"pipeline":"draw"}
               lens={drawAreaSelection.lens}
               rows={drawAreaEntities}
               onClose={()=>{ setLassoClearSeq((s)=>s+1); setDrawAreaSelection(null); setDrawBulkDone(false); }}
@@ -4681,7 +4731,14 @@ function canonicalPipelineId(pid){
   return resolveChatPlot(pid)?.id ?? pid;
 }
 
-function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddToProject, setActiveNav, listingSavedScans, onInspectPlotInSearch}){
+/** Map row ids for all listings matching saved pipeline canonical ids (includes duplicate markers per listing). */
+function mapPlotIdsForPipeline(plots, savedCanonicalIds) {
+  if (!plots?.length || !savedCanonicalIds?.length) return [];
+  const saved = new Set(savedCanonicalIds.map((id) => canonicalPipelineId(id)));
+  return plots.filter((p) => saved.has(canonicalPipelineId(plotListingOpenId(p)))).map((p) => p.id);
+}
+
+function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddToProject, setActiveNav, listingSavedScans, onInspectPlotInSearch, onViewPipelineOnMap}){
   const [projects, setProjects] = useState(INIT_PROJECTS);
   const [activeProject, setActiveProject] = useState(null);
   const [view, setView] = useState("list"); // list | kanban
@@ -4823,9 +4880,16 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
       {!activeProject&&(
         <div className="ye-scroll" style={{flex:1,minHeight:0,overflowY:"auto",padding:"12px 24px 28px",background:SUBTLE}}>
           <div style={{marginBottom:16}}>
-            <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8,gap:12}}>
+            <div style={{display:"flex",alignItems:"baseline",justifyContent:"space-between",marginBottom:8,gap:12,flexWrap:"wrap"}}>
               <span style={{...TP.labelUC}}>Your pipeline</span>
-              <span style={{...TP.label,color:MID}}>{projectPlots.length} saved</span>
+              <span style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+                <span style={{...TP.label,color:MID}}>{projectPlots.length} saved</span>
+                {projectPlots.length>0&&(
+                  <button type="button" onClick={()=>onViewPipelineOnMap&&onViewPipelineOnMap()} style={{background:`${ACCENT}14`,border:`1px solid ${ACCENT}40`,borderRadius:99,padding:"4px 12px",...TP.label,fontWeight:600,color:ACCENT,cursor:"pointer",fontFamily:FF}}>
+                    View on map
+                  </button>
+                )}
+              </span>
             </div>
             {projectPlots.length===0 ? (
               <div style={{...TP.secondary,lineHeight:1.55,padding:"12px 14px",background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:10}}>
@@ -5135,7 +5199,7 @@ function GlobalNav({ activeNav, setActiveNav, upgraded, onBackToLanding }:{
               style={{width:38,height:38,borderRadius:8,background:active?BG2:"none",border:`1px solid ${active?LIGHTER:"transparent"}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.12s"}}>
               {item.icon(active)}
             </button>
-            <span style={{fontSize:10,fontWeight:500,color:active?INK:MID,fontFamily:FF,letterSpacing:"0.02em",lineHeight:1,textAlign:"center",maxWidth:56}}>{item.shortLabel}</span>
+            <span style={{fontSize:"var(--type-overline)",fontWeight:500,color:active?INK:MID,fontFamily:FF,letterSpacing:"0.02em",lineHeight:1,textAlign:"center",maxWidth:56}}>{item.shortLabel}</span>
             </div>
           </NavTooltip>
         );
@@ -5519,6 +5583,7 @@ export default function YonderExplorerAppInner({
   const [listingPlot,setListingPlot]=useState<string|null>(null);
   const [listingSavedScans,setListingSavedScans]=useState(null);
   const [pipelineFocusCanonicalId,setPipelineFocusCanonicalId]=useState(null);
+  const [pipelineOnMapTick,setPipelineOnMapTick]=useState(0);
 
   useEffect(()=>{setListingSavedScans(loadListingScansFromStorage());},[]);
   useEffect(()=>{
@@ -5612,8 +5677,8 @@ export default function YonderExplorerAppInner({
             <PlotListingPage plotId={listingPlot} upgraded={upgraded} onUpgrade={()=>setShowUpgradeModal(true)} onBack={closeListing} onAddToProject={handleAddToProject} inProject={projectPlots.includes(listingPlot)} savedAiRecap={listingRecapFromStore(listingSavedScans, canonicalPipelineId(listingPlot))}/>
           </div>
         )}
-        {activeNav==="Search"&&<ChatMapView upgraded={upgraded} setShowUpgradeModal={setShowUpgradeModal} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)}/>}
-        {activeNav==="Projects"&&<ProjectsView onOpenListing={openListing} upgraded={upgraded} onUpgrade={()=>setShowUpgradeModal(true)} projectPlots={projectPlots} onAddToProject={handleAddToProject} setActiveNav={setActiveNav} listingSavedScans={listingSavedScans} onInspectPlotInSearch={(id)=>{setPipelineFocusCanonicalId(id);setActiveNav("Search");}}/>}
+        {activeNav==="Search"&&<ChatMapView upgraded={upgraded} setShowUpgradeModal={setShowUpgradeModal} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)} pipelineOnMapTick={pipelineOnMapTick}/>}
+        {activeNav==="Projects"&&<ProjectsView onOpenListing={openListing} upgraded={upgraded} onUpgrade={()=>setShowUpgradeModal(true)} projectPlots={projectPlots} onAddToProject={handleAddToProject} setActiveNav={setActiveNav} listingSavedScans={listingSavedScans} onInspectPlotInSearch={(id)=>{setPipelineFocusCanonicalId(id);setActiveNav("Search");}} onViewPipelineOnMap={()=>{setActiveNav("Search");setPipelineOnMapTick((t)=>t+1);}}/>}
       </div>
     </div>
   );

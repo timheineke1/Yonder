@@ -18,6 +18,8 @@ When AI or humans add pages (e.g. `/deck`), use these tokens and patterns — no
 
 ## CSS variables (`app/globals.css`)
 
+### Colour / surface (unchanged)
+
 | Token | Value | Use |
 |--------|--------|-----|
 | `--background` | `#F9F9F9` | Page background (not `#f2f0eb`) |
@@ -26,9 +28,30 @@ When AI or humans add pages (e.g. `/deck`), use these tokens and patterns — no
 | `--muted` | `#6b6b68` | Secondary text |
 | `--orange` | `#c84b0a` | Eyebrows, hover on nav links, spinners, land accent |
 | `--accent` | `#3B82F6` | Map clusters, some UI chrome |
-| `--text-hero` | `clamp(32px, 6vw, 48px)` | Hero (class `.text-hero`) |
-| `--text-h2` | `clamp(22px, 3.2vw, 30px)` | Section titles (`.text-h2`) |
-| `--text-eyebrow` | `10px` | Uppercase section labels |
+
+### Typography — canonical ramp (`--type-*`, rem)
+
+**One system.** Use CSS vars or Tailwind utilities from `@theme` (e.g. `text-body`, `text-nav`). Legacy `--text-*` names alias to `--type-*` for older snippets.
+
+| Role | CSS variable | Tailwind (when applicable) | Typical use |
+|------|----------------|-----------------------------|-------------|
+| Hero | `--type-hero` | `text-hero` | Marketing hero (also `.text-hero`) |
+| Section H2 | `--type-h2` | `text-h2` | Section titles (also `.text-h2`) |
+| Large UI / stat display | `--type-display` | `text-display` | Big numerals, modals |
+| Title / H4-scale | `--type-title` | `text-title` | Sub-hero headings |
+| H3 / page titles | `--type-h3` | `text-h3` | Page titles, pricing row labels |
+| Lead / emphasis | `--type-lead` | `text-lead` | Stats, strong listing lines |
+| Body (marketing) | `--type-body` | `text-body` | Marketing body, explorer `TC.title` |
+| Body small | `--type-body-sm` | `text-body-sm` | Secondary marketing |
+| Nav / meta / mono T | `--type-nav` | `text-nav` | Site nav, 13px meta |
+| App body (dense) | `--type-app-body` | `text-app-body` | Explorer chat + list primary |
+| App secondary | `--type-app-secondary` | `text-app-secondary` | Explorer secondary lines |
+| Caption / chips | `--type-caption` | `text-caption` | Filters, chips, `TC.label` |
+| Mono small | `--type-mono-sm` | `text-mono-sm` | IDs, refs in-app |
+| Overline / eyebrow | `--type-overline` | `text-overline` | Uppercase labels (~10px) |
+| Micro / CAD | `--type-micro` | `text-micro` | Diagram annotations (~9px) |
+
+**Density:** Marketing defaults to `--type-body` (15px). Explorer chat/lists use **`--type-app-body`** (13px) and **`--type-caption`** (11px) — same ramp, tighter step — via `TC` / `TP` in `YonderExplorerAppInner.tsx`.
 
 ---
 
@@ -54,21 +77,21 @@ Use the same outer wrapper as the homepage:
 
 - TL white · TR `#4a4a4a` · BL `#a8a8a8` · BR `#c84b0a`
 
-Wordmark: `Yonder` — `text-[13px] font-semibold tracking-[0.06em] uppercase`.
+Wordmark: `Yonder` — `text-nav font-semibold tracking-[0.06em] uppercase`.
 
 ---
 
 ## Navigation links (marketing)
 
 - Product → `/#product`, For who → `/#who`, Coverage → `/#coverage`, Pricing → `/#pricing`
-- `text-[13px] font-medium`, hover `text-[#c84b0a]`
+- `text-nav font-medium`, hover `text-[#c84b0a]`
 - Right: Sign in (text link) + Get access (dark pill `bg-[#1a1a18]`)
 
 ---
 
 ## Buttons
 
-- **Primary:** `rounded-full bg-[#1a1a18] text-white`, `text-[13px]`–`[14px] font-medium`
+- **Primary:** `rounded-full bg-[#1a1a18] text-white`, `text-nav` or `text-body-sm font-medium`
 - **Secondary:** `rounded-full border border-black/[0.15] text-[#6b6b68]`, hover border/text darken
 
 ---
@@ -84,7 +107,7 @@ Wordmark: `Yonder` — `text-[13px] font-semibold tracking-[0.06em] uppercase`.
 ## Deck (`/deck`)
 
 - **Not** the full marketing nav. Use `DeckHeader` only: cadastre logo → `/`, same **1152px** horizontal alignment as deck content. Optional: cadastral grid behind (`app/deck/page.tsx`).
-- Body copy lives in `public/investor-deck.html`; CSS there must use the **same tokens** as this doc (`--text-hero`, `--text-h2`, `--bg`, `--surface`, `--ink`, `--muted`, `--orange`, Geist 15px/14px body). No warm paper (`#f2f0eb`) or landscape “painting” gradients behind UI mocks — use neutral `#f0f0f0` like the homepage screenshot strip.
+- Body copy lives in `public/investor-deck.html`; CSS there must use the **same tokens** as this doc (`--type-hero`, `--type-h2`, `--type-body`, `--type-body-sm`, `--bg`, `--surface`, `--ink`, `--muted`, `--orange`, Geist). No warm paper (`#f2f0eb`) or landscape “painting” gradients behind UI mocks — use neutral `#f0f0f0` like the homepage screenshot strip.
 
 ---
 

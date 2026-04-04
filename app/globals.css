@@ -18,15 +18,34 @@
   --success: #2d7a2d;
   --success-bright: #4a9a4a;
   --online: #22c55e;
-  /* Type scale — clean, strong */
-  --text-hero: clamp(32px, 6vw, 48px);
-  --text-h2: clamp(22px, 3.2vw, 30px);
-  --text-h3: 18px;
-  --text-body: 15px;
-  --text-body-sm: 14px;
-  --text-muted: 13px;
-  --text-caption: 11px;
-  --text-eyebrow: 10px;
+
+  /* ── Type ramp (canonical) — Geist only; rem-based, minimal scale ─────────── */
+  --type-hero: clamp(2rem, 6vw, 3rem);
+  --type-h2: clamp(1.375rem, 3.2vw, 1.875rem);
+  --type-display: 1.75rem;
+  --type-title: 1.25rem;
+  --type-h3: 1.125rem;
+  --type-lead: 1rem;
+  --type-body: 0.9375rem;
+  --type-body-sm: 0.875rem;
+  --type-nav: 0.8125rem;
+  --type-app-body: 0.8125rem;
+  --type-app-secondary: 0.75rem;
+  --type-caption: 0.6875rem;
+  --type-mono-sm: 0.6875rem;
+  --type-overline: 0.625rem;
+  --type-micro: 0.5625rem;
+
+  /* Legacy aliases — prefer --type-* / theme utilities in new code */
+  --text-hero: var(--type-hero);
+  --text-h2: var(--type-h2);
+  --text-h3: var(--type-h3);
+  --text-body: var(--type-body);
+  --text-body-sm: var(--type-body-sm);
+  --text-muted: var(--type-nav);
+  --text-caption: var(--type-caption);
+  --text-eyebrow: var(--type-overline);
+
   /* Spacing */
   --section-py: 4rem;
   --section-py-lg: 5rem;
@@ -39,6 +58,23 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Font sizes → Tailwind utilities text-hero, text-nav, text-body, … */
+  --text-hero: var(--type-hero);
+  --text-h2: var(--type-h2);
+  --text-display: var(--type-display);
+  --text-title: var(--type-title);
+  --text-h3: var(--type-h3);
+  --text-lead: var(--type-lead);
+  --text-body: var(--type-body);
+  --text-body-sm: var(--type-body-sm);
+  --text-nav: var(--type-nav);
+  --text-caption: var(--type-caption);
+  --text-overline: var(--type-overline);
+  --text-app-body: var(--type-app-body);
+  --text-app-secondary: var(--type-app-secondary);
+  --text-mono-sm: var(--type-mono-sm);
+  --text-micro: var(--type-micro);
 }
 
 body {
@@ -275,7 +311,7 @@ body {
 /* Cadastral annotations — subtle labels in white spaces */
 .cadastral-annotation {
   font-family: var(--font-mono), monospace;
-  font-size: 9px;
+  font-size: var(--type-micro);
   font-weight: 500;
   letter-spacing: 0.03em;
   color: rgba(0,0,0,0.2);
@@ -288,14 +324,14 @@ body {
 
 /* Typography utilities — use for consistency */
 .text-hero {
-  font-size: var(--text-hero);
+  font-size: var(--type-hero);
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
 .text-h2 {
-  font-size: var(--text-h2);
+  font-size: var(--type-h2);
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.2;

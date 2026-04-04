@@ -15,9 +15,10 @@ Use this when building or restyling **`/`** (marketing), **`/explorer`** (app), 
 
 ### Typography
 - **Font:** Geist only (`next/font` in `app/layout.tsx`, CSS `var(--font-geist-sans)`).
-- **Hero:** class `.text-hero` → `--text-hero` from `globals.css`
-- **Body:** `15px`, secondary `#6b6b68`
-- **Nav wordmark:** `text-[13px] font-semibold tracking-[0.06em] uppercase` — `Yonder`
+- **Ramp:** Canonical tokens in `globals.css` `:root` (`--type-*`). Tailwind utilities: `text-hero`, `text-h2`, `text-body`, `text-nav`, `text-caption`, etc. See **`yonder-style-SKILL.md`** table.
+- **Hero:** class `.text-hero` → `var(--type-hero)`
+- **Marketing body:** `text-body` (~15px); **Explorer** chat/list: `TC` / `TP` use `var(--type-app-body)`, `var(--type-caption)` (denser, same system).
+- **Nav wordmark:** `text-nav font-semibold tracking-[0.06em] uppercase`
 
 ### Logo (2×2 cadastre)
 - **Container:** `h-5 w-5`, `rounded-[4px]`, `bg-[#1a1a18]`, `gap-[1px]` grid
@@ -25,7 +26,7 @@ Use this when building or restyling **`/`** (marketing), **`/explorer`** (app), 
 
 ### Nav (`SiteNav`)
 - **Bar:** `sticky top-0 z-[100] border-b border-black/[0.08] bg-[#F9F9F9]`, inner `h-14 max-w-6xl`
-- **Links:** `text-[13px] font-medium`, hover **`text-[#c84b0a]`**
+- **Links:** `text-nav font-medium`, hover **`text-[#c84b0a]`**
 - **Primary CTA:** `rounded-full bg-[#1a1a18] text-white` — “Get access” / “Search land”
 - **Secondary:** `rounded-full border border-black/[0.15] text-[#6b6b68]`
 
@@ -78,7 +79,9 @@ Use **rounded ~12px**, **light borders**, **no heavy shadows** — airy, referen
 
 ## 3. CSS variables (reference)
 
-Root marketing tokens live in **`globals.css`** `:root` (`--background`, `--foreground`, `--orange`, `--accent`, etc.). Explorer overrides in **`.yonder-explorer-page`** — keep `--foreground` / `--border-default` consistent with homepage unless a surface must be pure white.
+Root tokens live in **`globals.css`** `:root` — colours (`--background`, `--foreground`, `--orange`, …) plus **`--type-*`** typography ramp (with legacy `--text-*` aliases). Explorer overrides in **`.yonder-explorer-page`** — keep `--foreground` / `--border-default` consistent with homepage unless a surface must be pure white.
+
+**Inline styles in the explorer:** prefer `fontSize: "var(--type-caption)"` (and other `--type-*` keys) instead of raw `10` / `11` / `13` when touching components; `T`, `TC`, and `TP` in `YonderExplorerAppInner.tsx` already map to the ramp.
 
 ---
 
