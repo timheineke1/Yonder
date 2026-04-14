@@ -5,8 +5,9 @@ import { useState, useRef, useEffect, useMemo, useCallback, useId } from "react"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const FF = "var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif";
-const FFM = "var(--font-geist-mono), ui-monospace, monospace";
+const FF = "var(--font-sans-stack)";
+// Explorer uses one family for simplicity (sans only).
+const FFM = FF;
 
 /** Hex tokens — marketing site (`/`) neutrals + blue/green in-app accents (see `.yonder-explorer-page`). */
 const INK = "#1a1a18";
@@ -58,14 +59,35 @@ const T = {
   mono:     { fontFamily: FFM, fontSize: "var(--type-nav)", color: MID, letterSpacing: "0.04em" },
 };
 
-/** Explorer / chat — denser: app body + caption (same ramp, not ad-hoc px) */
+/** Explorer / chat typography
+ * Keep this intentionally small:
+ * - Chat uses 4 core variants: title, body, secondary, label.
+ * - Sidebar composes from the same set (+ mono + uppercase cap when needed).
+ */
 const TC = {
-  title:   { fontFamily: FF, fontSize: "var(--type-body)", fontWeight: 600, letterSpacing: "-0.02em", color: INK, lineHeight: 1.35 },
+  // 1) Emphasis / headers
+  title:   { fontFamily: FF, fontSize: "var(--type-app-body)", fontWeight: 600, letterSpacing: "-0.01em", color: INK, lineHeight: 1.35 },
+  // 2) Default readable text
   body:    { fontFamily: FF, fontSize: "var(--type-app-body)", fontWeight: 400, color: INK, lineHeight: 1.55 },
+  // 3) Supporting text
   secondary:{ fontFamily: FF, fontSize: "var(--type-app-secondary)", color: MID, lineHeight: 1.5 },
-  label:   { fontFamily: FF, fontSize: "var(--type-caption)", color: LIGHT },
-  labelUC: { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, color: LIGHT, letterSpacing: "0.1em", textTransform: "uppercase" as const },
-  mono:    { fontFamily: FFM, fontSize: "var(--type-mono-sm)", color: MID, letterSpacing: "0.03em" },
+  // 4) Labels / chips
+  label:   { fontFamily: FF, fontSize: "var(--type-caption)", fontWeight: 500, color: MID },
+  // Sidebar caps / section markers (same family, uppercase transform only)
+  labelUC: { fontFamily: FF, fontSize: "var(--type-caption)", fontWeight: 600, color: MID, letterSpacing: "0.06em", textTransform: "uppercase" as const },
+  // IDs / refs
+  mono:    { fontFamily: FFM, fontSize: "var(--type-app-secondary)", color: MID, letterSpacing: "0.02em" },
+};
+
+/** Sidebars: same sans as chat; use TC.* only (refs use TC.secondary, not mono). */
+const SB = {
+  head: { ...TC.labelUC, letterSpacing: "0.06em" },
+  title: { ...TC.title },
+  body: { ...TC.body },
+  meta: { ...TC.secondary },
+  cap: { ...TC.label },
+  btn: { ...TC.body, fontWeight: 600 },
+  btnGhost: { ...TC.body, fontWeight: 500, color: MID },
 };
 
 /** Pipeline, tables — aligns with TC; pageTitle = h3 ramp */
@@ -79,9 +101,18 @@ const TP = {
   mono: TC.mono,
   crumb: { fontFamily: FF, fontSize: "var(--type-app-secondary)", color: LIGHT },
   stat: { fontFamily: FF, fontSize: "var(--type-lead)", fontWeight: 600, color: INK, lineHeight: 1 },
-  statCap: { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: LIGHT },
-  tableHead: { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: LIGHT },
+  statCap: { fontFamily: FF, fontSize: "var(--type-caption)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, color: LIGHT },
+  tableHead: { fontFamily: FF, fontSize: "var(--type-caption)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, color: LIGHT },
 };
+
+/**
+ * Typography contract (Explorer app only)
+ * - Keep one family: use FF (sans) for app surfaces; avoid introducing extra font stacks.
+ * - Chat should rely on 4 variants only: TC.title, TC.body, TC.secondary, TC.label.
+ * - Listing + mini sidebar should compose from TC/TP tokens, not raw numeric font sizes.
+ * - Minimum readable interactive text: var(--type-caption) (12px in current globals).
+ * - Prefer color/weight for hierarchy before introducing new type sizes.
+ */
 
 // Stage / type tokens kept for logic
 const STAGES = ["Discovered","Agent Run","Outreach Sent","Legal Check","Offer","Closed"];
@@ -320,7 +351,7 @@ function loadListingScansFromStorage() {
   }
 }
 
-/** Demo “AI scan” recap — same shape for sidebar scan + chat deep-dive persistence. */
+/** Demo land-report recap — same shape for sidebar + chat persistence. */
 function buildListingRecapData(plot) {
   const tech = plot?.technical || {};
   const ranRaw = tech.RAN ?? plot?.ran ?? "No";
@@ -376,20 +407,20 @@ function PlotRecapCard({ data }) {
     <div style={{ fontFamily: FF, background: BG, borderRadius: 10, overflow: "hidden", color: INK, border: `1px solid ${LIGHTER}` }}>
       <div style={{ background: INK, padding: "12px 14px", color: WHITE }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-          <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.45, fontFamily: FF }}>AI scan</span>
-          <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 99, background: isBuildable ? GREEN : "#9b1c1c", color: WHITE, fontFamily: FF }}>{data.verdictLabel}</span>
+          <span style={{ ...TC.labelUC, opacity: 0.45, color: "rgba(255,255,255,0.55)" }}>Report</span>
+          <span style={{ ...TC.label, fontWeight: 700, color: WHITE, padding: "2px 8px", borderRadius: 99, background: isBuildable ? GREEN : "#9b1c1c", letterSpacing: 0 }}>{data.verdictLabel}</span>
         </div>
-        <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.2, marginBottom: 4, fontFamily: FF }}>{data.location}</div>
-        <div style={{ fontSize: 10, opacity: 0.55, marginBottom: 6, fontFamily: FF }}>{data.zoningShort}</div>
-        <div style={{ fontSize: 11, lineHeight: 1.5, opacity: 0.72, fontFamily: FF }}>{data.verdictSummary}</div>
+        <div style={{ ...TC.title, color: WHITE, marginBottom: 4 }}>{data.location}</div>
+        <div style={{ ...TC.secondary, color: "rgba(255,255,255,0.55)", marginBottom: 6 }}>{data.zoningShort}</div>
+        <div style={{ ...TC.body, color: "rgba(255,255,255,0.78)" }}>{data.verdictSummary}</div>
       </div>
       <div style={{ padding: "8px 12px 0" }}>
         <div style={{ display: "flex", gap: 4 }}>
           {data.keyFacts.map((f, i) => (
             <div key={i} style={{ flex: 1, background: WHITE, borderRadius: 6, padding: "7px 8px", border: `1px solid ${LIGHTER}` }}>
-              <div style={{ fontSize: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: LIGHT, marginBottom: 2, fontFamily: FF }}>{f.label}</div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: INK, fontFamily: FF }}>{f.value}</div>
-              <div style={{ fontSize: 9, color: MID, marginTop: 2, lineHeight: 1.3, fontFamily: FF }}>{f.note}</div>
+              <div style={{ ...TC.labelUC, marginBottom: 2 }}>{f.label}</div>
+              <div style={{ ...TC.title, marginBottom: 0 }}>{f.value}</div>
+              <div style={{ ...TC.secondary, marginTop: 2 }}>{f.note}</div>
             </div>
           ))}
         </div>
@@ -398,13 +429,103 @@ function PlotRecapCard({ data }) {
         {data.restrictions.map((restr, i) => {
           const c = RC[restr.status] || RC.clear;
           return (
-            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 9, fontWeight: 500, padding: "2px 7px", borderRadius: 99, background: c.bg, color: c.color, fontFamily: FF }}>
+            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, ...TC.label, fontWeight: 500, padding: "2px 7px", borderRadius: 99, background: c.bg, color: c.color }}>
               <span style={{ width: 4, height: 4, borderRadius: "50%", background: c.dot, flexShrink: 0 }}/>
               {restr.name}
             </span>
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** Rows we resolve onto the plot after Pro + land report (recap persists on listing). */
+function LandDataLayersChecklist({ plot, recap, pinPlot, upgraded, onUpgrade, compact }) {
+  const pad = compact ? "10px 13px" : "0";
+  const titleStyle = compact ? { ...TC.labelUC, color: LIGHT, marginBottom: 6 } : { ...TP.sectionTitle, marginBottom: 6 };
+  const subStyle = compact ? { ...TC.secondary, marginBottom: 8, lineHeight: 1.45 } : { ...TP.secondary, marginBottom: 10, lineHeight: 1.55 };
+  const rowLabel = compact ? { ...TC.body, color: INK, fontWeight: 600 } : { ...TP.body, color: INK, fontWeight: 600 };
+  const rowVal = compact ? { ...TC.body, color: INK, fontWeight: 600, textAlign: "right", maxWidth: "52%" } : { ...TP.body, color: INK, fontWeight: 600, textAlign: "right", maxWidth: "55%" };
+  const tagBase = { ...TC.labelUC, fontWeight: 700, letterSpacing: "0.04em", borderRadius: 99, padding: compact ? "2px 6px" : "3px 8px", flexShrink: 0 };
+  const ran = plot?.technical?.RAN ?? "—";
+  const ren = plot?.technical?.REN ?? "—";
+  const pdm = plot?.technical?.["PDM zone"] ?? plot?.type ?? "—";
+  const zoningPreview = plot?.type || "—";
+  const recapRanRen = recap?.keyFacts?.find((f) => f.label === "RAN / REN");
+  const rows = [
+    { key: "zoning", label: "General zoning rules", preview: zoningPreview || "Municipality classifications", filled: recap ? recap.zoningShort || recap.verdictSummary?.slice(0, 44) : null },
+    { key: "pdm", label: "Municipal PDM", preview: String(pdm).length > 40 ? `${String(pdm).slice(0, 38)}…` : pdm, filled: recap ? recap.keyFacts?.[0]?.note || recap.keyFacts?.[0]?.value : null },
+    { key: "plot", label: "Plot analysis / land use", preview: `${ran} / ${ren}`, filled: recapRanRen ? `${recapRanRen.value} · ${recapRanRen.note || ""}`.trim() : recap ? "In report" : null },
+    { key: "cadastre", label: "Cadastre", preview: plot?.technical?.["Cadastre ref"] || "Parcel boundaries + IDs", filled: recap ? "Linked" : null },
+    { key: "infra", label: "Access · utilities", preview: plot?.technical?.Access || plot?.technical?.["Grid distance"] ? [plot.technical.Access, plot.technical["Grid distance"]].filter(Boolean).join(" · ") : "—", filled: recap ? "In report" : null },
+    { key: "risk", label: "GIS layers · constraints", preview: plot?.technical?.["Fire risk"] || plot?.technical?.Slope ? [plot.technical["Fire risk"], plot.technical.Slope].filter(Boolean).join(" · ") : "—", filled: recap?.restrictions?.length ? `${recap.restrictions.length} flags` : null },
+  ];
+  const sourceColors = {
+    zoning: "#2563eb",
+    pdm: "#0f766e",
+    plot: "#16a34a",
+    cadastre: "#14b8a6",
+    infra: "#64748b",
+    risk: "#d97706",
+  };
+
+  function rowBadge() {
+    if (pinPlot) return { bg: `${LIGHT}33`, color: MID, text: "—" };
+    if (recap) return { bg: `${GREEN}18`, color: GREEN, text: "Saved" };
+    if (!upgraded) return { bg: `${ACCENT}10`, color: ACCENT, text: "Locked", bd: `1px solid ${ACCENT}25` };
+    return { bg: `${ORANGE}14`, color: ORANGE, text: "Report" };
+  }
+
+  const badge = rowBadge();
+
+  return (
+    <div style={{ padding: pad, borderBottom: compact ? `1px solid ${LIGHTER}` : "none", marginBottom: compact ? 0 : 24 }}>
+      <div style={titleStyle}>Data sources</div>
+      {!recap && (
+        <div style={{ ...subStyle, marginBottom: compact ? 6 : 8 }}>
+          {compact ? "Unlock + run AI analysis to fill these layers." : "Unlock + run AI analysis in chat to fill these layers and save recap on the listing."}
+        </div>
+      )}
+      <div style={{ border: `1px solid ${LIGHTER}`, borderRadius: compact ? 8 : 10, overflow: "hidden", background: WHITE }}>
+        {rows.map((r) => {
+          const hasReport = !!recap && !pinPlot;
+          const lockedRow = !hasReport && !pinPlot && !upgraded;
+          const value = hasReport && r.filled ? r.filled : lockedRow ? "Unlock required" : r.preview;
+          const dim = lockedRow;
+          return (
+            <div
+              key={r.key}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+                padding: compact ? "8px 12px" : "10px 12px",
+                borderBottom: `1px solid ${LIGHTER}`,
+                opacity: dim ? 0.55 : 1,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 7, minWidth: 0 }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: sourceColors[r.key] || MID, flexShrink: 0 }}/>
+                <span style={rowLabel}>{r.label}</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, justifyContent: "flex-end" }}>
+                <span style={{ ...rowVal, minWidth: 0 }}>{value || "—"}</span>
+                <span style={{ ...tagBase, background: badge.bg, color: badge.color, border: badge.bd || "none" }}>{badge.text}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {!upgraded && !pinPlot && (
+        <div style={{ marginTop: 6, ...(compact ? TC.secondary : { ...TC.secondary, fontSize: "var(--type-body-sm)" }) }}>
+          <button type="button" onClick={onUpgrade} style={{ border: "none", background: "none", padding: 0, color: ACCENT, fontWeight: 600, cursor: "pointer", fontFamily: FF }}>
+            Upgrade
+          </button>
+          {" · "}unlocks source layers + AI report
+        </div>
+      )}
     </div>
   );
 }
@@ -421,6 +542,7 @@ function ListingInsightSidebar({
   savedRecap,
   onStartLandAgentInChat,
   onSendToChat,
+  onRequestListingLocation,
 }) {
   const cid = plotListingOpenId(plot);
   const pinPlot = isExplorerPinPlot(plot);
@@ -440,18 +562,18 @@ function ListingInsightSidebar({
   }
 
   return (
-    <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 300, background: WHITE, borderLeft: `1px solid ${LIGHTER}`, zIndex: 65, display: "flex", flexDirection: "column", animation: "slideInRight 0.2s ease both", boxShadow: "-4px 0 20px rgba(0,0,0,0.08)" }}>
+    <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: 340, background: WHITE, borderLeft: `1px solid ${LIGHTER}`, zIndex: 65, display: "flex", flexDirection: "column", animation: "slideInRight 0.2s ease both", boxShadow: "-4px 0 20px rgba(0,0,0,0.08)" }}>
       <div style={{ padding: "11px 13px", borderBottom: `1px solid ${LIGHTER}`, flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 10, color: ORANGE, fontFamily: FFM, letterSpacing: "0.06em", marginBottom: 2 }}>{pinPlot ? "MAP PIN" : plot.ref || cid}</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: INK, fontFamily: FF, lineHeight: 1.25, marginBottom: 4 }}>{plot.name}</div>
+            <div style={{ ...SB.head, color: ORANGE, marginBottom: 2 }}>{pinPlot ? "MAP PIN" : plot.ref || cid}</div>
+            <div style={{ ...SB.title, marginBottom: 4 }}>{plot.name}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-              <span style={{ fontSize: 10, color: v.color, fontFamily: FF, fontWeight: 600 }}>{pinPlot ? "Marker" : v.label}</span>
-              {plot.score != null ? <ScoreRing pct={plot.score} size={28} /> : <span style={{ fontSize: 11, color: LIGHT, fontFamily: FF }}>No listing score</span>}
+              <span style={{ ...SB.meta, color: v.color, fontWeight: 600 }}>{pinPlot ? "Marker" : v.label}</span>
+              {plot.score != null ? <ScoreRing pct={plot.score} size={28} /> : <span style={{ ...SB.meta, color: LIGHT }}>No listing score</span>}
             </div>
           </div>
-          <button type="button" onClick={onClose} style={{ width: 24, height: 24, borderRadius: "50%", border: `1px solid ${LIGHTER}`, background: BG, color: MID, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
+          <button type="button" onClick={onClose} style={{ width: 24, height: 24, borderRadius: "50%", border: `1px solid ${LIGHTER}`, background: BG, color: MID, cursor: "pointer", ...SB.cap, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
         </div>
       </div>
 
@@ -460,119 +582,91 @@ function ListingInsightSidebar({
           <div style={{ position: "relative", width: "100%", height: 118, borderRadius: 10, overflow: "hidden", marginTop: 8, border: `1px solid ${LIGHTER}`, background: BG2 }}>
             <PlotImage plot={plot} type={plot.type} index={0} style={{ width: "100%", height: "100%", display: "block" }} />
             <div style={{ position: "absolute", bottom: 6, left: 8, right: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 9, fontWeight: 600, color: WHITE, fontFamily: FF, letterSpacing: "0.06em", textTransform: "uppercase", textShadow: "0 1px 3px rgba(0,0,0,0.45)" }}>Listing visual</span>
-              {plot.timeOnMarket && <span style={{ fontSize: 9, color: "rgba(255,255,255,0.9)", fontFamily: FF, textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>{plot.timeOnMarket}</span>}
+              <span style={{ ...SB.head, color: WHITE, textShadow: "0 1px 3px rgba(0,0,0,0.45)" }}>From portal</span>
+              {plot.timeOnMarket && <span style={{ ...SB.meta, color: "rgba(255,255,255,0.9)", textShadow: "0 1px 2px rgba(0,0,0,0.4)" }}>{plot.timeOnMarket}</span>}
             </div>
           </div>
         </div>
 
         <div style={{ padding: "10px 13px", borderBottom: `1px solid ${LIGHTER}` }}>
-          <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 8 }}>From listing</div>
+          <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 8 }}>Listing</div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-            <span style={{ fontFamily: FF, fontSize: 17, fontWeight: 600, color: INK }}>{plot.price}</span>
-            <span style={{ fontSize: 10, color: LIGHT, fontFamily: FFM }}>{plot.area} · {plot.pricePerSqm}</span>
+            <span style={{ ...SB.title, fontWeight: 700 }}>{plot.price}</span>
+            <span style={{ ...SB.meta, color: LIGHT }}>{plot.area} · {plot.pricePerSqm}</span>
           </div>
           {plot.tag && (
-            <div style={{ fontSize: 11, color: MID, fontFamily: FF, lineHeight: 1.4, marginBottom: 6 }}>{plot.tag}</div>
+            <div style={{ ...SB.meta, marginBottom: 6 }}>{plot.tag}</div>
           )}
-          <div style={{ fontSize: 10, color: INK, fontFamily: FF, lineHeight: 1.45 }}>
+          <div style={{ ...SB.meta, color: INK }}>
             <span style={{ color: LIGHT }}>Region · </span>
             {plot.region || "—"}
           </div>
-          <div style={{ fontSize: 10, color: INK, fontFamily: FF, marginTop: 4 }}>
+          <div style={{ ...SB.meta, color: INK, marginTop: 4 }}>
             <span style={{ color: LIGHT }}>Type · </span>
             {plot.type || "—"}
           </div>
+          {!pinPlot && Array.isArray(plot.amenities) && plot.amenities.length > 0 && (
+            <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${LIGHTER}` }}>
+              <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 6 }}>Nearby</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {plot.amenities.slice(0, 4).map((a, i) => (
+                  <span key={i} style={{ ...SB.meta, padding: "3px 8px", borderRadius: 99, border: `1px solid ${LIGHTER}`, background: BG }}>
+                    {a.icon} {a.label} · {a.dist}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           {!pinPlot && (
-            <button type="button" onClick={() => onOpenListing(cid)} style={{ width: "100%", marginTop: 10, background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", fontSize: 11, color: MID, cursor: "pointer", fontFamily: FF }}>
+            <button type="button" onClick={() => onOpenListing(cid)} style={{ width: "100%", marginTop: 10, background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", cursor: "pointer", ...SB.btnGhost }}>
               View full listing →
             </button>
           )}
         </div>
 
-        <div style={{ padding: "10px 13px", borderBottom: `1px solid ${LIGHTER}` }}>
-          <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 6 }}>Yonder layers</div>
-          {!pinPlot && !upgraded && (
-            <div style={{ fontSize: 10, color: MID, fontFamily: FF, lineHeight: 1.45, marginBottom: 8, padding: "8px 10px", background: SUBTLE, borderRadius: 8, border: `1px solid ${LIGHTER}` }}>
-              Regulatory preview only. <button type="button" onClick={onUpgrade} style={{ border: "none", background: "none", padding: 0, color: ACCENT, fontWeight: 600, cursor: "pointer", fontFamily: FF }}>Upgrade</button> for full PDM parameters, RAN/REN overlays, and dossier.
-            </div>
-          )}
-          {[
-            ["PDM", plot.technical?.["PDM zone"] || plot.type || "—"],
-            ["RAN", plot.technical?.RAN || "—"],
-            ["REN", plot.technical?.REN || "—"],
-          ].map(([k, val]) => {
-            const lockLayer = !pinPlot && !upgraded && (k === "RAN" || k === "REN");
-            const shortPdm = !pinPlot && !upgraded && k === "PDM" && String(val).length > 36;
-            const displayVal = shortPdm ? `${String(val).slice(0, 34)}…` : val;
-            return (
-              <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: `1px solid ${LIGHTER}`, position: "relative", gap: 8 }}>
-                <span style={{ fontSize: 10, color: LIGHT, fontFamily: FF, flexShrink: 0 }}>{k}</span>
-                <span style={{ fontSize: 10, color: INK, fontFamily: FF, fontWeight: 500, textAlign: "right", maxWidth: "62%" }}>{displayVal}</span>
-                {lockLayer && (
-                  <button
-                    type="button"
-                    onClick={onUpgrade}
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      border: "none",
-                      borderRadius: 4,
-                      cursor: "pointer",
-                      background: "linear-gradient(90deg, rgba(248,247,244,0.15), rgba(248,247,244,0.9) 50%)",
-                      backdropFilter: "blur(3px)",
-                      fontSize: 10,
-                      fontWeight: 600,
-                      fontFamily: FF,
-                      color: ACCENT,
-                      padding: "0 8px 0 38%",
-                      textAlign: "right",
-                    }}
-                  >
-                    Unlock on Pro
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <LandDataLayersChecklist plot={plot} recap={recap} pinPlot={pinPlot} upgraded={upgraded} onUpgrade={onUpgrade} compact />
+
+        {!pinPlot && onRequestListingLocation && (
+          <div style={{ padding: "10px 13px", borderBottom: `1px solid ${LIGHTER}` }}>
+            <div style={{ ...TC.labelUC, color: ORANGE, marginBottom: 6 }}>Location check</div>
+            <div style={{ ...SB.meta, marginBottom: 8 }}>Request official location confirmation with the realtor first, or run the full report now if you already know the exact plot.</div>
+            <button type="button" onClick={onRequestListingLocation} style={{ width: "100%", background: ORANGE, border: "none", borderRadius: 99, padding: "8px", color: WHITE, cursor: "pointer", marginBottom: 6, ...SB.btn }}>
+              Request official location · €89 →
+            </button>
+            <button
+              type="button"
+              onClick={startAnalysis}
+              style={{ width: "100%", background: "none", border: `1px dashed ${LIGHTER}`, borderRadius: 99, padding: "7px", cursor: "pointer", ...SB.btnGhost }}
+            >
+              Run full report now
+            </button>
+          </div>
+        )}
 
         <div style={{ padding: "10px 13px 14px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6, gap: 8 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: INK, fontFamily: FF }}>AI scan</div>
+            <div style={SB.title}>Report</div>
             {!upgraded && !pinPlot && (
-              <button type="button" onClick={onUpgrade} style={{ fontSize: 10, fontWeight: 600, fontFamily: FF, color: ACCENT, background: "rgba(37,99,235,0.08)", border: `1px solid rgba(37,99,235,0.2)`, borderRadius: 99, padding: "3px 10px", cursor: "pointer", flexShrink: 0 }}>
+              <button type="button" onClick={onUpgrade} style={{ ...SB.cap, fontWeight: 600, color: ACCENT, background: "rgba(37,99,235,0.08)", border: `1px solid rgba(37,99,235,0.2)`, borderRadius: 99, padding: "3px 10px", cursor: "pointer", flexShrink: 0 }}>
                 Pro
               </button>
             )}
           </div>
-          {!upgraded && !pinPlot && (
-            <div style={{ fontSize: 10, color: MID, fontFamily: FF, lineHeight: 1.45, marginBottom: 8, padding: "8px 10px", background: `${ACCENT}06`, borderRadius: 8, border: `1px solid ${ACCENT}22` }}>
-              New runs and the full saved AI dossier need Pro. You can still ask questions in chat on any tier.
-            </div>
-          )}
           {pinPlot ? (
             <>
-              <div style={{ fontSize: 10, color: LIGHT, fontFamily: FF, lineHeight: 1.45, marginBottom: 8 }}>
-                Pins mark a spot on the map. <strong style={{ color: INK }}>Land-agent analysis and AI scan</strong> need a real listing — search in chat or tap a plot, then run analysis (Pro).
-              </div>
-              <button type="button" onClick={() => onSendToChat(plot, { mode: "ask" })} style={{ width: "100%", background: INK, border: "none", borderRadius: 99, padding: "9px", fontSize: 12, fontWeight: 600, color: WHITE, cursor: "pointer", fontFamily: FF }}>
+              <div style={{ ...SB.meta, color: LIGHT, marginBottom: 8 }}>Pick a listing on the map for a full report.</div>
+              <button type="button" onClick={() => onSendToChat(plot, { mode: "ask" })} style={{ width: "100%", background: INK, border: "none", borderRadius: 99, padding: "9px", color: WHITE, cursor: "pointer", ...SB.btn }}>
                 Ask about this area in chat →
               </button>
             </>
           ) : (
             <>
-              <div style={{ fontSize: 10, color: LIGHT, fontFamily: FF, lineHeight: 1.45, marginBottom: 8 }}>
-                The <strong style={{ color: INK }}>saved AI recap</strong> appears here only <strong style={{ color: INK }}>after</strong> you run <strong style={{ color: INK }}>Land agent + analysis</strong> in chat (land agent → regulatory pass → verdict card). Then it syncs to this sidebar and the full listing.
-                {!upgraded && <> <strong style={{ color: INK }}>Pro</strong> required to run a new scan.</>}
-              </div>
-
               {!recap && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <button type="button" onClick={startAnalysis} style={{ width: "100%", background: ORANGE, border: "none", borderRadius: 99, padding: "9px", fontSize: 12, fontWeight: 600, color: WHITE, cursor: "pointer", fontFamily: FF }}>
-                    {upgraded ? "⊕ Run land agent + analysis in chat" : "⊕ Run analysis in chat (Pro)"}
+                  <button type="button" onClick={startAnalysis} style={{ width: "100%", background: ORANGE, border: "none", borderRadius: 99, padding: "9px", color: WHITE, cursor: "pointer", ...SB.btn }}>
+                    {upgraded ? "⊕ Run AI analysis" : "⊕ Run AI analysis (Unlock)"}
                   </button>
-                  <button type="button" onClick={() => onSendToChat(plot, { mode: "ask" })} style={{ width: "100%", background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", fontSize: 11, color: MID, cursor: "pointer", fontFamily: FF }}>
+                  <button type="button" onClick={() => onSendToChat(plot, { mode: "ask" })} style={{ width: "100%", background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", cursor: "pointer", ...SB.btnGhost }}>
                     Ask a question in chat →
                   </button>
                 </div>
@@ -582,7 +676,7 @@ function ListingInsightSidebar({
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                     <div style={{ width: 5, height: 5, borderRadius: "50%", background: GREEN_BRIGHT, flexShrink: 0 }}/>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: INK, fontFamily: FF }}>Saved report · land agent run</span>
+                    <span style={SB.title}>Saved report</span>
                   </div>
                   <div style={{ position: "relative" }}>
                     <PlotRecapCard data={recap} />
@@ -598,21 +692,19 @@ function ListingInsightSidebar({
                           cursor: "pointer",
                           background: "rgba(248,247,244,0.75)",
                           backdropFilter: "blur(4px)",
-                          fontSize: 11,
-                          fontWeight: 600,
-                          fontFamily: FF,
+                          ...SB.btn,
                           color: ACCENT,
                         }}
                       >
-                        Upgrade to read full AI scan
+                        Upgrade to read full report
                       </button>
                     )}
                   </div>
-                  <button type="button" onClick={() => onSendToChat(plot, { mode: "deep", recap })} style={{ width: "100%", marginTop: 8, background: `${ORANGE}12`, border: `1px solid ${ORANGE}35`, borderRadius: 99, padding: "8px", fontSize: 11, fontWeight: 600, color: ORANGE, cursor: "pointer", fontFamily: FF }}>
-                    Continue in chat (Q&amp;A) →
+                  <button type="button" onClick={() => onSendToChat(plot, { mode: "deep", recap })} style={{ width: "100%", marginTop: 8, background: `${ORANGE}12`, border: `1px solid ${ORANGE}35`, borderRadius: 99, padding: "8px", color: ORANGE, cursor: "pointer", ...SB.btn }}>
+                    Chat →
                   </button>
-                  <button type="button" onClick={startAnalysis} style={{ width: "100%", marginTop: 6, background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", fontSize: 11, color: MID, cursor: "pointer", fontFamily: FF }}>
-                    {upgraded ? "Re-run analysis in chat" : "Re-run analysis (Pro)"}
+                  <button type="button" onClick={startAnalysis} style={{ width: "100%", marginTop: 6, background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", cursor: "pointer", ...SB.btnGhost }}>
+                    {upgraded ? "Re-run" : "Re-run (Pro)"}
                   </button>
                 </div>
               )}
@@ -622,12 +714,10 @@ function ListingInsightSidebar({
       </div>
 
       <div style={{ padding: "10px 13px", borderTop: `1px solid ${LIGHTER}`, flexShrink: 0 }}>
-        <button type="button" onClick={() => onAddToProject(cid)} style={{ width: "100%", background: inProject ? `${GREEN}10` : INK, border: `1px solid ${inProject ? `${GREEN}35` : "transparent"}`, borderRadius: 99, padding: "9px", fontSize: 12, fontWeight: 600, color: inProject ? GREEN : WHITE, cursor: "pointer", fontFamily: FF }}>
+        <button type="button" onClick={() => onAddToProject(cid)} style={{ width: "100%", background: inProject ? `${GREEN}10` : INK, border: `1px solid ${inProject ? `${GREEN}35` : "transparent"}`, borderRadius: 99, padding: "9px", color: inProject ? GREEN : WHITE, cursor: "pointer", ...SB.btn }}>
           {pinPlot ? inProject ? "✓ Pin saved" : "✦ Save pin to workspace" : inProject ? "✓ In pipeline" : "✦ Save to pipeline"}
         </button>
-        <div style={{ fontSize: 10, color: LIGHT, fontFamily: FF, textAlign: "center", marginTop: 8, lineHeight: 1.4 }}>
-          The report stays on this listing and in your pipeline — not only in the chat thread.
-        </div>
+        <div style={{ ...SB.meta, color: LIGHT, textAlign: "center", marginTop: 8 }}>Recap saved on plot + pipeline.</div>
       </div>
 
       <style>{`@keyframes slideInRight { from{transform:translateX(100%)} to{transform:translateX(0)} }`}</style>
@@ -641,20 +731,20 @@ function PipelineSaveModal({ open, count, pipelineName, setPipelineName, onClose
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 600, background: "rgba(17,17,16,0.45)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }} onClick={onClose}>
       <div style={{ width: "min(380px, 100%)", background: WHITE, borderRadius: 12, border: `1px solid ${LIGHTER}`, boxShadow: "0 16px 48px rgba(0,0,0,0.18)", padding: "18px 18px 16px", animation: "fadeIn 0.18s ease both" }} onClick={(e) => e.stopPropagation()}>
-        <div style={{ fontFamily: FF, fontSize: 16, fontWeight: 600, color: INK, marginBottom: 4 }}>Add to pipeline</div>
-        <div style={{ fontSize: 13, color: MID, fontFamily: FF, lineHeight: 1.45, marginBottom: 14 }}>
+        <div style={{ ...TC.title, marginBottom: 4 }}>Add to pipeline</div>
+        <div style={{ ...TC.secondary, lineHeight: 1.45, marginBottom: 14 }}>
           {count} {count === 1 ? "item" : "items"} · choose where to save (demo: same workspace; named pipeline is a label for now).
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <button type="button" onClick={onSaveMyListings} style={{ width: "100%", background: INK, border: "none", borderRadius: 99, padding: "10px 14px", fontSize: 13, fontWeight: 600, color: WHITE, cursor: "pointer", fontFamily: FF }}>
+          <button type="button" onClick={onSaveMyListings} style={{ width: "100%", background: INK, border: "none", borderRadius: 99, padding: "10px 14px", ...TC.body, fontWeight: 600, color: WHITE, cursor: "pointer" }}>
             Save to My listings
           </button>
-          <div style={{ fontSize: 11, color: LIGHT, fontFamily: FF, textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 4 }}>Or name a pipeline</div>
-          <input value={pipelineName} onChange={(e) => setPipelineName(e.target.value)} placeholder="e.g. Alentejo shortlist" style={{ width: "100%", border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "9px 11px", fontSize: 13, fontFamily: FF, outline: "none" }} />
-          <button type="button" onClick={() => onSaveNamed(pipelineName?.trim() || "Untitled pipeline")} style={{ width: "100%", background: `${ORANGE}12`, border: `1px solid ${ORANGE}40`, borderRadius: 99, padding: "9px 14px", fontSize: 13, fontWeight: 600, color: ORANGE, cursor: "pointer", fontFamily: FF }}>
+          <div style={{ ...TC.labelUC, marginTop: 4 }}>Or name a pipeline</div>
+          <input value={pipelineName} onChange={(e) => setPipelineName(e.target.value)} placeholder="e.g. Alentejo shortlist" style={{ width: "100%", border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "9px 11px", ...TC.body, outline: "none" }} />
+          <button type="button" onClick={() => onSaveNamed(pipelineName?.trim() || "Untitled pipeline")} style={{ width: "100%", background: `${ORANGE}12`, border: `1px solid ${ORANGE}40`, borderRadius: 99, padding: "9px 14px", ...TC.body, fontWeight: 600, color: ORANGE, cursor: "pointer" }}>
             Save to named pipeline
           </button>
-          <button type="button" onClick={onClose} style={{ width: "100%", background: "none", border: "none", padding: "6px", fontSize: 12, color: LIGHT, cursor: "pointer", fontFamily: FF }}>
+          <button type="button" onClick={onClose} style={{ width: "100%", background: "none", border: "none", padding: "6px", ...TC.label, color: LIGHT, cursor: "pointer" }}>
             Cancel
           </button>
         </div>
@@ -672,17 +762,22 @@ function DrawAreaSelectionSidebar({ lens, rows, onClose, onInspectListing, onIns
       <div style={{ padding: "11px 13px", borderBottom: `1px solid ${LIGHTER}`, flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 10, color: pipelineMode ? GREEN : ORANGE, fontFamily: FFM, letterSpacing: "0.06em", marginBottom: 2 }}>
+            <div style={{ ...SB.head, color: pipelineMode ? GREEN : ORANGE, marginBottom: 2 }}>
               {pipelineMode ? "PIPELINE" : "AREA SEARCH"}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: INK, fontFamily: FF, lineHeight: 1.25 }}>
+            <div style={SB.title}>
               {pipelineMode ? "Saved plots on map" : lens === "parcels" ? "Parcels in shape" : "Listings in shape"}
             </div>
-            <div style={{ fontSize: 11, color: MID, fontFamily: FF, marginTop: 4 }}>
+            <div style={{ ...SB.meta, marginTop: 4 }}>
               {n} {lens === "parcels" ? "parcels" : "listings"} · use <strong style={{ fontWeight: 600, color: INK }}>List</strong> tab for the same set
             </div>
+            {!pipelineMode && (
+              <div style={{ ...SB.meta, color: LIGHT, marginTop: 8, padding: "8px 10px", background: SUBTLE, borderRadius: 8, border: `1px solid ${LIGHTER}` }}>
+                <strong style={{ color: INK }}>Pricing:</strong> zone / multi-parcel packs from <strong style={{ color: INK }}>€499</strong> (typically 10+ plots or cadastre IDs). Municipality-scale or 50+ units from <strong style={{ color: INK }}>€999</strong> — talk to us for scope.
+              </div>
+            )}
           </div>
-          <button type="button" onClick={onClose} style={{ width: 24, height: 24, borderRadius: "50%", border: `1px solid ${LIGHTER}`, background: BG, color: MID, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
+          <button type="button" onClick={onClose} style={{ width: 24, height: 24, borderRadius: "50%", border: `1px solid ${LIGHTER}`, background: BG, color: MID, cursor: "pointer", ...SB.cap, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
         </div>
       </div>
       <div style={{ flex: 1, overflowY: "auto", padding: "8px 10px" }}>
@@ -696,10 +791,10 @@ function DrawAreaSelectionSidebar({ lens, rows, onClose, onInspectListing, onIns
                     <PlotImage plot={p} type={p.type} index={idx} style={{ width: "100%", height: "100%", display: "block" }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 10, color: ACCENT, fontFamily: FFM }}>{p.id}</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: INK }}>{p.price}</div>
-                    <div style={{ fontSize: 11, color: MID, lineHeight: 1.3 }}>{p.region}</div>
-                    <div style={{ fontSize: 10, color: inProj ? GREEN : LIGHT, marginTop: 3 }}>{inProj ? "In pipeline" : "Tap for dossier"}</div>
+                    <div style={{ ...SB.meta, color: ACCENT }}>{p.id}</div>
+                    <div style={SB.title}>{p.price}</div>
+                    <div style={{ ...SB.meta, lineHeight: 1.3 }}>{p.region}</div>
+                    <div style={{ ...SB.meta, color: inProj ? GREEN : LIGHT, marginTop: 3 }}>{inProj ? "In pipeline" : "Tap for dossier"}</div>
                   </div>
                 </button>
               );
@@ -710,19 +805,19 @@ function DrawAreaSelectionSidebar({ lens, rows, onClose, onInspectListing, onIns
                 <button type="button" key={par.id} onClick={() => onInspectParcel(par)} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left", background: BG, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px 6px 6px", marginBottom: 6, cursor: "pointer", fontFamily: FF }}>
                   <div style={{ width: 48, height: 48, flexShrink: 0, borderRadius: 7, background: zc.fill, border: `2px solid ${zc.stroke}` }} aria-hidden />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 10, color: ORANGE, fontFamily: FFM }}>{par.ref}</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: INK }}>{par.zone} · {par.pdm}</div>
-                    <div style={{ fontSize: 11, color: MID }}>{par.area}</div>
+                    <div style={{ ...SB.meta, color: ORANGE }}>{par.ref}</div>
+                    <div style={SB.title}>{par.zone} · {par.pdm}</div>
+                    <div style={SB.meta}>{par.area}</div>
                   </div>
                 </button>
               );
             })}
       </div>
       <div style={{ padding: "10px 12px", borderTop: `1px solid ${LIGHTER}`, flexShrink: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-        <button type="button" disabled={bulkRunning || bulkDone} onClick={onAnalyseAll} style={{ width: "100%", background: bulkDone ? `${GREEN}15` : ORANGE, border: `1px solid ${bulkDone ? GREEN + "40" : "transparent"}`, borderRadius: 99, padding: "9px", fontSize: 12, fontWeight: 600, color: bulkDone ? GREEN : WHITE, cursor: bulkRunning || bulkDone ? "default" : "pointer", fontFamily: FF, opacity: bulkRunning ? 0.85 : 1 }}>
-          {bulkDone ? `✓ Analysis sent to chat` : bulkRunning ? "Analysing…" : "⊕ Analyse all (chat)"}
+        <button type="button" disabled={bulkRunning || bulkDone} onClick={onAnalyseAll} style={{ width: "100%", background: bulkDone ? `${GREEN}15` : ORANGE, border: `1px solid ${bulkDone ? GREEN + "40" : "transparent"}`, borderRadius: 99, padding: "9px", color: bulkDone ? GREEN : WHITE, cursor: bulkRunning || bulkDone ? "default" : "pointer", opacity: bulkRunning ? 0.85 : 1, ...SB.btn }}>
+          {bulkDone ? `✓ Scan sent to chat` : bulkRunning ? "Scanning…" : "⊕ Scan area in chat"}
         </button>
-        <button type="button" disabled={bulkRunning} onClick={onSaveAll} style={{ width: "100%", background: WHITE, border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "8px", fontSize: 12, fontWeight: 600, color: INK, cursor: bulkRunning ? "default" : "pointer", fontFamily: FF }}>
+        <button type="button" disabled={bulkRunning} onClick={onSaveAll} style={{ width: "100%", background: WHITE, border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "8px", color: INK, cursor: bulkRunning ? "default" : "pointer", ...SB.btn }}>
           ✦ Add all to pipeline…
         </button>
       </div>
@@ -941,7 +1036,7 @@ function StepTracker({steps}){
             border:s.done?"none":active?`2px solid ${ORANGE}40`:`1.5px solid ${LIGHTER}`,
             display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
           }}>
-            {s.done&&<span style={{color:"white",fontSize:11,lineHeight:1,fontWeight:700}}>✓</span>}
+            {s.done&&<span style={{...TC.label,color:WHITE,lineHeight:1,fontWeight:700}}>✓</span>}
             {active&&<div style={{width:11,height:11,border:`2px solid ${LIGHTER}`,borderTopColor:ORANGE,borderRadius:"50%",animation:"spin 0.85s linear infinite"}}/>}
           </div>
           <span style={{...TP.body,fontWeight:s.done||active?600:400,color:s.done?GREEN:MID}}>{s.label}</span>
@@ -954,15 +1049,41 @@ function StepTracker({steps}){
 }
 
 // ── UPGRADE MODAL ─────────────────────────────────────────────────────────────
-function UpgradeModal({onClose,onUpgrade}){
+/** `plot` = AI land analysis on a listing; `area` = multi-plot / drawn zone scan; null = generic unlock. */
+function UpgradeModal({ onClose, onUpgrade, promptReason }) {
+  const showPayPerUse =
+    promptReason === "plot" || promptReason === "area"
+      ? (
+          <div style={{ background: SUBTLE, borderRadius: 10, padding: "12px 14px", marginBottom: 18, border: `1px solid ${LIGHTER}` }}>
+            <div style={{ ...TP.labelUC, color: MID, marginBottom: 8 }}>Pay-per-use (shown because you started this action)</div>
+            {promptReason === "plot" ? (
+              <div style={{ ...TP.secondary, lineHeight: 1.55, margin: 0 }}>
+                <strong style={{ color: INK }}>Single-plot report</strong> — from <strong style={{ color: INK }}>€49</strong> when you identify the parcel (address, cadastre ref, or map).{" "}
+                <strong style={{ color: INK }}>Listing + we get the pin</strong> — from <strong style={{ color: INK }}>€89</strong>. Full tier list lives on the{" "}
+                <Link href="/" style={{ color: ACCENT, fontWeight: 600 }}>homepage</Link>.
+              </div>
+            ) : (
+              <div style={{ ...TP.secondary, lineHeight: 1.55, margin: 0 }}>
+                <strong style={{ color: INK }}>Area / multi-plot search</strong> — packs from <strong style={{ color: INK }}>€499</strong> (typically 10+ listings or cadastre parcels). Larger / municipality scope from <strong style={{ color: INK }}>€999</strong>. Details on the{" "}
+                <Link href="/" style={{ color: ACCENT, fontWeight: 600 }}>homepage</Link>.
+              </div>
+            )}
+          </div>
+        )
+      : (
+          <div style={{ ...TP.secondary, lineHeight: 1.55, marginBottom: 18 }}>
+            Pay-per-use reports from <strong style={{ color: INK }}>€49</strong> — see <Link href="/" style={{ color: ACCENT, fontWeight: 600 }}>liveyonder.co</Link> for packs and enterprise.
+          </div>
+        );
   return(
     <div style={{position:"fixed",inset:0,background:"rgba(17,17,16,0.5)",backdropFilter:"blur(6px)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
       <div style={{background:WHITE,borderRadius:12,padding:"32px 28px",maxWidth:400,width:"90%",boxShadow:"0 24px 80px rgba(0,0,0,0.2)",position:"relative",border:`1px solid ${LIGHTER}`}} onClick={e=>e.stopPropagation()}>
-        <button onClick={onClose} style={{position:"absolute",top:14,right:16,background:"none",border:"none",fontSize:18,color:LIGHT,cursor:"pointer"}}>✕</button>
+        <button onClick={onClose} style={{position:"absolute",top:14,right:16,background:"none",border:"none",...TC.body,color:LIGHT,cursor:"pointer"}}>✕</button>
         <div style={{display:"inline-flex",alignItems:"center",gap:6,background:`${ORANGE}0f`,border:`1px solid ${ORANGE}30`,borderRadius:99,padding:"3px 10px",marginBottom:16}}>
           <span style={{...TP.labelUC,color:ORANGE,letterSpacing:"0.1em"}}>Upgrade required</span>
         </div>
-        <div style={{...TP.pageTitle,fontSize:20,lineHeight:1.25,marginBottom:8}}>Unlock the full<br/>land intelligence suite</div>
+        <div style={{...TP.pageTitle,lineHeight:1.25,marginBottom:8}}>Unlock the full<br/>land intelligence suite</div>
+        {showPayPerUse}
         <div style={{...TP.secondary,lineHeight:1.65,marginBottom:20}}>Upgrade to Pro for unlimited searches, full cadastre reports and expert legal checks.</div>
         <div style={{background:SUBTLE,borderRadius:8,padding:"14px",marginBottom:20,border:`1px solid ${LIGHTER}`}}>
           {["Unlimited AI land searches","Full cadastre + registry data","Expert manual check on any plot","BUPI, PDM, RAN/REN unlocked","Priority support from land advisors"].map(t=>(
@@ -983,6 +1104,7 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
   const plot=PLOT_DETAILS[plotId]||CHAT_PLOTS[0];
   const [descExpanded,setDescExpanded]=useState(false);
   const [contacted,setContacted]=useState(false);
+  const [locationRequested,setLocationRequested]=useState(false);
   const [activeImg,setActiveImg]=useState(0);
   const v=VERDICT[plot.aiVerdict];
 
@@ -1037,7 +1159,7 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
               <div style={{...TP.secondary}}>{plot.tag}</div>
             </div>
             <div style={{textAlign:"right",flexShrink:0}}>
-              <div style={{...TP.pageTitle,fontSize:22}}>{plot.price}</div>
+              <div style={{...TP.pageTitle}}>{plot.price}</div>
               <div style={{...TP.mono,marginTop:4}}>{plot.pricePerSqm}</div>
               <div style={{...TP.label,color:v.color,fontWeight:600,marginTop:6}}>{v.label} · {plot.score}/100</div>
             </div>
@@ -1058,10 +1180,23 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             ))}
           </div>
 
+          <LandDataLayersChecklist plot={plot} recap={savedAiRecap || null} pinPlot={false} upgraded={upgraded} onUpgrade={onUpgrade} compact={false} />
+
+          <div style={{marginBottom:24,padding:"14px 16px",background:`${ORANGE}08`,border:`1px solid ${ORANGE}28`,borderRadius:10}}>
+            <div style={{...TP.sectionTitle,marginBottom:6}}>Pin not exact?</div>
+            <p style={{...TP.secondary,margin:"0 0 12px",lineHeight:1.45}}>We contact the agent first, then run your report — avoids paying twice.</p>
+            {locationRequested ? (
+              <div style={{...TP.body,color:GREEN,fontWeight:600,textAlign:"center",padding:"10px",background:`${GREEN}0d`,borderRadius:8,border:`1px solid ${GREEN}30`}}>✓ Request received — we’ll follow up within one business day (demo)</div>
+            ) : (
+              <button type="button" onClick={()=>setLocationRequested(true)} style={{width:"100%",background:ORANGE,border:"none",borderRadius:99,padding:"10px 16px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
+                Request location — we’ll contact the realtor · from €89 →
+              </button>
+            )}
+          </div>
+
           {savedAiRecap && (
             <div style={{marginBottom:24,paddingBottom:20,borderBottom:`1px solid ${LIGHTER}`}}>
-              <div style={{...TP.sectionTitle,marginBottom:10}}>AI report</div>
-              <p style={{...TP.secondary,margin:"0 0 12px",lineHeight:1.55}}>Structured scan from your last <strong style={{color:INK,fontWeight:600}}>Land agent + analysis</strong> in chat (not from the listing alone). Also on the map sidebar and in your pipeline.</p>
+              <div style={{...TP.sectionTitle,marginBottom:10}}>AI land report · recap</div>
               <PlotRecapCard data={savedAiRecap} />
             </div>
           )}
@@ -1084,7 +1219,7 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0}}>
               {plot.highlights.map((h,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",...TP.body,borderBottom:`1px solid ${LIGHTER}`}}>
-                  <span style={{color:GREEN_BRIGHT,fontSize:10,flexShrink:0}}>●</span>{h}
+                  <span style={{...TP.label,color:GREEN_BRIGHT,flexShrink:0}}>●</span>{h}
                 </div>
               ))}
             </div>
@@ -1096,7 +1231,7 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:8}}>
               {(plot.amenities||[]).map((a,i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10}}>
-                  <span style={{fontSize:16,flexShrink:0,lineHeight:1}}>{a.icon}</span>
+                  <span style={{...TP.body,flexShrink:0,lineHeight:1}}>{a.icon}</span>
                   <div style={{minWidth:0}}>
                     <div style={{...TP.body,fontWeight:600}}>{a.label}</div>
                     <div style={{...TP.secondary,marginTop:2}}>{a.dist}</div>
@@ -1110,7 +1245,7 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
           <div style={{background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",marginBottom:20}}>
             <div style={{...TP.sectionTitle,marginBottom:12}}>Listed by</div>
             <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
-              <div style={{width:40,height:40,borderRadius:8,background:WHITE,display:"flex",alignItems:"center",justifyContent:"center",border:`1px solid ${LIGHTER}`,fontSize:16,flexShrink:0}}>⊞</div>
+              <div style={{width:40,height:40,borderRadius:8,background:WHITE,display:"flex",alignItems:"center",justifyContent:"center",border:`1px solid ${LIGHTER}`,...TP.body,flexShrink:0}}>⊞</div>
               <div>
                 <div style={{...TP.body,fontWeight:600,color:INK}}>{plot.contact.name}</div>
                 <div style={{...TP.secondary,marginTop:2}}>{plot.contact.role}</div>
@@ -1124,8 +1259,8 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
 
           {/* ── PLOT DATA ── */}
           <div style={{marginBottom:20}}>
-            <div style={{...TP.sectionTitle,marginBottom:4}}>Plot data</div>
-            <div style={{...TP.secondary,marginBottom:14}}>Zoning, legal status, cadastre and land use classification.</div>
+            <div style={{...TP.sectionTitle,marginBottom:4}}>More from the listing</div>
+            <div style={{...TP.secondary,marginBottom:14}}>Portal text; verified fields are in the checklist above after a report.</div>
 
             {/* Free section — always visible */}
             <div style={{marginBottom:12}}>
@@ -1140,24 +1275,24 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             {/* Pro sections — headers visible, content greyed */}
             {[
               {
-                title:"Zoning & Classification",
+                title:"General zoning rules",
                 rows:[["PDM zone",plot.technical["PDM zone"]],["Land use","Rustic — Espaço Agrícola"],["Reclassification","No active process"],["Protected areas","None on this parcel"]],
               },
               {
-                title:"PDM — Municipal Master Plan",
+                title:"Municipal PDM",
                 rows:[["Build allowance","0.3 FAR — rural tourism"],["Max footprint","25% of plot area"],["Height limit","6.5m (2 floors)"],["Setbacks","5m from all boundaries"]],
               },
               {
-                title:"BUPI & Cadastre",
+                title:"Plot analysis / land use",
+                rows:[["Land use","Rustic — Espaço Agrícola"],["RAN",plot.technical["RAN"]],["REN",plot.technical["REN"]],["Reclassification","No active process"]],
+              },
+              {
+                title:"Cadastre",
                 rows:[["Cadastre ref",plot.technical["Cadastre ref"]],["BUPI status","Registered — no conflicts"],["Last transaction",plot.technical["Last transaction"]],["Ownership",plot.technical["Ownership"]]],
               },
               {
-                title:"Land Registry",
-                rows:[["IMT estimate",plot.technical["IMT estimate"]],["Mortgage","None on record"],["Liens","None found"],["Title chain","Clean — single owner"]],
-              },
-              {
-                title:"Infrastructure & Access",
-                rows:[["Grid distance",plot.technical["Grid distance"]||"—"],["Access",plot.technical["Access"]||"Paved road"],["Water","Connection 80m"],["Slope",plot.technical["Slope"]]],
+                title:"GIS layers · constraints",
+                rows:[["Fire risk",plot.technical["Fire risk"]||"—"],["Grid distance",plot.technical["Grid distance"]||"—"],["Access",plot.technical["Access"]||"Paved road"],["Slope",plot.technical["Slope"]]],
               },
             ].map(({title,rows})=>(
               <div key={title} style={{marginBottom:10,borderRadius:10,border:`1px solid ${LIGHTER}`,overflow:"hidden"}}>
@@ -1179,7 +1314,7 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             {!upgraded&&(
               <div style={{border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",textAlign:"center",background:SUBTLE,marginTop:4}}>
                 <div style={{...TP.body,fontWeight:600,color:INK,marginBottom:4}}>Unlock full plot data</div>
-                <div style={{...TP.secondary,lineHeight:1.55,marginBottom:12,maxWidth:280,margin:"0 auto 12px"}}>Zoning rules, PDM detail, BUPI, cadastre reference, registry & infrastructure — plus AI deep research</div>
+                <div style={{...TP.secondary,lineHeight:1.5,marginBottom:12,maxWidth:280,margin:"0 auto 12px"}}>PDM, cadastre, RAN/REN, registry — one report.</div>
                 <button type="button" onClick={onUpgrade} style={{background:INK,border:"none",borderRadius:99,padding:"9px 24px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>Upgrade to Pro →</button>
               </div>
             )}
@@ -1217,7 +1352,7 @@ function DetailPanel({plot,onClose,onToggleFav}){
             <div style={{...TP.mono}}>{plot.ref} · {plot.region}</div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
-            <button type="button" onClick={()=>onToggleFav(plot.id)} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:plot.favourite?ORANGE:LIGHTER,lineHeight:1}}>{plot.favourite?"★":"☆"}</button>
+            <button type="button" onClick={()=>onToggleFav(plot.id)} style={{background:"none",border:"none",cursor:"pointer",...TP.body,color:plot.favourite?ORANGE:LIGHTER,lineHeight:1}}>{plot.favourite?"★":"☆"}</button>
             <ScoreRing pct={plot.suitability} size={36}/>
             <button type="button" onClick={onClose} style={{background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:8,width:28,height:28,cursor:"pointer",...TP.body,color:MID,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:500}}>✕</button>
           </div>
@@ -1302,7 +1437,7 @@ function DashboardView({onOpenListing,upgraded,onUpgrade}){
           </div>
           <div style={{position:"relative"}}>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search…" style={{padding:"7px 12px 7px 30px",border:`1px solid ${LIGHTER}`,borderRadius:99,background:BG,...T.body,outline:"none",width:200}}/>
-            <span style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:LIGHT,fontSize:14,pointerEvents:"none"}}>⌕</span>
+            <span style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:LIGHT,...TC.body,pointerEvents:"none"}}>⌕</span>
           </div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -1316,16 +1451,16 @@ function DashboardView({onOpenListing,upgraded,onUpgrade}){
         <div style={{display:"flex",gap:8,flex:1,flexWrap:"wrap"}}>
           {stats.map(s=>(
             <div key={s.label} style={{display:"flex",gap:10,alignItems:"center",paddingRight:16,borderRight:`1px solid ${LIGHTER}`}}>
-              <span style={{fontFamily:FF,fontSize:18,color:INK}}>{s.value}</span>
-              <span style={{fontFamily:FF,fontSize:15,color:LIGHT,textTransform:"uppercase",letterSpacing:"0.07em"}}>{s.label}</span>
+              <span style={{...TP.pageTitle}}>{s.value}</span>
+              <span style={{...TP.labelUC,color:LIGHT}}>{s.label}</span>
             </div>
           ))}
         </div>
         <div style={{display:"flex",gap:4,alignItems:"center"}}>
           {["suitability","price","stage"].map(s=>(
-            <button key={s} onClick={()=>setSortBy(s)} style={{background:sortBy===s?INK:BG2,border:`1px solid ${sortBy===s?INK:LIGHTER}`,borderRadius:99,padding:"4px 10px",fontSize:15,color:sortBy===s?WHITE:MID,cursor:"pointer",fontFamily:FF,textTransform:"uppercase",letterSpacing:"0.04em"}}>{s}</button>
+            <button key={s} onClick={()=>setSortBy(s)} style={{background:sortBy===s?INK:BG2,border:`1px solid ${sortBy===s?INK:LIGHTER}`,borderRadius:99,padding:"4px 10px",...TP.body,color:sortBy===s?WHITE:MID,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em"}}>{s}</button>
           ))}
-          <select value={filterStage} onChange={e=>setFilterStage(e.target.value)} style={{border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"4px 10px",fontSize:15,fontFamily:FF,color:MID,background:BG2,cursor:"pointer",outline:"none",appearance:"none"}}>
+          <select value={filterStage} onChange={e=>setFilterStage(e.target.value)} style={{border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"4px 10px",...TP.body,color:MID,background:BG2,cursor:"pointer",outline:"none",appearance:"none"}}>
             <option>All</option>{STAGES.map(s=><option key={s}>{s}</option>)}
           </select>
         </div>
@@ -1337,26 +1472,26 @@ function DashboardView({onOpenListing,upgraded,onUpgrade}){
             <table style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 4px"}}>
               <thead>
                 <tr>{["","Name","Region","Size","Price","Score","Stage",""].map((h,i)=>(
-                  <th key={i} style={{textAlign:"left",fontFamily:FF,fontSize:15,letterSpacing:"0.07em",textTransform:"uppercase",color:LIGHT,padding:"0 12px 6px",fontWeight:400}}>{h}</th>
+                  <th key={i} style={{textAlign:"left",...TP.labelUC,color:LIGHT,padding:"0 12px 6px",fontWeight:400}}>{h}</th>
                 ))}</tr>
               </thead>
               <tbody>
                 {filtered.map(plot=>(
                   <tr key={plot.id} style={{background:detailPlot?.id===plot.id?`${ORANGE}06`:WHITE,cursor:"pointer"}}>
                     <td style={{padding:"12px",borderRadius:"6px 0 0 6px",width:28}}>
-                      <button onClick={()=>toggleFav(plot.id)} style={{background:"none",border:"none",cursor:"pointer",fontSize:15,color:plot.favourite?ORANGE:LIGHTER}}>{plot.favourite?"★":"☆"}</button>
+                      <button onClick={()=>toggleFav(plot.id)} style={{background:"none",border:"none",cursor:"pointer",...TP.body,color:plot.favourite?ORANGE:LIGHTER}}>{plot.favourite?"★":"☆"}</button>
                     </td>
                     <td style={{padding:"12px",minWidth:160}} onClick={()=>setDetailPlot(plot)}>
-                      <div style={{fontWeight:500,fontSize:15,color:INK,marginBottom:1,fontFamily:FF}}>{plot.name}</div>
-                      <div style={{fontFamily:FFM,fontSize:15,color:LIGHT,letterSpacing:"0.05em"}}>{plot.ref}</div>
+                      <div style={{...TP.body,fontWeight:500,color:INK,marginBottom:1}}>{plot.name}</div>
+                      <div style={{...TP.mono,color:LIGHT,letterSpacing:"0.05em"}}>{plot.ref}</div>
                     </td>
-                    <td style={{padding:"12px",fontSize:15,color:MID,fontFamily:FF}}>{plot.region}</td>
-                    <td style={{padding:"12px",fontFamily:FFM,fontSize:15,color:LIGHT}}>{plot.size}</td>
-                    <td style={{padding:"12px",fontFamily:FF,fontSize:18,color:INK}}>{plot.price}</td>
+                    <td style={{padding:"12px",...TP.body,color:MID}}>{plot.region}</td>
+                    <td style={{padding:"12px",...TP.mono,color:LIGHT}}>{plot.size}</td>
+                    <td style={{padding:"12px",...TP.pageTitle,color:INK}}>{plot.price}</td>
                     <td style={{padding:"12px"}}><ScoreRing pct={plot.suitability} size={36}/></td>
                     <td style={{padding:"12px"}}><StagePill stage={plot.stage}/></td>
                     <td style={{padding:"12px",borderRadius:"0 6px 6px 0"}}>
-                      <button onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)} style={{background:detailPlot?.id===plot.id?BG2:INK,border:`1px solid ${detailPlot?.id===plot.id?LIGHTER:"transparent"}`,borderRadius:99,padding:"4px 12px",fontSize:15,color:detailPlot?.id===plot.id?MID:WHITE,cursor:"pointer",fontFamily:FF}}>{detailPlot?.id===plot.id?"Close":"Open →"}</button>
+                      <button onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)} style={{background:detailPlot?.id===plot.id?BG2:INK,border:`1px solid ${detailPlot?.id===plot.id?LIGHTER:"transparent"}`,borderRadius:99,padding:"4px 12px",...TP.body,color:detailPlot?.id===plot.id?MID:WHITE,cursor:"pointer"}}>{detailPlot?.id===plot.id?"Close":"Open →"}</button>
                     </td>
                   </tr>
                 ))}
@@ -1372,20 +1507,20 @@ function DashboardView({onOpenListing,upgraded,onUpgrade}){
                   <div key={stage} style={{width:200,flexShrink:0}}>
                     <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,padding:"4px 0"}}>
                       <div style={{width:6,height:6,borderRadius:"50%",background:c}}/>
-                      <span style={{fontFamily:FF,fontSize:15,letterSpacing:"0.07em",textTransform:"uppercase",color:c,fontWeight:500}}>{stage}</span>
-                      <span style={{fontFamily:FF,fontSize:15,color:LIGHT,marginLeft:"auto",background:BG2,borderRadius:99,padding:"1px 7px",border:`1px solid ${LIGHTER}`}}>{sp.length}</span>
+                      <span style={{...TP.labelUC,letterSpacing:"0.07em",color:c,fontWeight:500}}>{stage}</span>
+                      <span style={{...TP.body,color:LIGHT,marginLeft:"auto",background:BG2,borderRadius:99,padding:"1px 7px",border:`1px solid ${LIGHTER}`}}>{sp.length}</span>
                     </div>
                     {sp.map(plot=>(
                       <div key={plot.id} onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)} style={{background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:6,padding:"12px",marginBottom:6,cursor:"pointer"}}>
-                        <div style={{fontWeight:500,fontSize:15,color:INK,marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontFamily:FF}}>{plot.name}</div>
-                        <div style={{fontFamily:FF,fontSize:15,color:LIGHT,marginBottom:8}}>{plot.region} · {plot.size}</div>
+                        <div style={{...TP.body,fontWeight:500,color:INK,marginBottom:3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{plot.name}</div>
+                        <div style={{...TP.body,color:LIGHT,marginBottom:8}}>{plot.region} · {plot.size}</div>
                         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                          <span style={{fontFamily:FF,fontSize:15,color:INK}}>{plot.price}</span>
+                          <span style={{...TP.body,color:INK}}>{plot.price}</span>
                           <ScoreRing pct={plot.suitability} size={32}/>
                         </div>
                       </div>
                     ))}
-                    {sp.length===0&&<div style={{border:`1px dashed ${LIGHTER}`,borderRadius:6,padding:"18px",textAlign:"center",color:LIGHT,fontSize:15,fontFamily:FF}}>Empty</div>}
+                    {sp.length===0&&<div style={{border:`1px dashed ${LIGHTER}`,borderRadius:6,padding:"18px",textAlign:"center",color:LIGHT,...TP.body}}>Empty</div>}
                   </div>
                 );
               })}
@@ -1878,7 +2013,7 @@ function Segmented({ options, value, onChange, compact }) {
             border: "none",
             cursor: "pointer",
             fontFamily: FF,
-            fontSize: compact ? 11 : 12,
+            fontSize: compact ? "var(--type-caption)" : "var(--type-app-secondary)",
             fontWeight: value === v ? 600 : 500,
             background: value === v ? INK : "transparent",
             color: value === v ? WHITE : MID,
@@ -1925,124 +2060,153 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
     setPdmOpen(false);
   }
 
+  /** Same box model as native <select> so Area + More filters line up on one toolbar row. */
+  const filterBarControl = {
+    border: `1px solid ${LIGHTER}`,
+    borderRadius: 8,
+    padding: "7px 12px",
+    fontSize: "var(--type-app-secondary)",
+    fontFamily: FF,
+    color: INK,
+    background: BG2,
+    cursor: "pointer",
+    outline: "none",
+    minHeight: 36,
+    boxSizing: "border-box",
+    lineHeight: 1.25,
+  };
+
   return (
     <div style={{ flexShrink: 0, background: WHITE, borderBottom: `1px solid ${LIGHTER}` }}>
-      {/* Row 1 — compact USE + province; PDM lives under More filters */}
-      <div style={{ padding: "8px 12px 6px", display: "flex", flexDirection: "column", gap: 8 }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0, flex: "1 1 280px" }}>
-            <span style={{ ...TC.labelUC, color: LIGHT }}>Use</span>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 5, alignItems: "center" }}>
+      {/* One toolbar row: Use chips (single scroll row) · region select · More filters */}
+      <div
+        style={{
+          padding: "8px 12px",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: 8,
+          rowGap: 8,
+        }}
+      >
+        <span style={{ ...TC.labelUC, color: LIGHT, flexShrink: 0 }}>Use</span>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "nowrap",
+            gap: 5,
+            alignItems: "center",
+            minWidth: 0,
+            flex: "1 1 auto",
+            overflowX: "auto",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "thin",
+            paddingBottom: 2,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => clearUseCategories()}
+            style={{
+              padding: "3px 10px",
+              borderRadius: 99,
+              border: `1px solid ${!(f.useCategories || []).length ? INK : LIGHTER}`,
+              background: !(f.useCategories || []).length ? INK : WHITE,
+              color: !(f.useCategories || []).length ? WHITE : MID,
+              fontSize: "var(--type-caption)",
+              fontFamily: FF,
+              fontWeight: 600,
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            All
+          </button>
+          {USE_CATEGORY_ORDER.map((id) => {
+            const u = USE_CATEGORIES[id];
+            const on = (f.useCategories || []).includes(id);
+            return (
               <button
                 type="button"
-                onClick={() => clearUseCategories()}
+                key={id}
+                onClick={() => toggleUseCategory(id)}
                 style={{
                   padding: "3px 10px",
                   borderRadius: 99,
-                  border: `1px solid ${!(f.useCategories || []).length ? INK : LIGHTER}`,
-                  background: !(f.useCategories || []).length ? INK : WHITE,
-                  color: !(f.useCategories || []).length ? WHITE : MID,
-                  fontSize: 11,
+                  border: `1px solid ${on ? ORANGE : LIGHTER}`,
+                  background: on ? `${ORANGE}12` : WHITE,
+                  color: on ? ORANGE : MID,
+                  fontSize: "var(--type-caption)",
                   fontFamily: FF,
-                  fontWeight: 600,
+                  fontWeight: on ? 600 : 500,
                   cursor: "pointer",
+                  flexShrink: 0,
+                  whiteSpace: "nowrap",
                 }}
               >
-                All
+                <span style={{ marginRight: 4 }} aria-hidden>
+                  {u.icon}
+                </span>
+                {u.label}
               </button>
-              {USE_CATEGORY_ORDER.map((id) => {
-                const u = USE_CATEGORIES[id];
-                const on = (f.useCategories || []).includes(id);
-                return (
-                  <button
-                    type="button"
-                    key={id}
-                    onClick={() => toggleUseCategory(id)}
-                    style={{
-                      padding: "3px 10px",
-                      borderRadius: 99,
-                      border: `1px solid ${on ? ORANGE : LIGHTER}`,
-                      background: on ? `${ORANGE}12` : WHITE,
-                      color: on ? ORANGE : MID,
-                      fontSize: 11,
-                      fontFamily: FF,
-                      fontWeight: on ? 600 : 500,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <span style={{ marginRight: 4 }} aria-hidden>
-                      {u.icon}
-                    </span>
-                    {u.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 140 }}>
-            <span style={{ ...TC.labelUC, color: LIGHT }}>Area (Portugal)</span>
-            <select
-              value={f.province || "all"}
-              onChange={(e) => patch({ province: e.target.value })}
-              style={{
-                border: `1px solid ${LIGHTER}`,
-                borderRadius: 8,
-                padding: "6px 10px",
-                fontSize: 12,
-                fontFamily: FF,
-                color: INK,
-                background: BG2,
-                cursor: "pointer",
-                outline: "none",
-              }}
-            >
-              <option value="all">All areas</option>
-              <option value="norte">Norte</option>
-              <option value="centro">Centro</option>
-              <option value="lisboa">Lisboa & Tagus</option>
-              <option value="alentejo">Alentejo</option>
-              <option value="algarve">Algarve</option>
-              <option value="madeira_acores">Madeira & Azores</option>
-            </select>
-          </div>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, flexShrink: 0 }}>
-            <button
-              type="button"
-              onClick={() => setMoreOpen((v) => !v)}
-              style={{
-                border: `1px solid ${LIGHTER}`,
-                background: moreOpen ? SUBTLE : WHITE,
-                borderRadius: 8,
-                padding: "6px 12px",
-                fontSize: 12,
-                fontFamily: FF,
-                color: MID,
-                cursor: "pointer",
-              }}
-            >
-              {moreOpen ? "▲ Fewer filters" : "▼ More filters"}
-            </button>
-            <button
-              type="button"
-              onClick={clearAll}
-              style={{
-                border: "none",
-                background: "none",
-                padding: "6px 8px",
-                fontSize: 12,
-                fontFamily: FF,
-                color: ACCENT,
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
-            >
-              Clear all
-            </button>
-            <div style={{ ...TC.mono, color: LIGHT, padding: "6px 0", whiteSpace: "nowrap" }}>
-              {resultCount}
-              {totalCount != null && totalCount !== resultCount ? ` / ${totalCount}` : ""}
-            </div>
-          </div>
+            );
+          })}
+        </div>
+
+        <div style={{ width: 1, height: 24, background: LIGHTER, flexShrink: 0, alignSelf: "center", opacity: 0.85 }} aria-hidden />
+
+        <select
+          aria-label="Filter by region"
+          value={f.province || "all"}
+          onChange={(e) => patch({ province: e.target.value })}
+          style={{ ...filterBarControl, minWidth: 148, maxWidth: 220, flexShrink: 0 }}
+        >
+          <option value="all">All areas</option>
+          <option value="norte">Norte</option>
+          <option value="centro">Centro</option>
+          <option value="lisboa">Lisboa & Tagus</option>
+          <option value="alentejo">Alentejo</option>
+          <option value="algarve">Algarve</option>
+          <option value="madeira_acores">Madeira & Azores</option>
+        </select>
+
+        <button
+          type="button"
+          onClick={() => setMoreOpen((v) => !v)}
+          style={{
+            ...filterBarControl,
+            background: moreOpen ? SUBTLE : WHITE,
+            color: MID,
+            fontWeight: 500,
+            flexShrink: 0,
+          }}
+        >
+          {moreOpen ? "▲ Fewer filters" : "▼ More filters"}
+        </button>
+        <button
+          type="button"
+          onClick={clearAll}
+          style={{
+            border: "none",
+            background: "none",
+            padding: "7px 8px",
+            fontSize: "var(--type-app-secondary)",
+            fontFamily: FF,
+            color: ACCENT,
+            cursor: "pointer",
+            fontWeight: 600,
+            flexShrink: 0,
+            minHeight: 36,
+            boxSizing: "border-box",
+            lineHeight: 1.25,
+            alignSelf: "center",
+          }}
+        >
+          Clear all
+        </button>
+        <div style={{ ...TC.mono, color: LIGHT, whiteSpace: "nowrap", flexShrink: 0, padding: "0 4px", alignSelf: "center" }}>
+          {resultCount}
+          {totalCount != null && totalCount !== resultCount ? ` / ${totalCount}` : ""}
         </div>
       </div>
 
@@ -2090,7 +2254,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Min"
                   value={f.priceMin || ""}
                   onChange={(e) => patch({ priceMin: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", fontSize: 12, fontFamily: FFM }}
+                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
                 />
                 <input
                   type="text"
@@ -2098,7 +2262,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Max"
                   value={f.priceMax || ""}
                   onChange={(e) => patch({ priceMax: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", fontSize: 12, fontFamily: FFM }}
+                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
                 />
               </div>
               <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginTop: 10, marginBottom: 6 }}>Size (m²)</span>
@@ -2109,7 +2273,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Min"
                   value={f.areaMin || ""}
                   onChange={(e) => patch({ areaMin: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", fontSize: 12, fontFamily: FFM }}
+                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
                 />
                 <input
                   type="text"
@@ -2117,7 +2281,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Max"
                   value={f.areaMax || ""}
                   onChange={(e) => patch({ areaMax: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", fontSize: 12, fontFamily: FFM }}
+                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
                 />
               </div>
             </div>
@@ -2126,7 +2290,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
               <select
                 value={f.sortBy || "match"}
                 onChange={(e) => patch({ sortBy: e.target.value })}
-                style={{ width: "100%", border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 10px", fontSize: 12, fontFamily: FF, background: BG2 }}
+                style={{ width: "100%", border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 10px", ...TC.body, background: BG2 }}
               >
                 <option value="match">Match (search order)</option>
                 <option value="score-desc">Score · high first</option>
@@ -2153,7 +2317,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
               { key: "score", label: "Score", options: ["Any", "60+", "75+", "85+", "90+"] },
             ].map((blk) => (
               <div key={blk.key} style={{ minWidth: 0 }}>
-                <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 4, fontSize: 10 }}>{blk.label}</div>
+                <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 4 }}>{blk.label}</div>
                 <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
                   {blk.options.map((o) => (
                     <button
@@ -2165,7 +2329,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                         border: `1px solid ${f[blk.key] === o ? INK : LIGHTER}`,
                         borderRadius: 99,
                         padding: "2px 8px",
-                        fontSize: 10,
+                        fontSize: "var(--type-overline)",
                         color: f[blk.key] === o ? WHITE : MID,
                         cursor: "pointer",
                         fontFamily: FF,
@@ -2198,7 +2362,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                 gap: 12,
               }}
             >
-              <span style={{ ...TC.labelUC, color: INK, letterSpacing: "0.05em", fontSize: 10 }}>
+              <span style={{ ...TC.labelUC, color: INK, letterSpacing: "0.05em" }}>
                 Zoning · PDM classes
               </span>
               <span
@@ -2207,7 +2371,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   alignItems: "center",
                   gap: 8,
                   fontFamily: FF,
-                  fontSize: 11,
+                  fontSize: "var(--type-caption)",
                   color: LIGHT,
                   flexShrink: 0,
                 }}
@@ -2217,7 +2381,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                 ) : (
                   <span>Optional</span>
                 )}
-                <span style={{ color: MID, fontSize: 12 }} aria-hidden>
+                <span style={{ color: MID, ...TC.body }} aria-hidden>
                   {pdmOpen ? "▴" : "▾"}
                 </span>
               </span>
@@ -2227,7 +2391,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                 <p
                   style={{
                     fontFamily: FF,
-                    fontSize: 10,
+                    fontSize: "var(--type-overline)",
                     color: LIGHT,
                     margin: "0 0 8px",
                     lineHeight: 1.45,
@@ -2259,7 +2423,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                             color: MID,
                             display: "block",
                             marginBottom: 6,
-                            fontSize: 10,
+                            fontSize: "var(--type-overline)",
                           }}
                         >
                           {title}
@@ -2282,7 +2446,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                                   border: `1px ${sug && !on ? "dashed" : "solid"} ${on ? ORANGE : LIGHTER}`,
                                   background: on ? `${ORANGE}12` : WHITE,
                                   color: on ? ORANGE : MID,
-                                  fontSize: 11,
+                                  fontSize: "var(--type-caption)",
                                   fontFamily: FF,
                                   fontWeight: on ? 600 : 500,
                                   cursor: "pointer",
@@ -2626,7 +2790,7 @@ function BulkResultCard({plots, onOpenListing, onAddToProject, projectPlots, onQ
       <div style={{background:INK,borderRadius:"10px 10px 0 0",padding:"11px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <div style={{width:26,height:26,borderRadius:6,background:ORANGE,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <span style={{fontFamily:FF,fontSize:14,color:WHITE}}>Y</span>
+            <span style={{...TC.body,color:WHITE}}>Y</span>
           </div>
           <div>
             <div style={{...T.label,color:WHITE,fontWeight:500}}>Area analysis — {sorted.length} plots scored</div>
@@ -2647,8 +2811,8 @@ function BulkResultCard({plots, onOpenListing, onAddToProject, projectPlots, onQ
           return(
             <button key={pl.id} onClick={()=>setIdx(i)}
               style={{flex:1,minWidth:52,padding:"8px 4px",background:active?BG:WHITE,border:"none",borderRight:`1px solid ${LIGHTER}`,borderBottom:active?`2px solid ${ORANGE}`:"2px solid transparent",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.1s"}}>
-              <div style={{fontSize:15,fontWeight:700,color:col,fontFamily:FF,lineHeight:1}}>{pl.score}</div>
-              <div style={{...T.label,color:active?INK:LIGHT,fontSize:11}}>{pl.id.replace("PT-","")}</div>
+              <div style={{...TC.title,fontWeight:700,color:col,lineHeight:1}}>{pl.score}</div>
+              <div style={{...TC.label,color:active?INK:LIGHT}}>{pl.id.replace("PT-","")}</div>
             </button>
           );
         })}
@@ -2692,20 +2856,20 @@ function CadastreSidePanel({parcel, onClose, onAddToProject, inProject, onOpenLi
       {/* Header */}
       <div style={{padding:"12px 14px",borderBottom:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
         <div>
-          <div style={{fontFamily:FFM,fontSize:11,color:ORANGE,letterSpacing:"0.07em",marginBottom:2}}>{parcel.ref}</div>
-          <div style={{fontSize:13,fontWeight:500,color:INK,fontFamily:FF}}>{parcel.id}</div>
+          <div style={{...TC.labelUC,color:ORANGE,letterSpacing:"0.07em",marginBottom:2}}>{parcel.ref}</div>
+          <div style={{...TC.body,fontWeight:500,color:INK}}>{parcel.id}</div>
         </div>
-        <button onClick={onClose} style={{width:24,height:24,borderRadius:"50%",border:`1px solid ${LIGHTER}`,background:BG,color:MID,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+        <button onClick={onClose} style={{width:24,height:24,borderRadius:"50%",border:`1px solid ${LIGHTER}`,background:BG,color:MID,cursor:"pointer",...TC.body,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
       </div>
 
       {/* Zone badge + status */}
       <div style={{padding:"10px 14px",borderBottom:`1px solid ${LIGHTER}`,display:"flex",gap:6,flexShrink:0}}>
-        <span style={{fontSize:11,padding:"3px 9px",borderRadius:99,background:zc.fill,color:zc.stroke,border:`1px solid ${zc.stroke}40`,fontFamily:FF,fontWeight:500}}>{parcel.zone}</span>
+        <span style={{...TC.label,padding:"3px 9px",borderRadius:99,background:zc.fill,color:zc.stroke,border:`1px solid ${zc.stroke}40`,fontWeight:500}}>{parcel.zone}</span>
         {parcel.listed
-          ? <span style={{fontSize:11,padding:"3px 9px",borderRadius:99,background:`${ORANGE}15`,color:ORANGE,border:`1px solid ${ORANGE}30`,fontFamily:FF}}>For sale</span>
-          : <span style={{fontSize:11,padding:"3px 9px",borderRadius:99,background:BG2,color:MID,border:`1px solid ${LIGHTER}`,fontFamily:FF}}>Unlisted</span>
+          ? <span style={{...TC.label,padding:"3px 9px",borderRadius:99,background:`${ORANGE}15`,color:ORANGE,border:`1px solid ${ORANGE}30`}}>For sale</span>
+          : <span style={{...TC.label,padding:"3px 9px",borderRadius:99,background:BG2,color:MID,border:`1px solid ${LIGHTER}`}}>Unlisted</span>
         }
-        {v&&<span style={{fontSize:11,padding:"3px 9px",borderRadius:99,background:`${v.color}15`,color:v.color,border:`1px solid ${v.color}25`,fontFamily:FF}}>{v.label}</span>}
+        {v&&<span style={{...TC.label,padding:"3px 9px",borderRadius:99,background:`${v.color}15`,color:v.color,border:`1px solid ${v.color}25`}}>{v.label}</span>}
       </div>
 
       {/* Data */}
@@ -2717,24 +2881,24 @@ function CadastreSidePanel({parcel, onClose, onAddToProject, inProject, onOpenLi
           ["Cadastre ref", parcel.ref],
         ].map(([k,val])=>(
           <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10,paddingBottom:10,borderBottom:`1px solid ${LIGHTER}`}}>
-            <span style={{fontSize:11,color:LIGHT,fontFamily:FF}}>{k}</span>
-            <span style={{fontSize:12,color:INK,fontFamily:FFM,textAlign:"right",maxWidth:140}}>{val}</span>
+            <span style={{...TC.label,color:LIGHT}}>{k}</span>
+            <span style={{...TC.secondary,color:INK,textAlign:"right",maxWidth:140}}>{val}</span>
           </div>
         ))}
 
         {/* Score if listed */}
         {parcel.score&&(
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,paddingBottom:10,borderBottom:`1px solid ${LIGHTER}`}}>
-            <span style={{fontSize:11,color:LIGHT,fontFamily:FF}}>AI score</span>
-            <span style={{fontSize:18,fontWeight:700,color:parcel.score>=85?GREEN:parcel.score>=70?ACCENT:MID,fontFamily:FF}}>{parcel.score}</span>
+            <span style={{...TC.label,color:LIGHT}}>AI score</span>
+            <span style={{...TP.pageTitle,fontWeight:700,color:parcel.score>=85?GREEN:parcel.score>=70?ACCENT:MID}}>{parcel.score}</span>
           </div>
         )}
 
         {/* Unlisted note */}
         {!parcel.listed&&(
           <div style={{background:`${ORANGE}08`,border:`1px solid ${ORANGE}20`,borderRadius:8,padding:"10px 12px",marginBottom:12}}>
-            <div style={{fontSize:12,fontWeight:500,color:INK,fontFamily:FF,marginBottom:3}}>Unlisted parcel</div>
-            <div style={{fontSize:11,color:MID,fontFamily:FF,lineHeight:1.5}}>This parcel has no active listing. You can still run AI analysis and add it to your pipeline.</div>
+            <div style={{...TC.body,fontWeight:500,color:INK,marginBottom:3}}>Unlisted parcel</div>
+            <div style={{...TC.label,color:MID,lineHeight:1.5}}>This parcel has no active listing. You can still run AI analysis and add it to your pipeline.</div>
           </div>
         )}
       </div>
@@ -2742,21 +2906,21 @@ function CadastreSidePanel({parcel, onClose, onAddToProject, inProject, onOpenLi
       {/* Actions */}
       <div style={{padding:"12px 14px",borderTop:`1px solid ${LIGHTER}`,display:"flex",flexDirection:"column",gap:7,flexShrink:0}}>
         <button onClick={()=>onAnalyse(parcel)}
-          style={{width:"100%",background:ORANGE,border:"none",borderRadius:99,padding:"9px 0",fontSize:12,fontWeight:500,color:WHITE,cursor:"pointer",fontFamily:FF}}>
+          style={{width:"100%",background:ORANGE,border:"none",borderRadius:99,padding:"9px 0",...TC.body,fontWeight:500,color:WHITE,cursor:"pointer"}}>
           ⊕ Analyse parcel
         </button>
         {parcel.listed&&parcel.plotId&&(
           <button onClick={()=>onOpenListing(parcel.plotId)}
-            style={{width:"100%",background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"9px 0",fontSize:12,color:INK,cursor:"pointer",fontFamily:FF}}>
+            style={{width:"100%",background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"9px 0",...TC.body,color:INK,cursor:"pointer"}}>
             View listing →
           </button>
         )}
         <button onClick={()=>onAddToProject(parcel.id)}
-          style={{width:"100%",background:inProject?`${GREEN}0f`:BG,border:`1px solid ${inProject?GREEN+"40":LIGHTER}`,borderRadius:99,padding:"9px 0",fontSize:12,color:inProject?GREEN:MID,cursor:"pointer",fontFamily:FF}}>
+          style={{width:"100%",background:inProject?`${GREEN}0f`:BG,border:`1px solid ${inProject?GREEN+"40":LIGHTER}`,borderRadius:99,padding:"9px 0",...TC.body,color:inProject?GREEN:MID,cursor:"pointer"}}>
           {inProject?"✓ In pipeline":"✦ Add to pipeline"}
         </button>
         {!parcel.listed&&(
-          <div style={{fontSize:11,color:LIGHT,fontFamily:FF,textAlign:"center",lineHeight:1.5}}>
+          <div style={{...TC.label,color:LIGHT,textAlign:"center",lineHeight:1.5}}>
             Unlisted · analyse to score and add to pipeline
           </div>
         )}
@@ -2808,7 +2972,7 @@ const LAYER_GROUPS = [
   { group:"Natura 2000",              color:"#2C5F2D", items:[{id:"natura",        label:"Rede Natura 2000 — ZPE + SIC"}]},
 ];
 
-function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadastreMode,cadastreParcels,onParcelClick,selectedParcelId,onLayerToggle,pinMode,setPinMode,pinMarker,onPinPlaced,onDrawAreaSelectionChange,lassoClearSeq,highlightPlotIds}){
+function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadastreMode,cadastreParcels,onParcelClick,selectedParcelId,onLayerToggle,pinMode,setPinMode,pinMarker,onPinPlaced,onDrawAreaSelectionChange,lassoClearSeq,highlightPlotIds,drawModeKick=0}){
   const mapRef    = useRef(null);
   const canvasRef = useRef(null);
   const pathRef   = useRef([]);
@@ -2820,6 +2984,23 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
   const [activeLayers,  setActiveLayers]  = useState({});
   const [drawMode,      setDrawMode]      = useState(false);
   const [selection,     setSelection]     = useState([]);
+  const prevDrawKick = useRef(0);
+  function armDrawModeFromParent(){
+    isDrawing.current = false;
+    pathRef.current = [];
+    const canvas = canvasRef.current;
+    if (canvas) canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    setSelection([]);
+    if (setPinMode) setPinMode(false);
+    setActivePin?.(null);
+    setDrawMode(true);
+  }
+  useEffect(() => {
+    if (!drawModeKick || drawModeKick === prevDrawKick.current) return;
+    prevDrawKick.current = drawModeKick;
+    armDrawModeFromParent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- kick seq only
+  }, [drawModeKick]);
   function toggleLayer(id){
     setActiveLayers(l=>({...l,[id]:!l[id]}));
     if((id==="boundaries"||id==="crus") && onLayerToggle) onLayerToggle(id, !activeLayers[id]);
@@ -3182,7 +3363,7 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
                 minWidth:38,height:38,padding:"0 10px",borderRadius:999,
                 background:tierColor,color:WHITE,
                 display:"flex",alignItems:"center",justifyContent:"center",
-                fontFamily:FF,fontSize:14,fontWeight:700,
+                ...TC.title,fontWeight:700,
                 border:selected||active?"3px solid #fff":"2px solid rgba(255,255,255,0.95)",
                 boxShadow:active||selected?`0 0 0 3px rgba(${glow},0.35), 0 4px 14px rgba(${glow},0.45)`:`0 2px 10px rgba(${glow},0.35)`,
                 lineHeight:1,
@@ -3194,12 +3375,12 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
                   border:"1px solid rgba(0,0,0,0.08)",
                   borderLeft:`4px solid ${tierColor}`,
                   boxShadow:active||selected?"0 3px 14px rgba(0,0,0,0.14)":"0 2px 10px rgba(0,0,0,0.1)",
-                  fontFamily:FF,fontSize:12,fontWeight:600,color:INK,whiteSpace:"nowrap",
+                  ...TC.body,fontWeight:600,color:INK,whiteSpace:"nowrap",
                   outline:active||selected?`2px solid ${tierColor}`:"none",outlineOffset:1,
                   display:"flex",alignItems:"center",gap:6,
                 }}>
                   <span>{p.price}</span>
-                  <span style={{fontSize:10,fontWeight:700,color:tierColor,opacity:0.9}}>{p.score}</span>
+                  <span style={{...TC.label,fontWeight:700,color:tierColor,opacity:0.9}}>{p.score}</span>
                 </div>
                 <div style={{width:0,height:0,marginTop:-1,borderLeft:"6px solid transparent",borderRight:"6px solid transparent",borderTop:"7px solid #fff",filter:"drop-shadow(0 1px 1px rgba(0,0,0,0.06))"}}/>
               </div>
@@ -3222,8 +3403,8 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
       {!showPlots&&(
         <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none"}}>
           <div style={{background:"rgba(248,247,244,0.96)",backdropFilter:"blur(10px)",borderRadius:8,padding:"20px 28px",textAlign:"center",border:`1px solid ${LIGHTER}`}}>
-            <div style={{fontFamily:FF,fontSize:15,color:INK,marginBottom:3}}>Start a search</div>
-            <div style={{fontSize:12,color:MID,fontFamily:FF}}>Plots appear as you chat · or draw an area to select</div>
+            <div style={{...TC.title,color:INK,marginBottom:3}}>Start a search</div>
+            <div style={{...TC.secondary,color:MID}}>Plots appear as you chat · or draw an area to select</div>
           </div>
         </div>
       )}
@@ -3231,16 +3412,16 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
       {/* Draw + pin — top-left */}
         <div data-map-chrome onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} style={{position:"absolute",top:10,left:10,zIndex:40,display:"flex",gap:6}}>
         <button onClick={()=>{ setPinMode&&setPinMode(false); setDrawMode(m=>!m); if(drawMode) clearDraw(); setActivePin(null); }}
-          style={{display:"flex",alignItems:"center",gap:6,background:drawMode?ORANGE:WHITE,border:`1px solid ${drawMode?ORANGE:LIGHTER}`,borderRadius:99,padding:"6px 14px",cursor:"pointer",fontSize:12,fontWeight:500,color:drawMode?WHITE:MID,fontFamily:FF,boxShadow:"0 1px 4px rgba(0,0,0,0.1)",transition:"all 0.15s"}}>
+          style={{display:"flex",alignItems:"center",gap:6,background:drawMode?ORANGE:WHITE,border:`1px solid ${drawMode?ORANGE:LIGHTER}`,borderRadius:99,padding:"6px 14px",cursor:"pointer",...TC.body,fontWeight:500,color:drawMode?WHITE:MID,boxShadow:"0 1px 4px rgba(0,0,0,0.1)",transition:"all 0.15s"}}>
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
             <path d="M2 11 C3 8 5 5 7 3 C9 1 11 1.5 11 3.5 C11 5.5 9 7 7 8 C5 9 3.5 10 3 11.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
             <circle cx="3" cy="11" r="1.5" fill="currentColor"/>
           </svg>
-          {drawMode ? "Drawing…" : "Area research"}
+          {drawMode ? "Drawing…" : "Draw area"}
         </button>
         {setPinMode&&onPinPlaced&&!cadastreMode&&(
         <button onClick={()=>{ if(drawMode){ isDrawing.current=false; clearDraw(); } setDrawMode(false); setPinMode(m=>!m); setActivePin(null); }}
-          style={{display:"flex",alignItems:"center",gap:6,background:pinMode?`${ORANGE}18`:WHITE,border:`1px solid ${pinMode?ORANGE:LIGHTER}`,borderRadius:99,padding:"6px 14px",cursor:"pointer",fontSize:12,fontWeight:500,color:pinMode?ORANGE:MID,fontFamily:FF,boxShadow:"0 1px 4px rgba(0,0,0,0.1)",transition:"all 0.15s"}}>
+          style={{display:"flex",alignItems:"center",gap:6,background:pinMode?`${ORANGE}18`:WHITE,border:`1px solid ${pinMode?ORANGE:LIGHTER}`,borderRadius:99,padding:"6px 14px",cursor:"pointer",...TC.body,fontWeight:500,color:pinMode?ORANGE:MID,boxShadow:"0 1px 4px rgba(0,0,0,0.1)",transition:"all 0.15s"}}>
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden>
             <path d="M8 1.5c-2.1 0-3.8 1.7-3.8 3.8 0 2.8 3.8 6.9 3.8 6.9s3.8-4.1 3.8-6.9c0-2.1-1.7-3.8-3.8-3.8z" stroke="currentColor" strokeWidth="1.3"/>
             <circle cx="8" cy="5.2" r="1.2" fill="currentColor"/>
@@ -3249,12 +3430,12 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
         </button>
         )}
         {drawMode&&selection.length===0&&(
-          <div style={{background:"rgba(17,17,16,0.75)",backdropFilter:"blur(8px)",borderRadius:99,padding:"6px 12px",fontSize:12,color:"rgba(255,255,255,0.85)",fontFamily:FF,display:"flex",alignItems:"center",pointerEvents:"none"}}>
+          <div style={{background:"rgba(17,17,16,0.75)",backdropFilter:"blur(8px)",borderRadius:99,padding:"6px 12px",...TC.body,color:"rgba(255,255,255,0.85)",display:"flex",alignItems:"center",pointerEvents:"none"}}>
             Draw an area on the map (click and drag)
           </div>
         )}
         {drawMode&&selection.length>0&&(
-          <button onClick={clearDraw} style={{background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"6px 12px",cursor:"pointer",fontSize:12,color:MID,fontFamily:FF,boxShadow:"0 1px 4px rgba(0,0,0,0.1)"}}>✕ Clear</button>
+          <button onClick={clearDraw} style={{background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"6px 12px",cursor:"pointer",...TC.body,color:MID,boxShadow:"0 1px 4px rgba(0,0,0,0.1)"}}>✕ Clear</button>
         )}
       </div>
 
@@ -3262,17 +3443,17 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
       <div data-map-chrome onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} style={{position:"absolute",top:10,right:10,display:"flex",flexDirection:"column",gap:4,zIndex:50}}>
         {/* Layers toggle */}
         <button onClick={()=>setLayersOpen(o=>!o)}
-          style={{display:"flex",alignItems:"center",gap:5,background:layersOpen?INK:WHITE,border:`1px solid ${layersOpen?INK:LIGHTER}`,borderRadius:6,padding:"5px 10px",cursor:"pointer",fontSize:11,fontWeight:500,color:layersOpen?WHITE:INK,fontFamily:FF,boxShadow:"0 1px 4px rgba(0,0,0,0.1)",whiteSpace:"nowrap",transition:"all 0.15s"}}>
+          style={{display:"flex",alignItems:"center",gap:5,background:layersOpen?INK:WHITE,border:`1px solid ${layersOpen?INK:LIGHTER}`,borderRadius:6,padding:"5px 10px",cursor:"pointer",...TC.label,fontWeight:500,color:layersOpen?WHITE:INK,boxShadow:"0 1px 4px rgba(0,0,0,0.1)",whiteSpace:"nowrap",transition:"all 0.15s"}}>
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
             <rect x="1" y="1" width="11" height="3" rx="1" fill="currentColor" opacity="0.9"/>
             <rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity="0.6"/>
             <rect x="1" y="9" width="11" height="3" rx="1" fill="currentColor" opacity="0.3"/>
           </svg>
-          Layers{activeCount>0&&<span style={{background:ORANGE,color:WHITE,borderRadius:99,padding:"0 5px",fontSize:10,fontWeight:700,marginLeft:2}}>{activeCount}</span>}
+          Layers{activeCount>0&&<span style={{background:ORANGE,color:WHITE,borderRadius:99,padding:"0 5px",...TC.label,fontWeight:700,marginLeft:2}}>{activeCount}</span>}
         </button>
         {/* Zoom */}
         {["＋","－"].map((c,i)=>(
-          <button key={i} style={{width:28,height:28,background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:6,cursor:"pointer",fontSize:15,color:MID,boxShadow:"0 1px 4px rgba(0,0,0,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FF}}>{c}</button>
+          <button key={i} style={{width:28,height:28,background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:6,cursor:"pointer",...TC.body,color:MID,boxShadow:"0 1px 4px rgba(0,0,0,0.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>{c}</button>
         ))}
       </div>
 
@@ -3281,16 +3462,16 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
         <div data-map-chrome onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} style={{position:"absolute",top:10,right:90,zIndex:50,width:260,background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:10,boxShadow:"0 8px 32px rgba(0,0,0,0.15)",overflow:"hidden",animation:"fadeIn 0.15s ease both"}}>
           {/* Panel header */}
           <div style={{padding:"11px 14px",borderBottom:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div style={{fontFamily:FF,fontSize:12,fontWeight:600,color:INK}}>Map layers</div>
+            <div style={{...TC.title,fontWeight:600,color:INK}}>Map layers</div>
             <div style={{display:"flex",gap:8,alignItems:"center"}}>
               {activeCount>0&&(
                 <button onClick={()=>setActiveLayers({})}
-                  style={{fontSize:11,color:ORANGE,background:"none",border:"none",cursor:"pointer",fontFamily:FF,padding:0}}>
+                  style={{...TC.label,color:ORANGE,background:"none",border:"none",cursor:"pointer",padding:0}}>
                   Clear all
                 </button>
               )}
               <button onClick={()=>setLayersOpen(false)}
-                style={{fontSize:14,color:LIGHT,background:"none",border:"none",cursor:"pointer",lineHeight:1,padding:0}}>✕</button>
+                style={{...TC.body,color:LIGHT,background:"none",border:"none",cursor:"pointer",lineHeight:1,padding:0}}>✕</button>
             </div>
           </div>
 
@@ -3301,7 +3482,7 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
                 {/* Group header */}
                 <div style={{padding:"7px 14px 3px",display:"flex",alignItems:"center",gap:6}}>
                   <div style={{width:8,height:8,borderRadius:2,background:color,flexShrink:0}}/>
-                  <span style={{fontSize:10,fontWeight:600,color:MID,fontFamily:FF,textTransform:"uppercase",letterSpacing:"0.07em"}}>{group}</span>
+                  <span style={{...TC.labelUC,fontWeight:600,color:MID,textTransform:"uppercase",letterSpacing:"0.07em"}}>{group}</span>
                 </div>
                 {/* Layer items */}
                 {items.map(({id,label})=>{
@@ -3311,7 +3492,7 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
                       style={{padding:"6px 14px 6px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer",background:on?`${color}08`:WHITE,transition:"background 0.1s"}}
                       onMouseEnter={e=>e.currentTarget.style.background=on?`${color}12`:BG}
                       onMouseLeave={e=>e.currentTarget.style.background=on?`${color}08`:WHITE}>
-                      <span style={{fontSize:12,color:on?INK:MID,fontFamily:FF,lineHeight:1.3}}>{label}</span>
+                      <span style={{...TC.body,color:on?INK:MID,lineHeight:1.3}}>{label}</span>
                       {/* Toggle pill */}
                       <div style={{width:28,height:16,borderRadius:99,background:on?color:LIGHTER,flexShrink:0,position:"relative",transition:"background 0.2s",marginLeft:8}}>
                         <div style={{width:12,height:12,borderRadius:"50%",background:WHITE,position:"absolute",top:2,left:on?14:2,transition:"left 0.2s",boxShadow:"0 1px 3px rgba(0,0,0,0.2)"}}/>
@@ -3325,7 +3506,7 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
 
           {/* Footer note */}
           <div style={{padding:"8px 14px",borderTop:`1px solid ${LIGHTER}`,background:BG}}>
-            <div style={{fontSize:11,color:LIGHT,fontFamily:FF}}>Live data layers available on full map</div>
+            <div style={{...TC.label,color:LIGHT}}>Live data layers available on full map</div>
           </div>
         </div>
       )}
@@ -3333,10 +3514,10 @@ function PortugalMap({plots,activePin,setActivePin,showPlots,onOpenListing,cadas
       {/* Match score legend — hidden in cadastre mode */}
       {!cadastreMode&&(
         <div data-map-chrome onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} style={{position:"absolute",bottom:10,left:12,background:"rgba(247,245,242,0.92)",backdropFilter:"blur(8px)",borderRadius:6,padding:"7px 10px",border:`1px solid ${LIGHTER}`,zIndex:selection.length>0?0:10}}>
-          <div style={{fontFamily:FF,fontSize:11,color:LIGHT,letterSpacing:"0.07em",textTransform:"uppercase",marginBottom:5}}>Match score</div>
+          <div style={{...TC.labelUC,color:LIGHT,letterSpacing:"0.07em",textTransform:"uppercase",marginBottom:5}}>Match score</div>
           {[[GREEN,"85+"],[ORANGE,"70–84"],[MID,"< 70"]].map(([c,r])=>(
             <div key={r} style={{display:"flex",alignItems:"center",gap:5,marginBottom:3}}>
-              <div style={{width:7,height:7,borderRadius:"50%",background:c}}/><span style={{fontSize:12,color:INK,fontFamily:FF}}>{r}</span>
+              <div style={{width:7,height:7,borderRadius:"50%",background:c}}/><span style={{...TC.body,color:INK}}>{r}</span>
             </div>
           ))}
         </div>
@@ -3363,8 +3544,8 @@ function MapListView({showPlots,plots,headlineCount,contextLabel,onOpenListing,o
       <div style={{padding:"9px 12px 8px",borderBottom:`1px solid ${LIGHTER}`,background:WHITE,flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10}}>
         {showPlots?(
           <div style={{minWidth:0}}>
-            <div style={{fontFamily:FF,fontSize:22,fontWeight:700,color:INK,letterSpacing:"-0.02em",lineHeight:1.15}}>{statNumber.toLocaleString()}</div>
-            <div style={{fontFamily:FF,fontSize:12,color:MID,marginTop:3,lineHeight:1.35}}>{contextLabel}</div>
+            <div style={{...TP.pageTitle,fontWeight:700,color:INK,lineHeight:1.15}}>{statNumber.toLocaleString()}</div>
+            <div style={{...TC.secondary,color:MID,marginTop:3,lineHeight:1.35}}>{contextLabel}</div>
             {sampleHint&&(
               <div style={{...TC.label,marginTop:4,color:LIGHT}}>Map & list · {plots.length} sample plots</div>
             )}
@@ -3376,11 +3557,11 @@ function MapListView({showPlots,plots,headlineCount,contextLabel,onOpenListing,o
             )}
           </div>
         ):(
-          <span style={{fontFamily:FF,fontSize:15,color:LIGHT,letterSpacing:"0.06em",textTransform:"uppercase"}}>No results yet</span>
+          <span style={{...TC.labelUC,color:LIGHT,letterSpacing:"0.06em",textTransform:"uppercase"}}>No results yet</span>
         )}
         {showPlots&&plots.length>0&&(
           <button onClick={saveAll}
-            style={{background:"none",border:"none",padding:"2px 0 0",cursor:"pointer",fontSize:15,color:savedAll?GREEN:MID,fontFamily:FF,display:"flex",alignItems:"center",gap:4,transition:"color 0.1s",flexShrink:0,whiteSpace:"nowrap"}}
+            style={{background:"none",border:"none",padding:"2px 0 0",cursor:"pointer",...TC.body,color:savedAll?GREEN:MID,display:"flex",alignItems:"center",gap:4,transition:"color 0.1s",flexShrink:0,whiteSpace:"nowrap"}}
             onMouseEnter={e=>{if(!savedAll)e.currentTarget.style.color=ORANGE;}}
             onMouseLeave={e=>{if(!savedAll)e.currentTarget.style.color=MID;}}>
             {savedAll?"✓ All saved":"Save all →"}
@@ -3390,7 +3571,7 @@ function MapListView({showPlots,plots,headlineCount,contextLabel,onOpenListing,o
       <div style={{flex:1,overflowY:"auto",padding:"8px 12px"}}>
         {!showPlots?(
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:8,color:LIGHT,height:"100%"}}>
-            <div style={{fontFamily:FF,fontSize:15,color:MID}}>Start a search</div>
+            <div style={{...TC.body,color:MID}}>Start a search</div>
           </div>
         ):(
           <div className="ye-map-list-grid">
@@ -3410,25 +3591,25 @@ function MapListView({showPlots,plots,headlineCount,contextLabel,onOpenListing,o
                   <div title={p.name} style={{position:"relative",width:"100%",aspectRatio:"5 / 3",maxHeight:108,minHeight:72,background:BG2}}>
                     <PlotImage plot={p} type={p.type} index={i%3} style={{width:"100%",height:"100%",display:"block",pointerEvents:"none"}}/>
                     <div style={{position:"absolute",inset:0,background:"linear-gradient(180deg,transparent 55%,rgba(17,17,16,0.12) 100%)",pointerEvents:"none"}}/>
-                    <div style={{position:"absolute",top:7,left:7,background:WHITE,borderRadius:6,padding:"2px 7px",fontFamily:FF,fontSize:12,fontWeight:600,color:INK,boxShadow:"0 1px 3px rgba(0,0,0,0.08)",border:"1px solid rgba(0,0,0,0.06)",pointerEvents:"none"}}>{p.price}</div>
-                    <div style={{position:"absolute",bottom:6,right:6,background:"rgba(17,17,16,0.72)",borderRadius:4,padding:"1px 6px",fontFamily:FF,fontSize:11,color:WHITE,fontWeight:600,pointerEvents:"none"}}>{p.score}</div>
+                    <div style={{position:"absolute",top:7,left:7,background:WHITE,borderRadius:6,padding:"2px 7px",...TC.body,fontWeight:600,color:INK,boxShadow:"0 1px 3px rgba(0,0,0,0.08)",border:"1px solid rgba(0,0,0,0.06)",pointerEvents:"none"}}>{p.price}</div>
+                    <div style={{position:"absolute",bottom:6,right:6,background:"rgba(17,17,16,0.72)",borderRadius:4,padding:"1px 6px",...TC.label,color:WHITE,fontWeight:600,pointerEvents:"none"}}>{p.score}</div>
                   </div>
                   <div style={{padding:"8px 10px 10px",display:"flex",flexDirection:"column",gap:5,flex:1,minWidth:0}}>
-                    <div style={{fontFamily:FFM,fontSize:10,color:ACCENT,letterSpacing:"0.04em"}}>{p.id}</div>
-                    <div style={{fontWeight:600,fontSize:13,color:INK,fontFamily:FF,lineHeight:1.3,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
-                    <div style={{fontSize:12,color:MID,fontFamily:FF,lineHeight:1.35}}>{p.region}</div>
-                    <div style={{fontSize:11,color:LIGHT,fontFamily:FF}}>{p.area} · {p.type}</div>
-                    <span style={{alignSelf:"flex-start",color:v.color,borderRadius:99,padding:"1px 6px",fontSize:10,fontWeight:600,border:`1px solid ${v.color}28`,fontFamily:FF,background:WHITE,marginTop:1}}>{v.label}</span>
+                    <div style={{...TC.labelUC,color:ACCENT,letterSpacing:"0.04em"}}>{p.id}</div>
+                    <div style={{...TC.title,fontWeight:600,color:INK,lineHeight:1.3,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
+                    <div style={{...TC.secondary,color:MID,lineHeight:1.35}}>{p.region}</div>
+                    <div style={{...TC.label,color:LIGHT}}>{p.area} · {p.type}</div>
+                    <span style={{alignSelf:"flex-start",color:v.color,borderRadius:99,padding:"1px 6px",...TC.label,fontWeight:600,border:`1px solid ${v.color}28`,background:WHITE,marginTop:1}}>{v.label}</span>
                     <div style={{marginTop:6,display:"flex",flexDirection:"column",gap:6}} onClick={e=>e.stopPropagation()}>
                       <button
                         type="button"
                         onClick={e=>{e.stopPropagation();onOpenListing(lid);}}
-                        style={{width:"100%",background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"6px 0",fontSize:12,color:INK,cursor:"pointer",fontFamily:FF}}
+                        style={{width:"100%",background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"6px 0",...TC.body,color:INK,cursor:"pointer"}}
                       >View listing →</button>
                       <button
                         type="button"
                         onClick={e=>{e.stopPropagation();onAddToProject(lid);}}
-                        style={{width:"100%",background:inProj?`${GREEN}0f`:BG2,border:`1px solid ${inProj?`${GREEN}30`:LIGHTER}`,borderRadius:99,padding:"6px 0",fontSize:12,color:inProj?GREEN:MID,cursor:"pointer",fontFamily:FF}}
+                        style={{width:"100%",background:inProj?`${GREEN}0f`:BG2,border:`1px solid ${inProj?`${GREEN}30`:LIGHTER}`,borderRadius:99,padding:"6px 0",...TC.body,color:inProj?GREEN:MID,cursor:"pointer"}}
                       >{inProj?"Saved":"Save"}</button>
                     </div>
                   </div>
@@ -3462,8 +3643,8 @@ function ParcelMapListView({showPlots,parcels,headlineCount,contextLabel,selecte
       <div style={{padding:"9px 12px 8px",borderBottom:`1px solid ${LIGHTER}`,background:WHITE,flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10}}>
         {showPlots?(
           <div style={{minWidth:0}}>
-            <div style={{fontFamily:FF,fontSize:22,fontWeight:700,color:INK,letterSpacing:"-0.02em",lineHeight:1.15}}>{listStat.toLocaleString()}</div>
-            <div style={{fontFamily:FF,fontSize:12,color:MID,marginTop:3,lineHeight:1.35}}>{contextLabel}</div>
+            <div style={{...TP.pageTitle,fontWeight:700,color:INK,letterSpacing:"-0.02em",lineHeight:1.15}}>{listStat.toLocaleString()}</div>
+            <div style={{...TC.secondary,color:MID,marginTop:3,lineHeight:1.35}}>{contextLabel}</div>
             {filter!=="all"&&(
               <div style={{...TC.label,marginTop:3,color:LIGHT}}>{filtered.length} on screen · {parcels.length} in map result</div>
             )}
@@ -3472,11 +3653,11 @@ function ParcelMapListView({showPlots,parcels,headlineCount,contextLabel,selecte
             )}
           </div>
         ):(
-          <span style={{fontFamily:FF,fontSize:15,color:LIGHT,letterSpacing:"0.06em",textTransform:"uppercase"}}>No results yet</span>
+          <span style={{...TC.labelUC,color:LIGHT,letterSpacing:"0.06em",textTransform:"uppercase"}}>No results yet</span>
         )}
         {showPlots&&parcels.length>0&&(
           <button onClick={saveAll}
-            style={{background:"none",border:"none",padding:"2px 0 0",cursor:"pointer",fontSize:15,color:savedAll?GREEN:MID,fontFamily:FF,flexShrink:0,whiteSpace:"nowrap"}}
+            style={{background:"none",border:"none",padding:"2px 0 0",cursor:"pointer",...TC.body,color:savedAll?GREEN:MID,flexShrink:0,whiteSpace:"nowrap"}}
             onMouseEnter={e=>{if(!savedAll)e.currentTarget.style.color=ORANGE;}}
             onMouseLeave={e=>{if(!savedAll)e.currentTarget.style.color=MID;}}>
             {savedAll?"✓ All saved":"Save all →"}
@@ -3487,17 +3668,17 @@ function ParcelMapListView({showPlots,parcels,headlineCount,contextLabel,selecte
         <div style={{padding:"6px 12px",borderBottom:`1px solid ${LIGHTER}`,display:"flex",gap:5,flexShrink:0,overflowX:"auto",background:WHITE}}>
           {filters.map(([k,lbl])=>(
             <button key={k} type="button" onClick={()=>setFilter(k)}
-              style={{padding:"4px 11px",borderRadius:99,border:`1px solid ${filter===k?ORANGE:LIGHTER}`,background:filter===k?`${ORANGE}10`:WHITE,color:filter===k?ORANGE:MID,fontSize:11,fontFamily:FF,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>
+              style={{padding:"4px 11px",borderRadius:99,border:`1px solid ${filter===k?ORANGE:LIGHTER}`,background:filter===k?`${ORANGE}10`:WHITE,color:filter===k?ORANGE:MID,...TC.label,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>
               {lbl}
             </button>
           ))}
-          <span style={{fontSize:11,color:LIGHT,fontFamily:FF,alignSelf:"center",marginLeft:4,flexShrink:0}}>{filtered.length} shown</span>
+          <span style={{...TC.label,color:LIGHT,alignSelf:"center",marginLeft:4,flexShrink:0}}>{filtered.length} shown</span>
         </div>
       )}
       <div style={{flex:1,overflowY:"auto",padding:"8px 12px"}}>
         {!showPlots?(
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:8,color:LIGHT,height:"100%"}}>
-            <div style={{fontFamily:FF,fontSize:15,color:MID}}>Start a search or switch to Parcels above</div>
+            <div style={{...TC.body,color:MID}}>Start a search or switch to Parcels above</div>
           </div>
         ):(
           <div className="ye-map-list-grid">
@@ -3531,26 +3712,26 @@ function ParcelMapListView({showPlots,parcels,headlineCount,contextLabel,selecte
                 >
                   <div style={{padding:"8px 10px 10px",display:"flex",flexDirection:"column",gap:5,flex:1,minWidth:0}}>
                     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:6}}>
-                      <span style={{fontFamily:FFM,fontSize:11,color:ORANGE}}>{p.ref}</span>
-                      <span style={{fontSize:10,fontWeight:600,fontFamily:FF,color:p.listed?ORANGE:MID,border:`1px solid ${p.listed?`${ORANGE}35`:LIGHTER}`,borderRadius:99,padding:"1px 6px",background:p.listed?`${ORANGE}0c`:BG2}}>
+                      <span style={{...TC.labelUC,color:ORANGE}}>{p.ref}</span>
+                      <span style={{...TC.label,fontWeight:600,color:p.listed?ORANGE:MID,border:`1px solid ${p.listed?`${ORANGE}35`:LIGHTER}`,borderRadius:99,padding:"1px 6px",background:p.listed?`${ORANGE}0c`:BG2}}>
                         {p.listed?"For sale":"Unlisted"}
                       </span>
                     </div>
-                    <div style={{fontSize:11,color:LIGHT,fontFamily:FFM}}>{p.id}</div>
-                    <div style={{fontWeight:600,fontSize:13,color:INK,fontFamily:FF,lineHeight:1.3}}>{p.pdm}</div>
-                    <div style={{fontSize:12,color:MID,fontFamily:FF}}>{p.zone} · {p.area}</div>
+                    <div style={{...TC.label,color:LIGHT}}>{p.id}</div>
+                    <div style={{...TC.title,fontWeight:600,color:INK,lineHeight:1.3}}>{p.pdm}</div>
+                    <div style={{...TC.secondary,color:MID}}>{p.zone} · {p.area}</div>
                     {v&&(
-                      <span style={{alignSelf:"flex-start",color:v.color,borderRadius:99,padding:"1px 6px",fontSize:10,fontWeight:600,border:`1px solid ${v.color}28`,fontFamily:FF,background:WHITE}}>{v.label}</span>
+                      <span style={{alignSelf:"flex-start",color:v.color,borderRadius:99,padding:"1px 6px",...TC.label,fontWeight:600,border:`1px solid ${v.color}28`,background:WHITE}}>{v.label}</span>
                     )}
                     <div style={{marginTop:6}} onClick={e=>e.stopPropagation()}>
                       {p.plotId&&(
                         <button type="button" onClick={(e)=>{e.stopPropagation();onOpenListing(p.plotId);}}
-                          style={{width:"100%",marginBottom:6,background:INK,border:"none",borderRadius:99,padding:"6px 0",fontSize:12,fontWeight:500,color:WHITE,cursor:"pointer",fontFamily:FF}}>
+                          style={{width:"100%",marginBottom:6,background:INK,border:"none",borderRadius:99,padding:"6px 0",...TC.body,fontWeight:500,color:WHITE,cursor:"pointer"}}>
                           View listing →
                         </button>
                       )}
                       <button type="button" onClick={(e)=>{e.stopPropagation();onAddToProject(p.id);}}
-                        style={{width:"100%",background:inProj?`${GREEN}0f`:BG2,border:`1px solid ${inProj?`${GREEN}30`:LIGHTER}`,borderRadius:99,padding:"6px 0",fontSize:12,color:inProj?GREEN:MID,cursor:"pointer",fontFamily:FF}}>
+                        style={{width:"100%",background:inProj?`${GREEN}0f`:BG2,border:`1px solid ${inProj?`${GREEN}30`:LIGHTER}`,borderRadius:99,padding:"6px 0",...TC.body,color:inProj?GREEN:MID,cursor:"pointer"}}>
                         {inProj?"Saved":"Save parcel"}
                       </button>
                     </div>
@@ -3570,21 +3751,23 @@ function AddToProjectToast({plotId,onConfirm,onClose}){
   return(
     <div style={{position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",background:INK,borderRadius:8,padding:"12px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.2)",zIndex:500,display:"flex",alignItems:"center",gap:12,animation:"slideUp 0.2s ease both",minWidth:300,border:`1px solid rgba(255,255,255,0.06)`}}>
       <div style={{flex:1}}>
-        <div style={{fontWeight:500,fontSize:15,color:WHITE,marginBottom:1,fontFamily:FF}}>{plotId} saved to My Plots</div>
-        <div style={{fontSize:15,color:"rgba(255,255,255,0.4)",fontFamily:FF}}>Open dashboard to manage</div>
+        <div style={{...TC.body,fontWeight:500,color:WHITE,marginBottom:1}}>{plotId} saved to My Plots</div>
+        <div style={{...TC.secondary,color:"rgba(255,255,255,0.6)"}}>Open dashboard to manage</div>
       </div>
-      <button onClick={onConfirm} style={{background:ORANGE,border:"none",borderRadius:99,padding:"6px 14px",fontSize:15,fontWeight:500,color:WHITE,cursor:"pointer",flexShrink:0,fontFamily:FF}}>View →</button>
-      <button onClick={onClose} style={{background:"none",border:"none",color:"rgba(255,255,255,0.3)",cursor:"pointer",fontSize:15}}>✕</button>
+      <button onClick={onConfirm} style={{background:ORANGE,border:"none",borderRadius:99,padding:"6px 14px",...TC.body,fontWeight:500,color:WHITE,cursor:"pointer",flexShrink:0}}>View →</button>
+      <button onClick={onClose} style={{background:"none",border:"none",color:"rgba(255,255,255,0.3)",cursor:"pointer",...TC.body}}>✕</button>
     </div>
   );
 }
 
 // ── INPUT BAR ─────────────────────────────────────────────────────────────────
-function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAnalysis,onOpenListing,onAddToProject,onClearPlot,onBrowseCadastre,projectPlots,upgraded,onUpgrade,plotType,plotVerdict}){
+function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAnalysis,onRunAreaScan,hasDrawArea,drawAreaCount,drawAreaLens,onOpenListing,onAddToProject,onClearPlot,onBrowseCadastre,projectPlots,upgraded,requestUpgrade,onRequestListingLocation,isChatEmpty=false}){
   const [plusOpen,setPlusOpen]=useState(false);
   const [tooltip,setTooltip]=useState(false);
   const plusRef=useRef(null);
   const fileInputRef=useRef(null);
+  /** visual = prefab render / sketch / moodboard for style match; doc = generic PDF */
+  const [attachIntent,setAttachIntent]=useState(null);
 
   useEffect(()=>{
     function handle(e){if(plusRef.current&&!plusRef.current.contains(e.target))setPlusOpen(false);}
@@ -3596,18 +3779,65 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
   const saved = activeListingId ? projectPlots?.includes(activeListingId) : false;
   const pinContext = activePlot && isExplorerPinPlot(activePlot);
 
-  // + menu — plot-centric when selected (map toolbar owns area research & drop pin)
-  const menuItems = activePlot ? [
-    {icon:"⊕", label: pinContext ? "Deep analysis (needs listing ref)" : "Land agent + analysis", highlight:true, upgrade:!upgraded&&!pinContext, fn:()=>{setPlusOpen(false); pinContext ? runAnalysis() : upgraded ? runAnalysis() : onUpgrade();}},
-    {icon:"✦", label: pinContext ? "Add pin to pipeline…" : "Add plot to pipeline…", active:saved, fn:()=>{setPlusOpen(false);onAddToProject(activeListingId);}},
-    {divider:true},
-    {icon:"⎗", label:"Attach file or photo (demo)", fn:()=>{setPlusOpen(false);fileInputRef.current?.click();}},
-    {icon:"↗", label:"Open listing page", disabled:pinContext||!onOpenListing, fn:()=>{setPlusOpen(false);if(activeListingId)onOpenListing(activeListingId);}},
-    {divider:true},
-    {icon:"⊟", label:"Browse parcels (cadastre)", fn:()=>{setPlusOpen(false);onBrowseCadastre&&onBrowseCadastre();}},
-  ] : [
-    {icon:"⊟", label:"Browse parcels (cadastre)", fn:()=>{setPlusOpen(false);onBrowseCadastre&&onBrowseCadastre();}},
-  ];
+  function openFilePicker(intent){
+    setAttachIntent(intent);
+    setPlusOpen(false);
+    setTimeout(()=>fileInputRef.current?.click(),0);
+  }
+
+  // + menu — one land report action, area scan, reference image, pipeline, cadastre
+  const areaLensWord=drawAreaLens==="parcels"?"parcels (cadastre)":"listings";
+  const menuItems=[];
+  if(activePlot){
+    menuItems.push({
+      icon: "⊕",
+      label: pinContext ? "Report (needs listing)" : "Run report",
+      sub: pinContext ? "Pick a plot on the map" : "Same as sidebar · recap saves on plot",
+      highlight: true,
+      upgrade: !upgraded && !pinContext,
+      fn: () => {
+        setPlusOpen(false);
+        pinContext ? runAnalysis() : upgraded ? runAnalysis() : requestUpgrade?.("plot");
+      },
+    });
+  }else if(hasDrawArea){
+    menuItems.push({
+      icon: "▤",
+      label: "Scan selected area",
+      sub: `${drawAreaCount ?? 0} ${areaLensWord} · multi-plot packs from €499`,
+      highlight: true,
+      upgrade: !upgraded,
+      fn: () => {
+        setPlusOpen(false);
+        upgraded ? onRunAreaScan?.() : requestUpgrade?.("area");
+      },
+    });
+  }
+  menuItems.push({
+    icon: "▣",
+    label: "Add reference image",
+    sub: "Prefab render, sketch, or inspiration — style match (demo)",
+    fn: () => openFilePicker("visual"),
+  });
+  if(activePlot){
+    menuItems.push(
+      { icon: "✦", label: pinContext ? "Save pin to pipeline" : "Save to pipeline", active: saved, fn: () => { setPlusOpen(false); onAddToProject(activeListingId); } },
+      { icon: "↗", label: "Open listing page", disabled: pinContext || !onOpenListing, fn: () => { setPlusOpen(false); if (activeListingId) onOpenListing(activeListingId); } },
+    );
+  }
+  if(hasDrawArea&&activePlot){
+    menuItems.push({
+      icon: "▤",
+      label: "Scan selected area",
+      sub: `${drawAreaCount ?? 0} ${areaLensWord} on map`,
+      upgrade: !upgraded,
+      fn: () => {
+        setPlusOpen(false);
+        upgraded ? onRunAreaScan?.() : requestUpgrade?.("area");
+      },
+    });
+  }
+  menuItems.push({ divider: true }, { icon: "⊟", label: "Browse cadastre (map)", fn: () => { setPlusOpen(false); onBrowseCadastre && onBrowseCadastre(); } });
 
   return(
     <div style={{padding:"0 10px 12px",borderTop:`1px solid ${LIGHTER}`,flexShrink:0,background:WHITE}}>
@@ -3618,11 +3848,21 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
           <div style={{width:5,height:5,borderRadius:"50%",background:pinContext?ORANGE:GREEN_BRIGHT,flexShrink:0}}/>
           <span style={{...T.label,color:MID}}>
             {pinContext ? (
-              <>Map pin — <span style={{color:INK,fontWeight:500}}>ask anything</span> about this spot, or use <span style={{color:INK,fontWeight:500}}>+</span> for analysis / save</>
+              <>Map pin — <span style={{color:INK,fontWeight:500}}>ask in chat</span> or use <span style={{color:INK,fontWeight:500}}>+</span> for save / image / cadastre</>
             ) : (
-              <><span style={{color:INK,fontWeight:500}}>{activeListingId}</span> · On this plot — ask anything or use <span style={{color:INK,fontWeight:500}}>+</span> for actions</>
+              <><span style={{color:INK,fontWeight:500}}>{activeListingId}</span> · Chat or <span style={{color:INK,fontWeight:500}}>+</span></>
             )}
           </span>
+        </div>
+      )}
+
+      {activePlot && !pinContext && onRequestListingLocation && (
+        <div style={{ padding: "0 2px 8px", animation: "fadeIn 0.2s ease both", ...T.label, color: MID, lineHeight: 1.4 }}>
+          Approximate pin?{" "}
+          <button type="button" onClick={onRequestListingLocation} style={{ border: "none", background: "none", padding: 0, color: ACCENT, fontWeight: 600, cursor: "pointer", fontFamily: FF, fontSize: "inherit", textDecoration: "underline", textUnderlineOffset: 2 }}>
+            Log location request
+          </button>
+          {" "}or sidebar · €89
         </div>
       )}
 
@@ -3631,8 +3871,8 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
         {/* Text input — top */}
         <input value={input} onChange={e=>setInput(e.target.value)}
           onKeyDown={e=>e.key==="Enter"&&input.trim()&&send(input.trim())}
-          placeholder={activePlot?`Ask anything about ${activeListingId}…`:activeICP?"Ask or pick a suggestion above…":"e.g. rustic land near Porto, 25km from coast…"}
-          style={{background:"none",border:"none",outline:"none",...T.body,width:"100%",marginBottom:10}}/>
+          placeholder={activePlot?`Ask anything about ${activeListingId}…`:activeICP?"Ask or pick a suggestion above…":isChatEmpty?"Ask anything…":"e.g. rustic land near Porto, 25km from coast…"}
+          style={{background:"none",border:"none",outline:"none",...TC.body,width:"100%",marginBottom:10}}/>
 
         {/* Bottom row */}
         <div style={{display:"flex",alignItems:"center",gap:5}}>
@@ -3652,36 +3892,44 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
                 }}>
                 <PlotImage plot={activePlot} type={activePlot.type} index={0}/>
                 <button onClick={e=>{e.stopPropagation();onClearPlot();}}
-                  style={{position:"absolute",inset:0,width:"100%",height:"100%",background:"rgba(17,17,16,0.55)",border:"none",cursor:"pointer",color:WHITE,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",opacity:0,transition:"opacity 0.15s"}}>✕</button>
+                  style={{position:"absolute",inset:0,width:"100%",height:"100%",background:"rgba(17,17,16,0.55)",border:"none",cursor:"pointer",color:WHITE,...TC.body,display:"flex",alignItems:"center",justifyContent:"center",opacity:0,transition:"opacity 0.15s"}}>✕</button>
               </div>
               {tooltip&&(
                 <div style={{position:"absolute",bottom:36,left:0,background:INK,borderRadius:8,padding:"10px 12px",boxShadow:"0 6px 20px rgba(0,0,0,0.18)",zIndex:300,minWidth:180,animation:"fadeIn 0.12s ease both",pointerEvents:"none"}}>
-                  <div style={{fontSize:15,color:"rgba(255,255,255,0.4)",fontFamily:FFM,letterSpacing:"0.05em",marginBottom:3}}>{activeListingId}</div>
-                  <div style={{fontSize:15,fontWeight:500,color:WHITE,fontFamily:FF,marginBottom:1}}>{activePlot.region}</div>
-                  <div style={{fontSize:15,color:"rgba(255,255,255,0.5)",fontFamily:FF}}>{activePlot.area} · {activePlot.price}</div>
-                  <div style={{fontSize:15,color:"rgba(255,255,255,0.28)",fontFamily:FF,marginTop:4}}>Hover to dismiss</div>
+                  <div style={{...TC.secondary,color:"rgba(255,255,255,0.4)",marginBottom:3}}>{activeListingId}</div>
+                  <div style={{...TC.body,fontWeight:500,color:WHITE,marginBottom:1}}>{activePlot.region}</div>
+                  <div style={{...TC.secondary,color:"rgba(255,255,255,0.5)"}}>{activePlot.area} · {activePlot.price}</div>
+                  <div style={{...TC.label,color:"rgba(255,255,255,0.28)",marginTop:4}}>Hover to dismiss</div>
                 </div>
               )}
             </div>
           )}
 
           {/* + button */}
-          <input ref={fileInputRef} type="file" accept="image/*,.pdf" style={{display:"none"}}
+          <input ref={fileInputRef} type="file" accept="image/*,.pdf,application/pdf" style={{display:"none"}}
             onChange={e=>{
               const f=e.target.files?.[0];
               e.target.value="";
               if(!f)return;
-              setInput(s=>`${s}${s&&!s.endsWith(" ")?" ":""}[Attached: ${f.name}]`);
+              const intent=attachIntent;
+              setAttachIntent(null);
+              let tag;
+              if(intent==="visual"&&f.type.startsWith("image/")){
+                tag=`[Image — prefab render, hand-drawn home sketch, or inspiration photo: find visually similar listings & suggest relevant reading / blogs (demo) · ${f.name}]`;
+              }else if(f.type.startsWith("image/")){
+                tag=`[Image attachment (demo) · ${f.name}]`;
+              }else{
+                tag=`[PDF / document (demo) · ${f.name}]`;
+              }
+              setInput(s=>`${s}${s&&!s.endsWith(" ")?" ":""}${tag}`);
             }}/>
-          {activePlot&&(
-            <button type="button" title="Attach file or photo (demo)"
-              onClick={()=>fileInputRef.current?.click()}
-              style={{width:28,height:28,borderRadius:6,background:"transparent",border:`1px solid ${LIGHTER}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,color:MID}}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-                <path d="M8.5 2.5 4 7a2 2 0 102.8 2.8L12 4.5a3 3 0 00-4.2-4.2L3.2 5a4 4 0 105.6 5.6l5.7-5.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
-            </button>
-          )}
+          <button type="button" title="Add image or PDF — sketch, prefab render, plan (demo)"
+            onClick={()=>openFilePicker("visual")}
+            style={{width:28,height:28,borderRadius:6,background:"transparent",border:`1px solid ${LIGHTER}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,color:MID}}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path d="M8.5 2.5 4 7a2 2 0 102.8 2.8L12 4.5a3 3 0 00-4.2-4.2L3.2 5a4 4 0 105.6 5.6l5.7-5.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            </svg>
+          </button>
 
           <div style={{position:"relative",flexShrink:0}} ref={plusRef}>
             <button onClick={()=>setPlusOpen(v=>!v)}
@@ -3703,7 +3951,13 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
                 )}
                 {!activePlot&&(
                   <div style={{padding:"6px 10px 8px",borderBottom:`1px solid ${LIGHTER}`,marginBottom:4}}>
-                    <div style={{...TC.secondary,lineHeight:1.45,color:MID}}>Area research & drop pin: use the toolbar on the map.</div>
+                    <div style={{...TC.secondary,lineHeight:1.45,color:MID}}>
+                      {hasDrawArea ? (
+                        <><strong style={{color:INK}}>Area</strong> · <strong style={{color:INK}}>+</strong> to scan</>
+                      ) : (
+                        <>Drop pin & draw area: map toolbar. <strong style={{color:INK}}>+</strong> for cadastre & reference images.</>
+                      )}
+                    </div>
                   </div>
                 )}
                 {menuItems.map((item,i)=>
@@ -3716,11 +3970,12 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
                           color:INK}}
                         onMouseEnter={e=>{if(!item.disabled)e.currentTarget.style.background=BG;}}
                         onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                        <span style={{fontSize:13,width:18,textAlign:"center",flexShrink:0,color:item.highlight?ACCENT:MID}}>{item.icon}</span>
+                        <span style={{...TC.body,width:18,textAlign:"center",flexShrink:0,color:item.highlight?ACCENT:MID}}>{item.icon}</span>
                         <div style={{flex:1,minWidth:0}}>
                           <div style={{...TC.body,fontWeight:item.highlight?600:400,color:INK}}>{item.label}</div>
+                          {item.sub&&<div style={{...TC.label,color:MID,marginTop:2,lineHeight:1.35}}>{item.sub}</div>}
                         </div>
-                        {item.upgrade&&<span style={{fontSize:11,color:ACCENT,background:"rgba(37,99,235,0.08)",border:`1px solid rgba(37,99,235,0.22)`,borderRadius:99,padding:"2px 8px",flexShrink:0,fontFamily:FF,fontWeight:600}}>Upgrade</span>}
+                        {item.upgrade&&<span style={{...TC.label,color:ACCENT,background:"rgba(37,99,235,0.08)",border:`1px solid rgba(37,99,235,0.22)`,borderRadius:99,padding:"2px 8px",flexShrink:0,fontWeight:600}}>Upgrade</span>}
                       </div>
                     )
                 )}
@@ -3772,7 +4027,7 @@ function VerdictMessage({p, projectPlots, onOpenListing, handleAddToProject, hid
               <div style={{...TC.label,color:MID,marginTop:2}}>{p.region}</div>
             </div>
             <div style={{textAlign:"right",flexShrink:0}}>
-              <div style={{fontFamily:FF,fontSize:22,fontWeight:700,color:v.color,lineHeight:1}}>{p.score}<span style={{fontSize:11,fontWeight:600,color:MID,marginLeft:2}}>/100</span></div>
+              <div style={{...TP.pageTitle,fontWeight:700,color:v.color,lineHeight:1}}>{p.score}<span style={{...TC.label,fontWeight:600,color:MID,marginLeft:2}}>/100</span></div>
               <div style={{...TC.label,color:v.color,fontWeight:600,marginTop:3}}>{v.label}</div>
             </div>
           </div>
@@ -3810,7 +4065,7 @@ function VerdictMessage({p, projectPlots, onOpenListing, handleAddToProject, hid
                   cursor:"default",
                 }}
               >
-                <span style={{fontSize:10,color:s.ok?GREEN_BRIGHT:"#b45309",flexShrink:0,width:12}}>{s.ok?"✓":"!"}</span>
+                <span style={{...TC.label,color:s.ok?GREEN_BRIGHT:"#b45309",flexShrink:0,width:12}}>{s.ok?"✓":"!"}</span>
                 <span style={{...TC.body,fontWeight:500,color:INK,lineHeight:1.35}}>{s.label}</span>
               </div>
             ))}
@@ -3875,7 +4130,7 @@ function VerdictMessage({p, projectPlots, onOpenListing, handleAddToProject, hid
     </div>
   );
 }
-function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsToPipeline,projectPlots,onGoToDashboard,onOpenListing,listingSavedScans,persistListingScan,pipelineFocusCanonicalId,onPipelineFocusConsumed,pipelineOnMapTick=0}){
+function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipeline,projectPlots,onGoToDashboard,onOpenListing,listingSavedScans,persistListingScan,pipelineFocusCanonicalId,onPipelineFocusConsumed,pipelineOnMapTick=0}){
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(()=>{
     const onResize = ()=>setIsMobile(window.innerWidth<768);
@@ -3954,10 +4209,13 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
   const [isTyping,setIsTyping]=useState(false);
   const [searchCount,setSearchCount]=useState(0);
   const [mapMode,setMapMode]=useState("map");
+  const [mapDrawKick,setMapDrawKick]=useState(0);
   const [cadastreMode,setCadastreMode]=useState(false);
   const [selectedParcel,setSelectedParcel]=useState(null);
   const [toast,setToast]=useState(null);
   const [activeICP,setActiveICP]=useState(null);
+  /** Empty chat: show Location vs Use paths only (reduces button clutter). */
+  const [chatEmptyBranch,setChatEmptyBranch]=useState<"location"|"use">("use");
   const messagesEndRef=useRef(null);
   const ignoreNextEmptyDrawSelectionRef=useRef(false);
   const FREE_LIMIT=10;
@@ -4050,13 +4308,17 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
 
   function runDrawAreaBulkAnalysis(){
     if(!drawAreaEntities.length||!drawAreaSelection)return;
+    if(!upgraded){
+      requestUpgrade?.("area");
+      return;
+    }
     const bulkPlots=drawAreaSelection.lens==="parcels"?drawAreaEntities.map(parcelToBulkPlot):drawAreaEntities;
     const parcelsSubset=drawAreaSelection.lens==="parcels"?drawAreaEntities:null;
     const listingsSubset=drawAreaSelection.lens==="listings"?drawAreaEntities:null;
     setDrawBulkRunning(true);
     const regions=[...new Set(bulkPlots.map((p)=>p.region||p.pdm))];
     const thinkId="drawbulk-"+Date.now();
-    setMessages((m)=>[...m,{role:"user",text:`Analyse area: ${bulkPlots.length} ${drawAreaSelection.lens==="parcels"?"parcels (cadastre)":"listings"} across ${regions.join(", ")}`}]);
+    setMessages((m)=>[...m,{role:"user",text:`Area scan: ${bulkPlots.length} ${drawAreaSelection.lens==="parcels"?"parcels (cadastre)":"listings"} across ${regions.join(", ")}`}]);
     setMessages((m)=>[...m,{role:"assistant",isThinking:true,id:thinkId,steps:[]}]);
     const steps=["Fetching cadastre records…","Cross-referencing PDM zones…","Checking fire risk & slope data…","Running AI scoring model…","Ranking by match score…"];
     steps.forEach((s,i)=>{ setTimeout(()=>{ setMessages((m)=>m.map((msg)=>msg.id===thinkId?{...msg,steps:[...msg.steps,s]}:msg)); },(i+1)*550); });
@@ -4172,10 +4434,10 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
     const recap=recapArg||listingRecapFromStore(listingSavedScans,cid);
     const label=plot.name||cid;
     if(mode==="deep"){
-      const summary=recap?`**${recap.verdictLabel}** — ${recap.verdictSummary}`:`No saved land-agent scan yet — run **Land agent + analysis** in chat first, then the recap appears on the sidebar and here. You can still ask anything from listing details.`;
+      const summary=recap?`**${recap.verdictLabel}** — ${recap.verdictSummary}`:`No saved report yet — run a **land report** from chat first, then the recap appears on the sidebar and here. You can still ask anything from listing details.`;
       setMessages(m=>[...m,
-        {role:"user",text:`Deep dive / full analysis — ${label} (${cid})`},
-        {role:"assistant",text:`${summary}\n\nThis thread is for follow-ups. A **saved recap** only exists after a completed land-agent run in chat — it stays on the listing sidebar and in your browser.`},
+        {role:"user",text:`Continue — saved report · ${label} (${cid})`},
+        {role:"assistant",text:`${summary}\n\nThis thread is for follow-ups. A **saved recap** only exists after you complete a **land report** run in chat — it stays on the listing sidebar and in your browser.`},
       ]);
     }else{
       setMessages(m=>[...m,
@@ -4186,22 +4448,22 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
     setMobileTab("chat");
   }
 
-  function runAnalysis(){
+  function runLandIntelligence(){
     if(!activePlot) return;
     if(isExplorerPinPlot(activePlot)){
       setMobileTab("chat");
       setMessages((m)=>[
         ...m,
-        { role: "user", text: `Full land analysis — map pin (${activePlot.ref || activePlot.id})` },
+        { role: "user", text: `Land report — map pin (${activePlot.ref || activePlot.id})` },
         {
           role: "assistant",
-          text: "A **dropped pin** is not a listing yet. Search in chat or tap a plot on the map, then run the land agent for zoning, RAN/REN, and a saved report.",
+          text: "A **dropped pin** is not a listing yet. Search in chat or tap a **paid listing** on the map, then run a **land report** for zoning, RAN/REN, and a saved recap.",
         },
       ]);
       return;
     }
     if(!upgraded){
-      setShowUpgradeModal(true);
+      requestUpgrade?.("plot");
       return;
     }
     const plot = activePlot;
@@ -4211,22 +4473,23 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
     setMobileTab("chat");
 
     const label=resolvedPlot.name||listingId;
-    setMessages(m=>[...m, {role:"user", text:`Full land analysis — ${label} (${listingId})`}]);
+    setMessages(m=>[...m, {role:"user", text:`Land report — ${label} (${listingId})`}]);
 
     const landAgentSteps=[
-      "Land agent: fetching listing & cadastre pointers…",
-      "Land agent: querying geographic layers (PDM, RAN, REN)…",
-      "Land agent: interpreting municipality & location context…",
-      "Land agent: attaching plot — handing off to regulatory analyst…",
+      "Analyzing location…",
+      "Fetching listing and source pointers…",
+      "Querying geographic layers…",
+      "Interpreting layer data…",
+      "Identifying municipality and planning context…",
     ];
     const regulatorySteps=[
-      "Checking zoning classification and PDM articles…",
-      "Cross-referencing cadastre registry (BUPI)…",
-      "Evaluating RAN and REN restrictions…",
-      "Reviewing IMT transaction history…",
-      "Checking encumbrances and title chain…",
-      "Assessing buildability and permitted uses…",
-      "Consolidating match score & risk flags…",
+      "Querying General Zoning Rules…",
+      "Querying Municipal PDM rules…",
+      "Querying Plot analysis and land-use layers (RAN/REN)…",
+      "Querying Cadastre and parcel identifiers…",
+      "Checking registry and title constraints…",
+      "Assessing buildability, access, and environmental factors…",
+      "Generating AI land report…",
     ];
 
     const agentThinkId=Date.now();
@@ -4241,9 +4504,11 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
     });
 
     const afterLand=(landAgentSteps.length+1)*landMs+400;
+    const bridgeText="**Land agent** — source layers are loaded. Running full AI analysis across zoning, PDM, plot/land-use, and cadastre.";
+    const regStepMs=480;
     setTimeout(()=>{
       setMessages(m=>m.map(msg=>msg.id===agentThinkId
-        ? {role:"assistant", text:`**Land agent** — location, layers, and listing context are ready. Starting the full regulatory pass below.`}
+        ? {role:"assistant", text:bridgeText}
         : msg));
       setMessages(m=>[...m, {role:"assistant", isThinking:true, id:deepThinkId, steps:[]}]);
 
@@ -4261,9 +4526,75 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
               },0);
             },650);
           }
-        },(j+1)*480);
+        },(j+1)*regStepMs);
       });
     },afterLand);
+  }
+
+  function runAnalysis(){
+    runLandIntelligence();
+  }
+
+  function requestListingLocationService(){
+    if(!activePlot||isExplorerPinPlot(activePlot)) return;
+    const cid=plotListingOpenId(activePlot);
+    const label=activePlot.name||cid;
+    setMessages((m)=>[...m,
+      {role:"user",text:`Request official location check — ${label} (${cid})`},
+      {role:"assistant",text:`We’ll ask the realtor to confirm the **official location** (exact pin / cadastre reference) for **${label}**.\n\nThen you can run the same **full report** with confidence.\n\nIf you already know the exact location, you can skip this and run the report now.\n\n**€89** — includes outreach (demo: no email sent).`},
+    ]);
+    setMobileTab("chat");
+  }
+
+  function resetToGeneralStart(){
+    clearPlotFocus();
+    setActiveICP(null);
+    setChatEmptyBranch("use");
+    setMessages([]);
+  }
+
+  function beginAddressFlow(){
+    setActiveICP(null);
+    setMessages([{role:"assistant",text:`**Address → cadastre**\n\nPaste a Portuguese **street address** in the box below. We resolve it to official parcels; you confirm the match, then order a **single-plot report for €49** (you’re responsible for confirming the parcel).`}]);
+    setMobileTab("chat");
+  }
+
+  function beginCadastreRefFlow(){
+    setActiveICP(null);
+    setMessages([{role:"assistant",text:`**Cadastre reference**\n\nPaste a **PUN / article / parcel ID** (e.g. from BUPI or tax documents). We’ll look it up, show the parcel on the map, and you can order the **€49** report once confirmed.`}]);
+    setMobileTab("chat");
+  }
+
+  function beginDrawAreaListings(){
+    switchToListingsLens();
+    setMapPinMode(false);
+    setMapMode("map");
+    setMobileTab("map");
+    setMapDrawKick((k)=>k+1);
+    setToast({text:"Use **Draw area** on the map — draw a polygon. Multi-plot packs from **€499**.",mode:"note"});
+    setTimeout(()=>setToast(null),5200);
+  }
+
+  function beginDrawAreaParcels(){
+    switchToParcelsLens();
+    setMapPinMode(false);
+    setMapMode("map");
+    setMobileTab("map");
+    setMapDrawKick((k)=>k+1);
+    setToast({text:"**Parcels** lens — draw to select cadastre shapes. Single parcel **€49**; bulk exports **€499+**.",mode:"note"});
+    setTimeout(()=>setToast(null),5200);
+  }
+
+  function beginBrowseListings(){
+    switchToListingsLens();
+    setShowPlots(true);
+    setMapMode("map");
+    setMobileTab("map");
+    setMessages([{role:"assistant",text:`**Listings** on the map — tap for details. Hidden pin? **Request location** (€89) before a report if you want to avoid rework. **Run report** from **+** or the sidebar (Pro — see upgrade for pricing).`}]);
+  }
+
+  function startPrefabIntent(){
+    send("Prefab or modular self-build land in Portugal");
   }
 
   function send(text){
@@ -4316,6 +4647,17 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
     "Calculating match score…",
   ];
 
+  function analysisStepColor(step){
+    const s = String(step || "").toLowerCase();
+    if (s.includes("zoning")) return "#2563eb";
+    if (s.includes("pdm")) return "#0f766e";
+    if (s.includes("land-use") || s.includes("land use") || s.includes("ran") || s.includes("ren") || s.includes("plot analysis")) return "#16a34a";
+    if (s.includes("cadastre")) return "#14b8a6";
+    if (s.includes("registry") || s.includes("title")) return "#64748b";
+    if (s.includes("report")) return "#d97706";
+    return ACCENT;
+  }
+
   return(
     <div style={{flex:1,minHeight:0,display:"flex",overflow:"hidden"}}>
       <PipelineSaveModal
@@ -4329,11 +4671,11 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
       />
       {toast&&(
         <div style={{position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",background:INK,borderRadius:8,padding:"11px 18px",boxShadow:"0 8px 32px rgba(0,0,0,0.18)",zIndex:500,display:"flex",alignItems:"center",gap:12,minWidth:280}}>
-          <span style={{flex:1,fontSize:15,color:WHITE,fontFamily:FF}}>{typeof toast==="object"&&toast?.text?toast.text:`${toast} saved`}</span>
+          <span style={{flex:1,...TC.body,color:WHITE}}>{typeof toast==="object"&&toast?.text?toast.text:`${toast} saved`}</span>
           {typeof toast==="object"&&toast?.mode!=="note"&&(
-            <button type="button" onClick={()=>{setToast(null);onGoToDashboard();}} style={{background:ORANGE,border:"none",borderRadius:99,padding:"5px 12px",fontSize:15,fontWeight:500,color:WHITE,cursor:"pointer",fontFamily:FF}}>View →</button>
+            <button type="button" onClick={()=>{setToast(null);onGoToDashboard();}} style={{background:ORANGE,border:"none",borderRadius:99,padding:"5px 12px",...TC.body,fontWeight:500,color:WHITE,cursor:"pointer"}}>View →</button>
           )}
-          <button type="button" onClick={()=>setToast(null)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",cursor:"pointer",fontSize:15}}>✕</button>
+          <button type="button" onClick={()=>setToast(null)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",cursor:"pointer",...TC.body}}>✕</button>
         </div>
       )}
 
@@ -4342,7 +4684,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
 
         {/* Header */}
         <div style={{height:44,padding:"0 14px",borderBottom:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",gap:8,flexShrink:0,background:CHROME}}>
-          <div style={{flex:1,...TC.body,fontWeight:600,fontSize:14}}>Yonder</div>
+          <div style={{ flex: 1, ...TC.title }}>Yonder</div>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
             <div style={{width:5,height:5,borderRadius:"50%",background:ONLINE}}/>
             <span style={{...TC.label,color:MID}}>Online</span>
@@ -4352,56 +4694,74 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
         {/* Messages */}
         <div className="ye-scroll" style={{flex:1,overflowY:"auto",padding:"14px 12px",background:SUBTLE}}>
 
-          {/* Empty state */}
+          {/* Empty state — ask first, then optional Location/Use branches */}
           {messages.length===0&&(
             <div style={{animation:"fadeIn 0.3s ease both"}}>
-              <div style={{...TC.title,marginBottom:4}}>
-                Find land in <span style={{color:ACCENT}}>Portugal</span>
-              </div>
-              <p style={{...TC.secondary,margin:0,marginBottom:14,lineHeight:1.5,color:MID}}>
-                Search freely below — or tap a focus for suggested prompts <span style={{opacity:0.75}}>(hover for more)</span>.
+              <div style={{...TC.labelUC,marginBottom:6}}>Find land, understand anything about it.</div>
+              <p style={{...TC.secondary,margin:"0 0 8px",lineHeight:1.5,color:MID}}>
+                Type a prompt, or start from an example:
               </p>
+              <div style={{marginBottom:12}} />
 
-              <div style={{...TC.labelUC,marginBottom:8}}>Starting points</div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:8}}>
-                {CHAT_ICPS.map((icp2,idx)=>(
-                  <button
-                    key={icp2.id}
-                    type="button"
-                    title={`${icp2.label}: ${icp2.desc}`}
-                    aria-label={`${icp2.label}. ${icp2.desc}`}
-                    onClick={()=>startICP(icp2.id)}
-                    style={{
-                      margin:0,
-                      padding:"10px 6px 8px",
-                      borderRadius:12,
-                      border:`1px solid ${LIGHTER}`,
-                      background:WHITE,
-                      cursor:"pointer",
-                      display:"flex",
-                      flexDirection:"column",
-                      alignItems:"center",
-                      gap:5,
-                      transition:"background 0.12s, border-color 0.12s, box-shadow 0.12s",
-                      animation:`fadeIn 0.25s ease ${idx*0.04}s both`,
-                      WebkitTapHighlightColor:"transparent",
-                    }}
-                    onMouseEnter={e=>{
-                      e.currentTarget.style.background="var(--explorer-active-row)";
-                      e.currentTarget.style.borderColor="rgba(37,99,235,0.25)";
-                      e.currentTarget.style.boxShadow="0 1px 3px rgba(37,99,235,0.08)";
-                    }}
-                    onMouseLeave={e=>{
-                      e.currentTarget.style.background=WHITE;
-                      e.currentTarget.style.borderColor=LIGHTER;
-                      e.currentTarget.style.boxShadow="none";
-                    }}
-                  >
-                    <span style={{fontSize:17,lineHeight:1,color:MID}} aria-hidden>{icp2.icon}</span>
-                    <span style={{fontFamily:FF,fontSize:10,fontWeight:600,color:INK,letterSpacing:"0.02em",textAlign:"center",lineHeight:1.2}}>{icp2.short}</span>
-                  </button>
-                ))}
+              <div style={{display:"flex",gap:8,marginBottom:10}}>
+                <button
+                  type="button"
+                  onClick={()=>setChatEmptyBranch("location")}
+                  style={{
+                    flex:1,
+                    padding:"8px 12px",
+                    borderRadius:10,
+                    border:`1px solid ${chatEmptyBranch==="location"?ACCENT:LIGHTER}`,
+                    background:chatEmptyBranch==="location"?"var(--explorer-active-row)":WHITE,
+                    ...TC.body,
+                    fontWeight:600,
+                    color:INK,
+                    cursor:"pointer",
+                  }}
+                >Location</button>
+                <button
+                  type="button"
+                  onClick={()=>setChatEmptyBranch("use")}
+                  style={{
+                    flex:1,
+                    padding:"8px 12px",
+                    borderRadius:10,
+                    border:`1px solid ${chatEmptyBranch==="use"?ACCENT:LIGHTER}`,
+                    background:chatEmptyBranch==="use"?"var(--explorer-active-row)":WHITE,
+                    ...TC.body,
+                    fontWeight:600,
+                    color:INK,
+                    cursor:"pointer",
+                  }}
+                >Use</button>
               </div>
+
+              {chatEmptyBranch==="location"&&(
+                <>
+                  <div style={{background:"var(--explorer-active-row)",border:`1px solid rgba(37,99,235,0.18)`,borderRadius:10,padding:"10px 12px",marginBottom:8}}>
+                    <div style={{...TC.body,color:INK,lineHeight:1.55}}>
+                      Search by location: type an address, cadastre ref, drop a pin, or draw an area on listings/cadastre. Open a plot and run AI analysis.
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {chatEmptyBranch==="use"&&(
+                <>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                    {CHAT_ICPS.map((icp2)=>(
+                      <button
+                        key={icp2.id}
+                        type="button"
+                        title={`${icp2.label}: ${icp2.desc}`}
+                        onClick={()=>startICP(icp2.id)}
+                        style={{padding:"6px 11px",borderRadius:99,border:`1px solid ${LIGHTER}`,background:WHITE,color:MID,...TC.body,fontWeight:500,cursor:"pointer"}}
+                      >{icp2.short}</button>
+                    ))}
+                    <button type="button" onClick={startPrefabIntent} title="Prefab & modular self-build land" style={{padding:"6px 11px",borderRadius:99,border:`1px solid ${LIGHTER}`,background:WHITE,color:MID,...TC.body,fontWeight:500,cursor:"pointer"}}>Prefab</button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -4412,12 +4772,12 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
               {msg.role==="assistant"&&msg.isThinking&&(
                 <div style={{display:"flex",gap:8,width:"100%",alignItems:"flex-start"}}>
                   <div style={{width:20,height:20,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
-                    <span style={{fontFamily:FF,fontSize:11,fontWeight:600,color:WHITE,lineHeight:1}}>Y</span>
+                    <span style={{...TC.label,fontWeight:600,color:WHITE,lineHeight:1}}>Y</span>
                   </div>
                   <div style={{flex:1,background:CHAT_THINK_BG,border:`1px solid ${CHAT_THINK_BD}`,borderRadius:14,padding:"10px 12px",display:"flex",flexDirection:"column",gap:6}}>
                     {msg.steps.map((step,si)=>(
                       <div key={si} style={{display:"flex",alignItems:"center",gap:8,animation:"fadeIn 0.2s ease both"}}>
-                        <div style={{width:4,height:4,borderRadius:"50%",background:ACCENT,flexShrink:0,animation:`pulse 1.2s ease ${si*0.1}s infinite`}}/>
+                        <div style={{width:4,height:4,borderRadius:"50%",background:analysisStepColor(step),flexShrink:0,animation:`pulse 1.2s ease ${si*0.1}s infinite`}}/>
                         <span style={{...TC.body,color:MID}}>{step}</span>
                       </div>
                     ))}
@@ -4440,7 +4800,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
               {msg.role==="assistant"&&!msg.isThinking&&!msg.isVerdict&&!msg.isBulkResult&&(
                 <div style={{display:"flex",gap:8,width:"100%",alignItems:"flex-start"}}>
                   <div style={{width:20,height:20,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
-                    <span style={{fontFamily:FF,fontSize:11,fontWeight:600,color:WHITE,lineHeight:1}}>Y</span>
+                    <span style={{...TC.label,fontWeight:600,color:WHITE,lineHeight:1}}>Y</span>
                   </div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{background:WHITE,borderRadius:14,padding:"10px 12px",...TC.body,border:`1px solid rgba(0,0,0,0.06)`,boxShadow:"0 1px 2px rgba(0,0,0,0.04)"}}>{msg.text}</div>
@@ -4455,10 +4815,10 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
                           style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",background:"var(--explorer-active-row)",border:`1px solid rgba(37,99,235,0.2)`,borderRadius:12,cursor:"pointer",transition:"background 0.1s"}}
                           onMouseEnter={e=>{e.currentTarget.style.background="rgba(37,99,235,0.12)";}}
                           onMouseLeave={e=>{e.currentTarget.style.background="var(--explorer-active-row)";}}>
-                          <span style={{fontSize:14,color:ACCENT,flexShrink:0}}>⊕</span>
+                          <span style={{...TC.body,color:ACCENT,flexShrink:0}}>⊕</span>
                           <div>
-                            <div style={{...TC.body,fontWeight:500,color:INK}}>Run land agent + analysis (top result)</div>
-                            <div style={{...TC.secondary,marginTop:1}}>Chat: agent → full pass → Q&amp;A; report saves on listing</div>
+                            <div style={{...TC.body,fontWeight:500,color:INK}}>Run report (top match)</div>
+                            <div style={{...TC.secondary,marginTop:1}}>Sidebar · recap on listing</div>
                           </div>
                           <span style={{...TC.label,color:ACCENT,marginLeft:"auto",flexShrink:0}}>→</span>
                         </div>
@@ -4466,7 +4826,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
                       </div>
                     )}
                     {msg.showUpgrade&&(
-                      <button onClick={()=>setShowUpgradeModal(true)} style={{marginTop:6,background:"none",border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"5px 12px",...TC.label,color:ACCENT,cursor:"pointer",fontFamily:FF,display:"block",fontWeight:500}}>View plans →</button>
+                      <button onClick={()=>requestUpgrade?.(null)} style={{marginTop:6,background:"none",border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"5px 12px",...TC.label,color:ACCENT,cursor:"pointer",fontFamily:FF,display:"block",fontWeight:500}}>View plans →</button>
                     )}
                     {msg.showChips&&msg.icpId&&(()=>{
                       const ic=CHAT_ICPS.find(x=>x.id===msg.icpId);
@@ -4497,7 +4857,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
           {isTyping&&(
             <div style={{display:"flex",gap:8,alignItems:"flex-start",animation:"fadeIn 0.2s ease both",marginBottom:10}}>
               <div style={{width:20,height:20,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <span style={{fontFamily:FF,fontSize:11,fontWeight:600,color:WHITE,lineHeight:1}}>Y</span>
+                <span style={{...TC.label,fontWeight:600,color:WHITE,lineHeight:1}}>Y</span>
               </div>
               <div style={{background:CHAT_THINK_BG,border:`1px solid ${CHAT_THINK_BD}`,borderRadius:14,padding:"10px 12px",display:"flex",gap:4,alignItems:"center",boxShadow:"0 1px 2px rgba(0,0,0,0.04)"}}>
                 {[0,1,2].map(i=><div key={i} style={{width:4,height:4,borderRadius:"50%",background:ACCENT,opacity:0.45,animation:`bounce 1s ease ${i*0.15}s infinite`}}/>)}
@@ -4512,13 +4872,17 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
           input={input} setInput={setInput} send={send}
           activePlot={activePlot} activeICP={activeICP}
           analysisState={analysisState} runAnalysis={runAnalysis}
+          onRunAreaScan={runDrawAreaBulkAnalysis}
+          hasDrawArea={hasDrawArea}
+          drawAreaCount={drawAreaEntities.length}
+          drawAreaLens={drawAreaSelection?.lens ?? "listings"}
           onOpenListing={onOpenListing} onAddToProject={handleExplorerAdd}
           projectPlots={projectPlots} upgraded={upgraded}
-          onUpgrade={()=>setShowUpgradeModal(true)}
+          requestUpgrade={requestUpgrade}
           onClearPlot={()=>clearPlotFocus()}
           onBrowseCadastre={browseCadastreFromMenu}
-          plotType={activePlot?.type}
-          plotVerdict={activePlot?.aiVerdict}
+          onRequestListingLocation={requestListingLocationService}
+          isChatEmpty={messages.length===0}
         />
       </div>
 
@@ -4629,6 +4993,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
                 onPinPlaced={handleMapPinPlaced}
                 onDrawAreaSelectionChange={onDrawAreaSelectionChange}
                 lassoClearSeq={lassoClearSeq}
+                drawModeKick={mapDrawKick}
                 highlightPlotIds={hasDrawArea&&!cadastreMode&&drawAreaSelection?.ids?.length?drawAreaSelection.ids:undefined}
                 onLayerToggle={(id, on)=>{ if(id==="boundaries"||id==="crus"){ setCadastreMode(on); setMapPinMode(false); if(on) setMapResults(parcelCatalogResults()); else { setMapResults(lastListingsMapResultsRef.current); setSelectedParcel(null);} } }}/>
             : cadastreMode
@@ -4647,7 +5012,7 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
                   contextLabel={listContextLabel}
                   onOpenListing={onOpenListing}
                   onListingFocus={selectPlot}
-                  onAddToProject={handleExplorerAdd} projectPlots={projectPlots} upgraded={upgraded} onUpgrade={()=>setShowUpgradeModal(true)}
+                  onAddToProject={handleExplorerAdd} projectPlots={projectPlots} upgraded={upgraded} onUpgrade={()=>requestUpgrade?.(null)}
                   listingFilterActive={!hasDrawArea&&(listingPlotsFiltered.length < mapResults.plots.length || listingFiltersActive(listingMapFilters))}
                   mapTotal={mapResults.plots.length}/>
           }
@@ -4677,10 +5042,11 @@ function ChatMapView({upgraded,setShowUpgradeModal,onAddToProject,onCommitPlotsT
               onAddToProject={handleExplorerAdd}
               inProject={projectPlots.includes(plotListingOpenId(activePlot))}
               upgraded={upgraded}
-              onUpgrade={()=>setShowUpgradeModal(true)}
+              onUpgrade={()=>requestUpgrade?.("plot")}
               savedRecap={listingRecapFromStore(listingSavedScans, plotListingOpenId(activePlot))}
               onStartLandAgentInChat={()=>{setMobileTab("chat");setTimeout(()=>runAnalysis(),120);}}
               onSendToChat={sendPlotToChat}
+              onRequestListingLocation={requestListingLocationService}
             />
           )}
           {/* Cadastre side panel — floats over map or list */}
@@ -4747,15 +5113,28 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
   const [detailPlot, setDetailPlot] = useState(null);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("suitability");
+  const [filterReport, setFilterReport] = useState<"all"|"yes"|"no">("all");
+  const [stageByPlotId, setStageByPlotId] = useState<Record<string,string>>({});
   const [showNewProject, setShowNewProject] = useState(false);
   const [newName, setNewName] = useState("");
 
-  const plots = activeProject
+  const plotsRaw = activeProject
     ? MOCK_PLOTS.filter(p => activeProject.plotIds.includes(p.id))
     : MOCK_PLOTS;
 
+  const plots = plotsRaw.map((p) => {
+    const k = String(p.id);
+    const stage = stageByPlotId[k] || p.stage;
+    return stage === p.stage ? p : { ...p, stage };
+  });
+
   const filtered = plots
     .filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.region.toLowerCase().includes(search.toLowerCase()))
+    .filter((p) => {
+      if (filterReport === "all") return true;
+      const hasAiReport = !!listingRecapFromStore(listingSavedScans, canonicalPipelineId(p.id));
+      return filterReport === "yes" ? hasAiReport : !hasAiReport;
+    })
     .sort((a,b) => sortBy==="suitability" ? b.suitability-a.suitability : sortBy==="price" ? parseInt(b.price.replace(/\D/g,""))-parseInt(a.price.replace(/\D/g,"")) : 0);
 
   function toggleSelect(id){
@@ -4778,6 +5157,11 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
       desc:"", color:colors[Math.floor(Math.random()*colors.length)], plotIds:[], created:"Mar 2025"
     }]);
     setNewName(""); setShowNewProject(false);
+  }
+
+  function updatePlotStage(plotId, stage) {
+    setStageByPlotId((prev) => ({ ...prev, [String(plotId)]: stage }));
+    setDetailPlot((dp) => (dp && String(dp.id) === String(plotId) ? { ...dp, stage } : dp));
   }
 
   const anySelected = selected.length > 0;
@@ -4813,7 +5197,7 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
               <button type="button" onClick={()=>{setBulkState("idle");}} style={{background:"none",border:`1px solid ${GREEN_BRIGHT}`,borderRadius:8,padding:"4px 10px",...TP.body,color:GREEN_BRIGHT,cursor:"pointer",fontWeight:500}}>Dismiss</button>
             </div>
           )}
-          <button type="button" onClick={clearSelect} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",cursor:"pointer",fontSize:14,marginLeft:"auto",padding:0}}>✕</button>
+          <button type="button" onClick={clearSelect} style={{background:"none",border:"none",color:"rgba(255,255,255,0.35)",cursor:"pointer",...TP.body,marginLeft:"auto",padding:0}}>✕</button>
         </div>
       )}
 
@@ -4851,7 +5235,7 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
         {activeProject&&(
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12,gap:12,flexWrap:"wrap"}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
-              <div style={{width:36,height:36,borderRadius:8,background:`${activeProject.color}12`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,border:`1px solid ${LIGHTER}`}}>{activeProject.icon}</div>
+              <div style={{width:36,height:36,borderRadius:8,background:`${activeProject.color}12`,display:"flex",alignItems:"center",justifyContent:"center",...TP.body,border:`1px solid ${LIGHTER}`}}>{activeProject.icon}</div>
               <div>
                 <div style={{...TP.sectionTitle}}>{activeProject.name}</div>
                 {activeProject.desc&&<div style={{...TP.secondary,marginTop:2,maxWidth:420}}>{activeProject.desc}</div>}
@@ -4908,7 +5292,13 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                         <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:2}}>
                           <span style={{...TP.body,fontWeight:600,color:INK}}>{p.name}</span>
                           {hasAiReport&&(
-                            <span style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"2px 8px"}}>AI report</span>
+                            <button
+                              type="button"
+                              onClick={()=>onInspectPlotInSearch&&onInspectPlotInSearch(canon)}
+                              style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"2px 8px",cursor:"pointer"}}
+                            >
+                              AI report
+                            </button>
                           )}
                         </div>
                         <span style={{...TP.mono,display:"block",marginTop:2}}>{p.id} · {p.region}</span>
@@ -4955,7 +5345,7 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                 style={{background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"14px 16px",marginBottom:8,cursor:"pointer",display:"flex",alignItems:"center",gap:12,transition:"border-color 0.1s",animation:`fadeIn 0.2s ease ${i*0.04}s both`}}
                 onMouseEnter={e=>e.currentTarget.style.borderColor=proj.color}
                 onMouseLeave={e=>e.currentTarget.style.borderColor=LIGHTER}>
-                <div style={{width:40,height:40,borderRadius:10,background:`${proj.color}12`,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>{proj.icon}</div>
+                <div style={{width:40,height:40,borderRadius:10,background:`${proj.color}12`,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",...TP.body,flexShrink:0}}>{proj.icon}</div>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{...TP.body,fontWeight:600,color:INK,marginBottom:2}}>{proj.name}</div>
                   <div style={{...TP.secondary}}>{proj.desc||"No description"}</div>
@@ -4981,7 +5371,7 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
             style={{background:WHITE,border:`1px dashed ${LIGHTER}`,borderRadius:10,padding:"14px 16px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,transition:"opacity 0.1s"}}
             onMouseEnter={e=>e.currentTarget.style.opacity="0.82"}
             onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
-            <div style={{width:40,height:40,borderRadius:10,background:SUBTLE,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0,color:MID}}>⊟</div>
+            <div style={{width:40,height:40,borderRadius:10,background:SUBTLE,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",...TP.body,flexShrink:0,color:MID}}>⊟</div>
             <div style={{flex:1}}>
               <div style={{...TP.body,fontWeight:600,color:MID}}>All plots</div>
               <div style={{...TP.secondary}}>{MOCK_PLOTS.length} plots across demo projects</div>
@@ -5012,12 +5402,21 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                   <button type="button" key={s} onClick={()=>setSortBy(s)}
                     style={{background:sortBy===s?INK:WHITE,border:`1px solid ${sortBy===s?INK:LIGHTER}`,borderRadius:99,padding:"4px 10px",...TP.label,color:sortBy===s?WHITE:MID,cursor:"pointer",fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>{s}</button>
                 ))}
+                <select
+                  value={filterReport}
+                  onChange={(e)=>setFilterReport(e.target.value as "all"|"yes"|"no")}
+                  style={{background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"4px 10px",...TP.label,color:MID,cursor:"pointer",fontWeight:600,outline:"none"}}
+                >
+                  <option value="all">Report: All</option>
+                  <option value="yes">Report: Yes</option>
+                  <option value="no">Report: No</option>
+                </select>
               </div>
             </div>
 
             {view==="list"&&filtered.length===0&&(
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"64px 16px",gap:12,textAlign:"center"}}>
-                <div style={{width:44,height:44,borderRadius:10,background:WHITE,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:LIGHT}}>⊟</div>
+                <div style={{width:44,height:44,borderRadius:10,background:WHITE,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",...TP.pageTitle,color:LIGHT}}>⊟</div>
                 <div style={{...TP.sectionTitle}}>No plots in this project yet</div>
                 <div style={{...TP.secondary,maxWidth:300}}>Search for land and save plots here to start building your pipeline.</div>
                 <button type="button" onClick={()=>setActiveNav&&setActiveNav("Search")} style={{marginTop:4,background:INK,border:"none",borderRadius:99,padding:"8px 18px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>Search land →</button>
@@ -5034,16 +5433,28 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                   {filtered.map(plot=>{
                     const isSel = selected.includes(plot.id);
                     const plotProjects = INIT_PROJECTS.filter(pr=>pr.plotIds.includes(plot.id));
+                    const hasAiReport = !!listingRecapFromStore(listingSavedScans, canonicalPipelineId(plot.id));
                     return(
                       <tr key={plot.id} style={{background:isSel?`${ORANGE}08`:detailPlot?.id===plot.id?`${ACCENT}08`:WHITE,transition:"background 0.1s",boxShadow:`0 0 0 1px ${LIGHTER}`,borderRadius:8}}>
                         <td style={{padding:"8px 10px",borderRadius:"8px 0 0 8px",width:28}}>
                           <div role="presentation" onClick={()=>toggleSelect(plot.id)}
                             style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${isSel?ORANGE:LIGHTER}`,background:isSel?ORANGE:"transparent",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.1s"}}>
-                            {isSel&&<span style={{color:WHITE,fontSize:11,lineHeight:1}}>✓</span>}
+                            {isSel&&<span style={{...TC.label,color:WHITE,lineHeight:1}}>✓</span>}
                           </div>
                         </td>
                         <td style={{padding:"8px 10px",minWidth:140}} onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)}>
-                          <div style={{...TP.body,fontWeight:600,color:INK,marginBottom:2}}>{plot.name}</div>
+                          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:2}}>
+                            <div style={{...TP.body,fontWeight:600,color:INK}}>{plot.name}</div>
+                            {hasAiReport&&(
+                              <button
+                                type="button"
+                                onClick={(e)=>{e.stopPropagation(); onInspectPlotInSearch&&onInspectPlotInSearch(canonicalPipelineId(plot.id));}}
+                                style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"1px 8px",cursor:"pointer"}}
+                              >
+                                AI report
+                              </button>
+                            )}
+                          </div>
                           <div style={{...TP.mono,color:LIGHT}}>{plot.ref}</div>
                         </td>
                         <td style={{padding:"8px 10px",...TP.secondary}}>{plot.region}</td>
@@ -5052,7 +5463,15 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                         <td style={{padding:"8px 10px"}}>
                           <span style={{...TP.body,fontWeight:700,color:plot.suitability>=85?GREEN:plot.suitability>=70?ACCENT:MID}}>{plot.suitability}</span>
                         </td>
-                        <td style={{padding:"8px 10px"}}><StagePill stage={plot.stage}/></td>
+                        <td style={{padding:"8px 10px"}}>
+                          <select
+                            value={plot.stage}
+                            onChange={(e)=>updatePlotStage(plot.id, e.target.value)}
+                            style={{background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"4px 10px",...TP.label,color:INK,cursor:"pointer",fontWeight:600,outline:"none"}}
+                          >
+                            {STAGES.map((s)=><option key={s} value={s}>{s}</option>)}
+                          </select>
+                        </td>
                         <td style={{padding:"8px 10px"}}>
                           <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
                             {plotProjects.map(pr=>(
@@ -5087,18 +5506,30 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                       </div>
                       {sp.map(plot=>{
                         const isSel=selected.includes(plot.id);
+                        const hasAiReport = !!listingRecapFromStore(listingSavedScans, canonicalPipelineId(plot.id));
                         return(
                           <div key={plot.id}
                             style={{background:WHITE,border:`1px solid ${isSel?ORANGE:LIGHTER}`,borderRadius:8,padding:"10px",marginBottom:6,cursor:"pointer",transition:"border-color 0.1s"}}>
                             <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
                               <div role="presentation" onClick={()=>toggleSelect(plot.id)}
                                 style={{width:14,height:14,borderRadius:3,border:`1.5px solid ${isSel?ORANGE:LIGHTER}`,background:isSel?ORANGE:"transparent",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                                {isSel&&<span style={{color:WHITE,fontSize:10,lineHeight:1}}>✓</span>}
+                                {isSel&&<span style={{...TC.label,color:WHITE,lineHeight:1}}>✓</span>}
                               </div>
                               <div style={{...TP.mono}}>{plot.ref}</div>
                             </div>
                             <div onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)}>
-                              <div style={{...TP.body,fontWeight:600,color:INK,marginBottom:4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{plot.name}</div>
+                              <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+                                <div style={{...TP.body,fontWeight:600,color:INK,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{plot.name}</div>
+                                {hasAiReport&&(
+                                  <button
+                                    type="button"
+                                    onClick={(e)=>{e.stopPropagation(); onInspectPlotInSearch&&onInspectPlotInSearch(canonicalPipelineId(plot.id));}}
+                                    style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"1px 7px",cursor:"pointer",flexShrink:0}}
+                                  >
+                                    Report
+                                  </button>
+                                )}
+                              </div>
                               <div style={{...TP.secondary,marginBottom:8}}>{plot.region}</div>
                               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                                 <span style={{...TP.body,fontWeight:600,color:INK}}>{plot.price}</span>
@@ -5134,7 +5565,7 @@ function NavTooltip({label, children}){
     <div style={{position:"relative"}} onMouseEnter={()=>setShow(true)} onMouseLeave={()=>setShow(false)}>
       {children}
       {show&&(
-        <div style={{position:"absolute",left:"calc(100% + 10px)",top:"50%",transform:"translateY(-50%)",background:INK,color:WHITE,borderRadius:6,padding:"5px 10px",whiteSpace:"nowrap",fontFamily:FF,fontSize:13,pointerEvents:"none",zIndex:999,animation:"fadeIn 0.12s ease both"}}>
+        <div style={{position:"absolute",left:"calc(100% + 10px)",top:"50%",transform:"translateY(-50%)",background:INK,color:WHITE,borderRadius:6,padding:"5px 10px",whiteSpace:"nowrap",...TC.secondary,pointerEvents:"none",zIndex:999,animation:"fadeIn 0.12s ease both"}}>
           {label}
           <div style={{position:"absolute",right:"100%",top:"50%",transform:"translateY(-50%)",width:0,height:0,borderTop:"5px solid transparent",borderBottom:"5px solid transparent",borderRight:`5px solid ${INK}`}}/>
         </div>
@@ -5579,6 +6010,15 @@ export default function YonderExplorerAppInner({
   const [activeNav,setActiveNav]=useState("Search");
   const [upgraded,setUpgraded]=useState(false);
   const [showUpgradeModal,setShowUpgradeModal]=useState(false);
+  const [upgradeModalReason,setUpgradeModalReason]=useState(null);
+  function requestUpgrade(reason){
+    setUpgradeModalReason(reason ?? null);
+    setShowUpgradeModal(true);
+  }
+  function closeUpgradeModal(){
+    setShowUpgradeModal(false);
+    setUpgradeModalReason(null);
+  }
   const [projectPlots,setProjectPlots]=useState<string[]>([]);
   const [listingPlot,setListingPlot]=useState<string|null>(null);
   const [listingSavedScans,setListingSavedScans]=useState(null);
@@ -5667,18 +6107,24 @@ export default function YonderExplorerAppInner({
         .yonder-explorer-app button:hover{opacity:0.88}
       `}</style>
 
-      {showUpgradeModal&&<UpgradeModal onClose={()=>setShowUpgradeModal(false)} onUpgrade={()=>{setUpgraded(true);setShowUpgradeModal(false);}}/>}
+      {showUpgradeModal&&(
+        <UpgradeModal
+          promptReason={upgradeModalReason}
+          onClose={closeUpgradeModal}
+          onUpgrade={()=>{setUpgraded(true);closeUpgradeModal();}}
+        />
+      )}
 
       <GlobalNav activeNav={activeNav} setActiveNav={v=>{setActiveNav(v);closeListing();}} upgraded={upgraded} onBackToLanding={goHome}/>
 
       <div style={{flex:1,minHeight:0,display:"flex",overflow:"hidden",position:"relative"}}>
         {!!listingPlot&&(
           <div className="ye-scroll" style={{position:"absolute",inset:0,zIndex:100,animation:"slideIn 0.2s ease both",background:WHITE,display:"flex",flexDirection:"column",overflowY:"auto"}}>
-            <PlotListingPage plotId={listingPlot} upgraded={upgraded} onUpgrade={()=>setShowUpgradeModal(true)} onBack={closeListing} onAddToProject={handleAddToProject} inProject={projectPlots.includes(listingPlot)} savedAiRecap={listingRecapFromStore(listingSavedScans, canonicalPipelineId(listingPlot))}/>
+            <PlotListingPage plotId={listingPlot} upgraded={upgraded} onUpgrade={()=>requestUpgrade("plot")} onBack={closeListing} onAddToProject={handleAddToProject} inProject={projectPlots.includes(listingPlot)} savedAiRecap={listingRecapFromStore(listingSavedScans, canonicalPipelineId(listingPlot))}/>
           </div>
         )}
-        {activeNav==="Search"&&<ChatMapView upgraded={upgraded} setShowUpgradeModal={setShowUpgradeModal} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)} pipelineOnMapTick={pipelineOnMapTick}/>}
-        {activeNav==="Projects"&&<ProjectsView onOpenListing={openListing} upgraded={upgraded} onUpgrade={()=>setShowUpgradeModal(true)} projectPlots={projectPlots} onAddToProject={handleAddToProject} setActiveNav={setActiveNav} listingSavedScans={listingSavedScans} onInspectPlotInSearch={(id)=>{setPipelineFocusCanonicalId(id);setActiveNav("Search");}} onViewPipelineOnMap={()=>{setActiveNav("Search");setPipelineOnMapTick((t)=>t+1);}}/>}
+        {activeNav==="Search"&&<ChatMapView upgraded={upgraded} requestUpgrade={requestUpgrade} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)} pipelineOnMapTick={pipelineOnMapTick}/>}
+        {activeNav==="Projects"&&<ProjectsView onOpenListing={openListing} upgraded={upgraded} onUpgrade={()=>requestUpgrade(null)} projectPlots={projectPlots} onAddToProject={handleAddToProject} setActiveNav={setActiveNav} listingSavedScans={listingSavedScans} onInspectPlotInSearch={(id)=>{setPipelineFocusCanonicalId(id);setActiveNav("Search");}} onViewPipelineOnMap={()=>{setActiveNav("Search");setPipelineOnMapTick((t)=>t+1);}}/>}
       </div>
     </div>
   );
