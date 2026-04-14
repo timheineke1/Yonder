@@ -29,12 +29,18 @@
   --type-body: 0.9375rem;
   --type-body-sm: 0.875rem;
   --type-nav: 0.8125rem;
-  --type-app-body: 0.8125rem;
-  --type-app-secondary: 0.75rem;
-  --type-caption: 0.6875rem;
-  --type-mono-sm: 0.6875rem;
+  --type-app-body: 0.875rem;
+  --type-app-secondary: var(--type-nav);
+  --type-caption: 0.75rem;
+  --type-mono-sm: var(--type-caption);
   --type-overline: 0.625rem;
   --type-micro: 0.5625rem;
+
+  /* App UI: four sizes for dense surfaces (explorer); prefer over ad-hoc px */
+  --type-ui-body: var(--type-app-body);
+  --type-ui-sm: var(--type-app-secondary);
+  --type-ui-label: var(--type-caption);
+  --type-ui-mono: var(--type-mono-sm);
 
   /* Legacy aliases — prefer --type-* / theme utilities in new code */
   --text-hero: var(--type-hero);
@@ -78,9 +84,12 @@
 }
 
 body {
+  /* Next/font sets --font-geist-* on this element; stacks are the single source for app + inline styles */
+  --font-sans-stack: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono-stack: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans-stack);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -113,7 +122,7 @@ body {
   --text-hint: #999999;
   background-color: var(--explorer-bg);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans-stack);
   min-height: 100dvh;
 }
 
