@@ -601,7 +601,7 @@ function ListingInsightSidebar({
         </div>
 
         <div style={{ padding: "10px 13px", borderBottom: `1px solid ${LIGHTER}` }}>
-          <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 8 }}>Listing</div>
+          <div style={{ ...TC.labelUC, color: MID, marginBottom: 8 }}>Listing</div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
             <span style={{ ...SB.title, fontWeight: 700 }}>{plot.price}</span>
             <span style={{ ...SB.meta, color: MID }}>{plot.area} · {plot.pricePerSqm}</span>
@@ -2077,6 +2077,16 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
 
   /** Same box model as native <select> so Area + More filters line up on one toolbar row. */
   const filterText = { ...TC.label, fontSize: "var(--type-caption)", fontWeight: 500 };
+  const filterInput = {
+    border: `1px solid ${LIGHTER}`,
+    borderRadius: 8,
+    padding: "6px 10px",
+    ...filterText,
+    color: INK,
+    background: WHITE,
+    minHeight: 36,
+    boxSizing: "border-box",
+  };
   const filterBarControl = {
     border: `1px solid ${LIGHTER}`,
     borderRadius: 8,
@@ -2250,7 +2260,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
         <div style={{ padding: "0 12px 12px", borderTop: `1px solid ${LIGHTER}`, display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12, marginTop: 10 }}>
             <div>
-              <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginBottom: 6 }}>Restrictions</span>
+              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Restrictions</span>
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <ToggleRow label="Buildable only" on={!!f.buildableOnly} onToggle={() => patch({ buildableOnly: !f.buildableOnly })} />
                 <ToggleRow label="Exclude RAN" on={!!f.excludeRAN} onToggle={() => patch({ excludeRAN: !f.excludeRAN })} />
@@ -2259,7 +2269,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
               </div>
             </div>
             <div>
-              <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginBottom: 6 }}>Land type</span>
+              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Land type</span>
               <Segmented
                 options={[
                   ["all", "All"],
@@ -2270,7 +2280,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                 value={f.landType || "all"}
                 onChange={(v) => patch({ landType: v })}
               />
-              <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginTop: 10, marginBottom: 6 }}>Ruin</span>
+              <span style={{ ...TC.labelUC, color: MID, display: "block", marginTop: 10, marginBottom: 6 }}>Ruin</span>
               <Segmented
                 options={[
                   ["all", "All"],
@@ -2282,7 +2292,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
               />
             </div>
             <div>
-              <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginBottom: 6 }}>Price (€)</span>
+              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Price (€)</span>
               <div style={{ display: "flex", gap: 8 }}>
                 <input
                   type="text"
@@ -2290,7 +2300,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Min"
                   value={f.priceMin || ""}
                   onChange={(e) => patch({ priceMin: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
+                  style={{ flex: 1, ...filterInput }}
                 />
                 <input
                   type="text"
@@ -2298,10 +2308,10 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Max"
                   value={f.priceMax || ""}
                   onChange={(e) => patch({ priceMax: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
+                  style={{ flex: 1, ...filterInput }}
                 />
               </div>
-              <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginTop: 10, marginBottom: 6 }}>Size (m²)</span>
+              <span style={{ ...TC.labelUC, color: MID, display: "block", marginTop: 10, marginBottom: 6 }}>Size (m²)</span>
               <div style={{ display: "flex", gap: 8 }}>
                 <input
                   type="text"
@@ -2309,7 +2319,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Min"
                   value={f.areaMin || ""}
                   onChange={(e) => patch({ areaMin: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
+                  style={{ flex: 1, ...filterInput }}
                 />
                 <input
                   type="text"
@@ -2317,16 +2327,16 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                   placeholder="Max"
                   value={f.areaMax || ""}
                   onChange={(e) => patch({ areaMax: e.target.value })}
-                  style={{ flex: 1, border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 8px", ...TC.body }}
+                  style={{ flex: 1, ...filterInput }}
                 />
               </div>
             </div>
             <div>
-              <span style={{ ...TC.labelUC, color: LIGHT, display: "block", marginBottom: 6 }}>Sort</span>
+              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Sort</span>
               <select
                 value={f.sortBy || "match"}
                 onChange={(e) => patch({ sortBy: e.target.value })}
-                style={{ width: "100%", border: `1px solid ${LIGHTER}`, borderRadius: 8, padding: "6px 10px", ...TC.body, background: BG2 }}
+                style={{ width: "100%", ...filterInput, background: BG2 }}
               >
                 <option value="match">Match (search order)</option>
                 <option value="score-desc">Score · high first</option>
@@ -2353,7 +2363,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
               { key: "score", label: "Score", options: ["Any", "60+", "75+", "85+", "90+"] },
             ].map((blk) => (
               <div key={blk.key} style={{ minWidth: 0 }}>
-                <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 4 }}>{blk.label}</div>
+                <div style={{ ...TC.labelUC, color: MID, marginBottom: 4 }}>{blk.label}</div>
                 <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
                   {blk.options.map((o) => (
                     <button
