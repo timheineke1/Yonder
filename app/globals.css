@@ -2,9 +2,9 @@
 
 :root {
   --background: #F9F9F9;
-  --foreground: #1a1a18;
+  --foreground: #171717;
   --bg-card: #f0f0f0;
-  --muted: #6b6b68;
+  --muted: #666666;
   --accent: #3B82F6;
   --orange: #c84b0a;
   /* App / marketing shared surfaces — explorer chrome */
@@ -13,8 +13,8 @@
   --surface-warm: #f8f7f4;
   --border-default: rgba(0, 0, 0, 0.08);
   --border-soft: rgba(0, 0, 0, 0.06);
-  --text-tertiary: #888888;
-  --text-hint: #999999;
+  --text-tertiary: #666666;
+  --text-hint: #808080;
   --success: #2d7a2d;
   --success-bright: #4a9a4a;
   --online: #22c55e;
@@ -30,8 +30,8 @@
   --type-body-sm: 0.875rem;
   --type-nav: 0.8125rem;
   --type-app-body: 0.875rem;
-  --type-app-secondary: var(--type-nav);
-  --type-caption: 0.75rem;
+  --type-app-secondary: 0.75rem;
+  --type-caption: 0.6875rem;
   --type-mono-sm: var(--type-caption);
   --type-overline: 0.625rem;
   --type-micro: 0.5625rem;
@@ -97,10 +97,10 @@ body {
 /* Explorer — airy chat (light grey chrome), blue accents, mint/amber/blush verdict cards */
 .yonder-explorer-page {
   --explorer-bg: #ffffff;
-  --explorer-sidebar: #f4f4f4;
+  --explorer-sidebar: #fafafa;
   --explorer-chrome: #ffffff;
   --explorer-card: #ffffff;
-  --explorer-muted-surface: #f9f9f9;
+  --explorer-muted-surface: #fafafa;
   --explorer-input-bg: #ffffff;
   --explorer-accent: #2563eb;
   --explorer-success-bg: #dcfce7;

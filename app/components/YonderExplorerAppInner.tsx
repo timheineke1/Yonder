@@ -10,8 +10,8 @@ const FF = "var(--font-sans-stack)";
 const FFM = FF;
 
 /** Hex tokens — marketing site (`/`) neutrals + blue/green in-app accents (see `.yonder-explorer-page`). */
-const INK = "#1a1a18";
-const MID = "#6b6b68";
+const INK = "var(--foreground)";
+const MID = "var(--muted)";
 const BRAND_ORANGE = "#c84b0a";
 /** Chat cards — homepage-aligned tints (see yonder-product-design-SKILL.md + globals `.yonder-explorer-page`) */
 const CARD_POS_BG = "var(--chat-card-positive-bg, #ecfdf5)";
@@ -43,7 +43,7 @@ const WARM  = "var(--surface-warm)";
 const WHITE = "#ffffff";
 const LIGHT = "var(--text-tertiary)";
 const LIGHTER = "var(--border-default)";
-const ROW_HOVER = "rgba(0,0,0,0.04)";
+const ROW_HOVER = "rgba(0,0,0,0.03)";
 const ONLINE = "var(--online)";
 /** SVG stroke/fill — avoid `var()` on SVG attributes (Safari / some clients ignore it). */
 const SVG_MUTED = "#888888";
@@ -53,7 +53,7 @@ const T = {
   display:  { fontFamily: FF, fontSize: "var(--type-display)", fontWeight: 600, letterSpacing: "-0.02em", color: INK },
   heading:  { fontFamily: FF, fontSize: "var(--type-title)", fontWeight: 500, color: INK, lineHeight: 1.22 },
   body:     { fontFamily: FF, fontSize: "var(--type-body)", color: INK, lineHeight: 1.65 },
-  secondary:{ fontFamily: FF, fontSize: "var(--type-body)", color: MID, lineHeight: 1.55 },
+  secondary:{ fontFamily: FF, fontSize: "var(--type-body-sm)", color: MID, lineHeight: 1.5 },
   label:    { fontFamily: FF, fontSize: "var(--type-nav)", color: MID },
   labelUC:  { fontFamily: FF, fontSize: "var(--type-overline)", fontWeight: 600, color: "var(--text-hint)", letterSpacing: "0.14em", textTransform: "uppercase" as const },
   mono:     { fontFamily: FFM, fontSize: "var(--type-nav)", color: MID, letterSpacing: "0.04em" },
@@ -66,7 +66,7 @@ const T = {
  */
 const TC = {
   // 1) Emphasis / headers
-  title:   { fontFamily: FF, fontSize: "var(--type-app-body)", fontWeight: 600, letterSpacing: "-0.01em", color: INK, lineHeight: 1.35 },
+  title:   { fontFamily: FF, fontSize: "var(--type-app-body)", fontWeight: 500, letterSpacing: "-0.01em", color: INK, lineHeight: 1.32 },
   // 2) Default readable text
   body:    { fontFamily: FF, fontSize: "var(--type-app-body)", fontWeight: 400, color: INK, lineHeight: 1.55 },
   // 3) Supporting text
@@ -443,10 +443,23 @@ function PlotRecapCard({ data }) {
 /** Rows we resolve onto the plot after Pro + land report (recap persists on listing). */
 function LandDataLayersChecklist({ plot, recap, pinPlot, upgraded, onUpgrade, compact }) {
   const pad = compact ? "10px 13px" : "0";
-  const titleStyle = compact ? { ...TC.labelUC, color: LIGHT, marginBottom: 6 } : { ...TP.sectionTitle, marginBottom: 6 };
+  const titleStyle = compact ? { ...TC.labelUC, color: MID, marginBottom: 6 } : { ...TP.sectionTitle, marginBottom: 6 };
   const subStyle = compact ? { ...TC.secondary, marginBottom: 8, lineHeight: 1.45 } : { ...TP.secondary, marginBottom: 10, lineHeight: 1.55 };
-  const rowLabel = compact ? { ...TC.body, color: INK, fontWeight: 600 } : { ...TP.body, color: INK, fontWeight: 600 };
-  const rowVal = compact ? { ...TC.body, color: INK, fontWeight: 600, textAlign: "right", maxWidth: "52%" } : { ...TP.body, color: INK, fontWeight: 600, textAlign: "right", maxWidth: "55%" };
+  const rowLabel = compact
+    ? { ...TC.secondary, color: INK, fontWeight: 600, minWidth: 0 }
+    : { ...TP.body, color: INK, fontWeight: 600 };
+  const rowVal = compact
+    ? {
+        ...TC.secondary,
+        color: INK,
+        fontWeight: 600,
+        textAlign: "right",
+        maxWidth: "44%",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }
+    : { ...TP.body, color: INK, fontWeight: 600, textAlign: "right", maxWidth: "55%" };
   const tagBase = { ...TC.labelUC, fontWeight: 700, letterSpacing: "0.04em", borderRadius: 99, padding: compact ? "2px 6px" : "3px 8px", flexShrink: 0 };
   const ran = plot?.technical?.RAN ?? "—";
   const ren = plot?.technical?.REN ?? "—";
@@ -469,12 +482,11 @@ function LandDataLayersChecklist({ plot, recap, pinPlot, upgraded, onUpgrade, co
     infra: "#64748b",
     risk: "#d97706",
   };
-
   function rowBadge() {
-    if (pinPlot) return { bg: `${LIGHT}33`, color: MID, text: "—" };
-    if (recap) return { bg: `${GREEN}18`, color: GREEN, text: "Saved" };
-    if (!upgraded) return { bg: `${ACCENT}10`, color: ACCENT, text: "Locked", bd: `1px solid ${ACCENT}25` };
-    return { bg: `${ORANGE}14`, color: ORANGE, text: "Report" };
+    if (pinPlot) return { bg: `${MID}15`, color: MID, text: compact ? "—" : "—" };
+    if (recap) return { bg: `${GREEN}18`, color: GREEN, text: compact ? "✓" : "Saved", bd: `1px solid ${GREEN}35` };
+    if (!upgraded) return { bg: `${ACCENT}10`, color: ACCENT, text: compact ? "Lock" : "Locked", bd: `1px solid ${ACCENT}25` };
+    return { bg: `${ORANGE}14`, color: ORANGE, text: compact ? "Rpt" : "Report", bd: `1px solid ${ORANGE}35` };
   }
 
   const badge = rowBadge();
@@ -520,7 +532,7 @@ function LandDataLayersChecklist({ plot, recap, pinPlot, upgraded, onUpgrade, co
       </div>
       {!upgraded && !pinPlot && (
         <div style={{ marginTop: 6, ...(compact ? TC.secondary : { ...TC.secondary, fontSize: "var(--type-body-sm)" }) }}>
-          <button type="button" onClick={onUpgrade} style={{ border: "none", background: "none", padding: 0, color: ACCENT, fontWeight: 600, cursor: "pointer", fontFamily: FF }}>
+          <button type="button" onClick={onUpgrade} style={{ border: "none", background: "none", padding: 0, color: INK, fontWeight: 600, cursor: "pointer", fontFamily: FF }}>
             Upgrade
           </button>
           {" · "}unlocks source layers + AI report
@@ -566,11 +578,11 @@ function ListingInsightSidebar({
       <div style={{ padding: "11px 13px", borderBottom: `1px solid ${LIGHTER}`, flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ ...SB.head, color: ORANGE, marginBottom: 2 }}>{pinPlot ? "MAP PIN" : plot.ref || cid}</div>
+            <div style={{ ...SB.head, color: MID, marginBottom: 2 }}>{pinPlot ? "MAP PIN" : plot.ref || cid}</div>
             <div style={{ ...SB.title, marginBottom: 4 }}>{plot.name}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-              <span style={{ ...SB.meta, color: v.color, fontWeight: 600 }}>{pinPlot ? "Marker" : v.label}</span>
-              {plot.score != null ? <ScoreRing pct={plot.score} size={28} /> : <span style={{ ...SB.meta, color: LIGHT }}>No listing score</span>}
+              <span style={{ ...SB.meta, color: INK, fontWeight: 600 }}>{pinPlot ? "Marker" : v.label}</span>
+              {plot.score != null ? <ScoreRing pct={plot.score} size={28} /> : <span style={{ ...SB.meta, color: MID }}>No listing score</span>}
             </div>
           </div>
           <button type="button" onClick={onClose} style={{ width: 24, height: 24, borderRadius: "50%", border: `1px solid ${LIGHTER}`, background: BG, color: MID, cursor: "pointer", ...SB.cap, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
@@ -578,8 +590,8 @@ function ListingInsightSidebar({
       </div>
 
       <div style={{ flex: 1, overflowY: "auto" }}>
-        <div style={{ padding: "0 13px 10px", borderBottom: `1px solid ${LIGHTER}` }}>
-          <div style={{ position: "relative", width: "100%", height: 118, borderRadius: 10, overflow: "hidden", marginTop: 8, border: `1px solid ${LIGHTER}`, background: BG2 }}>
+        <div style={{ padding: 0 }}>
+          <div style={{ position: "relative", width: "100%", height: 152, overflow: "hidden", marginTop: 0, background: BG2 }}>
             <PlotImage plot={plot} type={plot.type} index={0} style={{ width: "100%", height: "100%", display: "block" }} />
             <div style={{ position: "absolute", bottom: 6, left: 8, right: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ ...SB.head, color: WHITE, textShadow: "0 1px 3px rgba(0,0,0,0.45)" }}>From portal</span>
@@ -592,22 +604,22 @@ function ListingInsightSidebar({
           <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 8 }}>Listing</div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
             <span style={{ ...SB.title, fontWeight: 700 }}>{plot.price}</span>
-            <span style={{ ...SB.meta, color: LIGHT }}>{plot.area} · {plot.pricePerSqm}</span>
+            <span style={{ ...SB.meta, color: MID }}>{plot.area} · {plot.pricePerSqm}</span>
           </div>
           {plot.tag && (
             <div style={{ ...SB.meta, marginBottom: 6 }}>{plot.tag}</div>
           )}
           <div style={{ ...SB.meta, color: INK }}>
-            <span style={{ color: LIGHT }}>Region · </span>
+            <span style={{ color: MID }}>Region · </span>
             {plot.region || "—"}
           </div>
           <div style={{ ...SB.meta, color: INK, marginTop: 4 }}>
-            <span style={{ color: LIGHT }}>Type · </span>
+            <span style={{ color: MID }}>Type · </span>
             {plot.type || "—"}
           </div>
           {!pinPlot && Array.isArray(plot.amenities) && plot.amenities.length > 0 && (
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${LIGHTER}` }}>
-              <div style={{ ...TC.labelUC, color: LIGHT, marginBottom: 6 }}>Nearby</div>
+              <div style={{ ...TC.labelUC, color: MID, marginBottom: 6 }}>Nearby</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                 {plot.amenities.slice(0, 4).map((a, i) => (
                   <span key={i} style={{ ...SB.meta, padding: "3px 8px", borderRadius: 99, border: `1px solid ${LIGHTER}`, background: BG }}>
@@ -628,8 +640,8 @@ function ListingInsightSidebar({
 
         {!pinPlot && onRequestListingLocation && (
           <div style={{ padding: "10px 13px", borderBottom: `1px solid ${LIGHTER}` }}>
-            <div style={{ ...TC.labelUC, color: ORANGE, marginBottom: 6 }}>Location check</div>
-            <div style={{ ...SB.meta, marginBottom: 8 }}>Request official location confirmation with the realtor first, or run the full report now if you already know the exact plot.</div>
+            <div style={{ ...TC.labelUC, color: MID, marginBottom: 6 }}>Location check</div>
+            <div style={{ ...SB.meta, marginBottom: 8 }}>Request official location confirmation with the realtor, or run the report now if you already know the exact location.</div>
             <button type="button" onClick={onRequestListingLocation} style={{ width: "100%", background: ORANGE, border: "none", borderRadius: 99, padding: "8px", color: WHITE, cursor: "pointer", marginBottom: 6, ...SB.btn }}>
               Request official location · €89 →
             </button>
@@ -647,7 +659,7 @@ function ListingInsightSidebar({
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6, gap: 8 }}>
             <div style={SB.title}>Report</div>
             {!upgraded && !pinPlot && (
-              <button type="button" onClick={onUpgrade} style={{ ...SB.cap, fontWeight: 600, color: ACCENT, background: "rgba(37,99,235,0.08)", border: `1px solid rgba(37,99,235,0.2)`, borderRadius: 99, padding: "3px 10px", cursor: "pointer", flexShrink: 0 }}>
+              <button type="button" onClick={onUpgrade} style={{ ...SB.cap, fontWeight: 600, color: INK, background: BG2, border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "3px 10px", cursor: "pointer", flexShrink: 0 }}>
                 Pro
               </button>
             )}
@@ -664,10 +676,7 @@ function ListingInsightSidebar({
               {!recap && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   <button type="button" onClick={startAnalysis} style={{ width: "100%", background: ORANGE, border: "none", borderRadius: 99, padding: "9px", color: WHITE, cursor: "pointer", ...SB.btn }}>
-                    {upgraded ? "⊕ Run AI analysis" : "⊕ Run AI analysis (Unlock)"}
-                  </button>
-                  <button type="button" onClick={() => onSendToChat(plot, { mode: "ask" })} style={{ width: "100%", background: "none", border: `1px solid ${LIGHTER}`, borderRadius: 99, padding: "7px", cursor: "pointer", ...SB.btnGhost }}>
-                    Ask a question in chat →
+                    {upgraded ? "⊕ Run AI analysis in chat" : "⊕ Run AI analysis in chat (Unlock)"}
                   </button>
                 </div>
               )}
@@ -714,10 +723,16 @@ function ListingInsightSidebar({
       </div>
 
       <div style={{ padding: "10px 13px", borderTop: `1px solid ${LIGHTER}`, flexShrink: 0 }}>
-        <button type="button" onClick={() => onAddToProject(cid)} style={{ width: "100%", background: inProject ? `${GREEN}10` : INK, border: `1px solid ${inProject ? `${GREEN}35` : "transparent"}`, borderRadius: 99, padding: "9px", color: inProject ? GREEN : WHITE, cursor: "pointer", ...SB.btn }}>
-          {pinPlot ? inProject ? "✓ Pin saved" : "✦ Save pin to workspace" : inProject ? "✓ In pipeline" : "✦ Save to pipeline"}
+        <button
+          type="button"
+          onClick={() => onAddToProject(cid)}
+          style={{ width: "100%", background: inProject ? `${GREEN}10` : INK, border: `1px solid ${inProject ? `${GREEN}35` : "transparent"}`, borderRadius: 99, padding: "9px", cursor: "pointer", ...SB.btn, color: inProject ? GREEN : WHITE }}
+        >
+          {pinPlot ? inProject ? "✓ Pin saved" : "+ Save pin" : inProject ? "✓ Saved to project" : "+ Save to project"}
         </button>
-        <div style={{ ...SB.meta, color: LIGHT, textAlign: "center", marginTop: 8 }}>Recap saved on plot + pipeline.</div>
+        <div style={{ ...SB.meta, color: LIGHT, textAlign: "center", marginTop: 8 }}>
+          {inProject ? "Saved in Projects." : "Save this listing to Projects."}
+        </div>
       </div>
 
       <style>{`@keyframes slideInRight { from{transform:translateX(100%)} to{transform:translateX(0)} }`}</style>
@@ -1154,14 +1169,14 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
           {/* ── TITLE + PRICE ── */}
           <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,marginBottom:18,paddingBottom:18,borderBottom:`1px solid ${LIGHTER}`}}>
             <div style={{minWidth:0}}>
-              <div style={{...TP.labelUC,color:ORANGE,marginBottom:4}}>{plot.region}</div>
+              <div style={{...TP.labelUC,color:MID,marginBottom:4}}>{plot.region}</div>
               <div style={{...TP.pageTitle,marginBottom:6}}>{plot.name}</div>
               <div style={{...TP.secondary}}>{plot.tag}</div>
             </div>
             <div style={{textAlign:"right",flexShrink:0}}>
               <div style={{...TP.pageTitle}}>{plot.price}</div>
               <div style={{...TP.mono,marginTop:4}}>{plot.pricePerSqm}</div>
-              <div style={{...TP.label,color:v.color,fontWeight:600,marginTop:6}}>{v.label} · {plot.score}/100</div>
+              <div style={{...TP.label,color:INK,fontWeight:600,marginTop:6}}>{v.label} · {plot.score}/100</div>
             </div>
           </div>
 
@@ -1182,13 +1197,13 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
 
           <LandDataLayersChecklist plot={plot} recap={savedAiRecap || null} pinPlot={false} upgraded={upgraded} onUpgrade={onUpgrade} compact={false} />
 
-          <div style={{marginBottom:24,padding:"14px 16px",background:`${ORANGE}08`,border:`1px solid ${ORANGE}28`,borderRadius:10}}>
+          <div style={{marginBottom:24,padding:"14px 16px",background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10}}>
             <div style={{...TP.sectionTitle,marginBottom:6}}>Pin not exact?</div>
             <p style={{...TP.secondary,margin:"0 0 12px",lineHeight:1.45}}>We contact the agent first, then run your report — avoids paying twice.</p>
             {locationRequested ? (
               <div style={{...TP.body,color:GREEN,fontWeight:600,textAlign:"center",padding:"10px",background:`${GREEN}0d`,borderRadius:8,border:`1px solid ${GREEN}30`}}>✓ Request received — we’ll follow up within one business day (demo)</div>
             ) : (
-              <button type="button" onClick={()=>setLocationRequested(true)} style={{width:"100%",background:ORANGE,border:"none",borderRadius:99,padding:"10px 16px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
+              <button type="button" onClick={()=>setLocationRequested(true)} style={{width:"100%",background:INK,border:"none",borderRadius:99,padding:"10px 16px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
                 Request location — we’ll contact the realtor · from €89 →
               </button>
             )}
@@ -2001,21 +2016,21 @@ function ToggleRow({ label, on, onToggle }) {
 
 function Segmented({ options, value, onChange, compact }) {
   return (
-    <div style={{ display: "flex", background: SUBTLE, borderRadius: 8, padding: 3, border: `1px solid ${LIGHTER}`, gap: 2, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
       {options.map(([v, lbl]) => (
         <button
           type="button"
           key={v}
           onClick={() => onChange(v)}
           style={{
-            padding: compact ? "4px 10px" : "5px 12px",
-            borderRadius: 6,
-            border: "none",
+            padding: compact ? "4px 9px" : "4px 10px",
+            borderRadius: 99,
+            border: `1px solid ${value === v ? INK : LIGHTER}`,
             cursor: "pointer",
-            fontFamily: FF,
-            fontSize: compact ? "var(--type-caption)" : "var(--type-app-secondary)",
+            ...TC.label,
+            fontSize: "var(--type-caption)",
             fontWeight: value === v ? 600 : 500,
-            background: value === v ? INK : "transparent",
+            background: value === v ? INK : WHITE,
             color: value === v ? WHITE : MID,
             whiteSpace: "nowrap",
           }}
@@ -2061,13 +2076,13 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
   }
 
   /** Same box model as native <select> so Area + More filters line up on one toolbar row. */
+  const filterText = { ...TC.label, fontSize: "var(--type-caption)", fontWeight: 500 };
   const filterBarControl = {
     border: `1px solid ${LIGHTER}`,
     borderRadius: 8,
-    padding: "7px 12px",
-    fontSize: "var(--type-app-secondary)",
-    fontFamily: FF,
-    color: INK,
+    padding: "6px 12px",
+    ...filterText,
+    color: MID,
     background: BG2,
     cursor: "pointer",
     outline: "none",
@@ -2078,7 +2093,7 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
 
   return (
     <div style={{ flexShrink: 0, background: WHITE, borderBottom: `1px solid ${LIGHTER}` }}>
-      {/* One toolbar row: Use chips (single scroll row) · region select · More filters */}
+      {/* One toolbar row: Area · Zoning/PDM · Filters */}
       <div
         style={{
           padding: "8px 12px",
@@ -2089,72 +2104,6 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
           rowGap: 8,
         }}
       >
-        <span style={{ ...TC.labelUC, color: LIGHT, flexShrink: 0 }}>Use</span>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "nowrap",
-            gap: 5,
-            alignItems: "center",
-            minWidth: 0,
-            flex: "1 1 auto",
-            overflowX: "auto",
-            WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "thin",
-            paddingBottom: 2,
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => clearUseCategories()}
-            style={{
-              padding: "3px 10px",
-              borderRadius: 99,
-              border: `1px solid ${!(f.useCategories || []).length ? INK : LIGHTER}`,
-              background: !(f.useCategories || []).length ? INK : WHITE,
-              color: !(f.useCategories || []).length ? WHITE : MID,
-              fontSize: "var(--type-caption)",
-              fontFamily: FF,
-              fontWeight: 600,
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
-          >
-            All
-          </button>
-          {USE_CATEGORY_ORDER.map((id) => {
-            const u = USE_CATEGORIES[id];
-            const on = (f.useCategories || []).includes(id);
-            return (
-              <button
-                type="button"
-                key={id}
-                onClick={() => toggleUseCategory(id)}
-                style={{
-                  padding: "3px 10px",
-                  borderRadius: 99,
-                  border: `1px solid ${on ? ORANGE : LIGHTER}`,
-                  background: on ? `${ORANGE}12` : WHITE,
-                  color: on ? ORANGE : MID,
-                  fontSize: "var(--type-caption)",
-                  fontFamily: FF,
-                  fontWeight: on ? 600 : 500,
-                  cursor: "pointer",
-                  flexShrink: 0,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span style={{ marginRight: 4 }} aria-hidden>
-                  {u.icon}
-                </span>
-                {u.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <div style={{ width: 1, height: 24, background: LIGHTER, flexShrink: 0, alignSelf: "center", opacity: 0.85 }} aria-hidden />
-
         <select
           aria-label="Filter by region"
           value={f.province || "all"}
@@ -2169,6 +2118,28 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
           <option value="algarve">Algarve</option>
           <option value="madeira_acores">Madeira & Azores</option>
         </select>
+
+        <button
+          type="button"
+          onClick={() => setPdmOpen((v) => !v)}
+          style={{
+            ...filterBarControl,
+            minWidth: 170,
+            justifyContent: "space-between",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            background: pdmOpen ? SUBTLE : WHITE,
+            color: INK,
+            fontWeight: 500,
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ ...filterText, color: INK }}>Zoning / PDM</span>
+          <span style={{ ...filterText, color: MID, flexShrink: 0 }}>
+            {(f.pdmTags || []).length > 0 ? `${(f.pdmTags || []).length}` : "Optional"} {pdmOpen ? "▴" : "▾"}
+          </span>
+        </button>
 
         <button
           type="button"
@@ -2189,9 +2160,8 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
           style={{
             border: "none",
             background: "none",
-            padding: "7px 8px",
-            fontSize: "var(--type-app-secondary)",
-            fontFamily: FF,
+            padding: "6px 8px",
+            ...filterText,
             color: ACCENT,
             cursor: "pointer",
             fontWeight: 600,
@@ -2209,6 +2179,72 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
           {totalCount != null && totalCount !== resultCount ? ` / ${totalCount}` : ""}
         </div>
       </div>
+
+      {pdmOpen && (
+        <div style={{ padding: "0 12px 10px", borderTop: `1px solid ${LIGHTER}` }}>
+          <p
+            style={{
+              ...TC.label,
+              color: MID,
+              margin: "8px 0 8px",
+              lineHeight: 1.45,
+            }}
+            title="Municipal plan land-use classes (RJIGT-style). Dashed border = suggested for your current Use filters."
+          >
+            Zoning / PDM classes.
+          </p>
+          <div
+            style={{
+              maxHeight: 180,
+              overflowY: "auto",
+              padding: 8,
+              border: `1px solid ${LIGHTER}`,
+              borderRadius: 8,
+              background: BG2,
+            }}
+          >
+            {["rustic", "urban"].map((group) => {
+              const keys = group === "rustic" ? PDM_RUSTIC_KEYS : PDM_URBAN_KEYS;
+              const title = group === "rustic" ? "Solo Rústico" : "Solo Urbano";
+              const suggested = pdmKeysSuggestedForUses(f.useCategories || []);
+              const useOn = (f.useCategories || []).length > 0;
+              return (
+                <div key={group} style={{ marginBottom: keys.length ? 10 : 0 }}>
+                  <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>{title}</span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                    {keys.map((key) => {
+                      const meta = PDM_KEY_META[key];
+                      if (!meta) return null;
+                      const on = (f.pdmTags || []).includes(key);
+                      const sug = useOn && suggested.has(key);
+                      return (
+                        <button
+                          type="button"
+                          key={key}
+                          onClick={() => togglePdmTag(key)}
+                          title={key}
+                          style={{
+                            padding: "4px 9px",
+                            borderRadius: 99,
+                            border: `1px ${sug && !on ? "dashed" : "solid"} ${on ? ORANGE : LIGHTER}`,
+                            background: on ? `${ORANGE}12` : WHITE,
+                            color: on ? ORANGE : MID,
+                            ...filterText,
+                            fontWeight: on ? 600 : 500,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {meta.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {moreOpen && (
         <div style={{ padding: "0 12px 12px", borderTop: `1px solid ${LIGHTER}`, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -2328,11 +2364,12 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
                         background: f[blk.key] === o ? INK : BG2,
                         border: `1px solid ${f[blk.key] === o ? INK : LIGHTER}`,
                         borderRadius: 99,
-                        padding: "2px 8px",
-                        fontSize: "var(--type-overline)",
+                        padding: "4px 10px",
+                        ...TC.label,
+                        fontSize: "var(--type-caption)",
                         color: f[blk.key] === o ? WHITE : MID,
                         cursor: "pointer",
-                        fontFamily: FF,
+                        fontWeight: f[blk.key] === o ? 600 : 500,
                       }}
                     >
                       {o}
@@ -2343,127 +2380,6 @@ function MapFilters({ filters, setFilters, resultCount, totalCount }) {
             ))}
           </div>
 
-          <div style={{ marginTop: 2 }}>
-            <button
-              type="button"
-              onClick={() => setPdmOpen((v) => !v)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                border: `1px solid ${LIGHTER}`,
-                background: pdmOpen ? SUBTLE : WHITE,
-                borderRadius: 8,
-                padding: "8px 12px",
-                cursor: "pointer",
-                fontFamily: FF,
-                textAlign: "left",
-                gap: 12,
-              }}
-            >
-              <span style={{ ...TC.labelUC, color: INK, letterSpacing: "0.05em" }}>
-                Zoning · PDM classes
-              </span>
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  fontFamily: FF,
-                  fontSize: "var(--type-caption)",
-                  color: LIGHT,
-                  flexShrink: 0,
-                }}
-              >
-                {(f.pdmTags || []).length > 0 ? (
-                  <span style={{ color: ORANGE, fontWeight: 600 }}>{(f.pdmTags || []).length} on</span>
-                ) : (
-                  <span>Optional</span>
-                )}
-                <span style={{ color: MID, ...TC.body }} aria-hidden>
-                  {pdmOpen ? "▴" : "▾"}
-                </span>
-              </span>
-            </button>
-            {pdmOpen && (
-              <div style={{ marginTop: 8 }}>
-                <p
-                  style={{
-                    fontFamily: FF,
-                    fontSize: "var(--type-overline)",
-                    color: LIGHT,
-                    margin: "0 0 8px",
-                    lineHeight: 1.45,
-                  }}
-                  title="Municipal plan land-use classes (RJIGT-style). Dashed border = suggested for your current Use filters."
-                >
-                  Dashed border = suggested from your Use filters. Scroll for all classes.
-                </p>
-                <div
-                  style={{
-                    maxHeight: 200,
-                    overflowY: "auto",
-                    padding: 8,
-                    border: `1px solid ${LIGHTER}`,
-                    borderRadius: 8,
-                    background: BG2,
-                  }}
-                >
-                  {["rustic", "urban"].map((group) => {
-                    const keys = group === "rustic" ? PDM_RUSTIC_KEYS : PDM_URBAN_KEYS;
-                    const title = group === "rustic" ? "Solo Rústico" : "Solo Urbano";
-                    const suggested = pdmKeysSuggestedForUses(f.useCategories || []);
-                    const useOn = (f.useCategories || []).length > 0;
-                    return (
-                      <div key={group} style={{ marginBottom: keys.length ? 10 : 0 }}>
-                        <span
-                          style={{
-                            ...TC.labelUC,
-                            color: MID,
-                            display: "block",
-                            marginBottom: 6,
-                            fontSize: "var(--type-overline)",
-                          }}
-                        >
-                          {title}
-                        </span>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                          {keys.map((key) => {
-                            const meta = PDM_KEY_META[key];
-                            if (!meta) return null;
-                            const on = (f.pdmTags || []).includes(key);
-                            const sug = useOn && suggested.has(key);
-                            return (
-                              <button
-                                type="button"
-                                key={key}
-                                onClick={() => togglePdmTag(key)}
-                                title={key}
-                                style={{
-                                  padding: "4px 9px",
-                                  borderRadius: 99,
-                                  border: `1px ${sug && !on ? "dashed" : "solid"} ${on ? ORANGE : LIGHTER}`,
-                                  background: on ? `${ORANGE}12` : WHITE,
-                                  color: on ? ORANGE : MID,
-                                  fontSize: "var(--type-caption)",
-                                  fontFamily: FF,
-                                  fontWeight: on ? 600 : 500,
-                                  cursor: "pointer",
-                                }}
-                              >
-                                {meta.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       )}
     </div>
@@ -4507,9 +4423,8 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     const bridgeText="**Land agent** — source layers are loaded. Running full AI analysis across zoning, PDM, plot/land-use, and cadastre.";
     const regStepMs=480;
     setTimeout(()=>{
-      setMessages(m=>m.map(msg=>msg.id===agentThinkId
-        ? {role:"assistant", text:bridgeText}
-        : msg));
+      // Keep the first step timeline visible; add bridge as a new message.
+      setMessages(m=>[...m,{role:"assistant", text:bridgeText}]);
       setMessages(m=>[...m, {role:"assistant", isThinking:true, id:deepThinkId, steps:[]}]);
 
       regulatorySteps.forEach((step,j)=>{
@@ -4518,9 +4433,12 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
           if(j===regulatorySteps.length-1){
             setTimeout(()=>{
               setAnalysisState("done");
-              setMessages((m)=>m.map((msg)=>msg.id===deepThinkId
-                ? {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot}
-                : msg));
+              // Keep the full analysis trace in chat; append report instead of replacing steps.
+              setMessages((m)=>[
+                ...m,
+                {role:"assistant", text:"Analysis complete. Building AI land report…"},
+                {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot},
+              ]);
               setTimeout(()=>{
                 persistListingScan(listingId,buildListingRecapData(resolvedPlot));
               },0);
@@ -4658,6 +4576,18 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     return ACCENT;
   }
 
+  function analysisStepSource(step){
+    const s = String(step || "").toLowerCase();
+    if (s.includes("zoning")) return "Zoning";
+    if (s.includes("pdm")) return "PDM";
+    if (s.includes("land-use") || s.includes("land use") || s.includes("ran") || s.includes("ren") || s.includes("plot analysis")) return "Land use";
+    if (s.includes("cadastre")) return "Cadastre";
+    if (s.includes("registry") || s.includes("title")) return "Registry";
+    if (s.includes("access") || s.includes("environmental") || s.includes("buildability")) return "GIS";
+    if (s.includes("report")) return "Report";
+    return "Layer";
+  }
+
   return(
     <div style={{flex:1,minHeight:0,display:"flex",overflow:"hidden"}}>
       <PipelineSaveModal
@@ -4778,6 +4708,9 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                     {msg.steps.map((step,si)=>(
                       <div key={si} style={{display:"flex",alignItems:"center",gap:8,animation:"fadeIn 0.2s ease both"}}>
                         <div style={{width:4,height:4,borderRadius:"50%",background:analysisStepColor(step),flexShrink:0,animation:`pulse 1.2s ease ${si*0.1}s infinite`}}/>
+                        <span style={{...TC.label,color:analysisStepColor(step),fontWeight:600,border:`1px solid ${analysisStepColor(step)}33`,background:`${analysisStepColor(step)}12`,borderRadius:999,padding:"1px 7px",flexShrink:0}}>
+                          {analysisStepSource(step)}
+                        </span>
                         <span style={{...TC.body,color:MID}}>{step}</span>
                       </div>
                     ))}
@@ -4886,18 +4819,12 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
         />
       </div>
 
-      {/* ── RESIZE HANDLE ── */}
-      {!isMobile&&<div
-        onMouseDown={startResize}
-        style={{width:5,flexShrink:0,background:LIGHTER,cursor:"col-resize",position:"relative",zIndex:10,transition:"background 0.15s"}}
-        onMouseEnter={e=>e.currentTarget.style.background=ACCENT}
-        onMouseLeave={e=>e.currentTarget.style.background=LIGHTER}
-      />}
+      {/* Resize divider removed to keep shell flush */}
 
       {/* ── RIGHT: MAP + LIST ── */}
       <div style={{flex:1,display:isMobile&&mobileTab!=="map"?"none":"flex",flexDirection:"column",minWidth:0,paddingBottom:isMobile?52:0}}>
         {/* Toolbar — v4 titlebar chrome */}
-        <div style={{height:44,borderBottom:`1px solid rgba(0,0,0,0.06)`,background:CHROME,display:"flex",alignItems:"center",padding:"0 12px",gap:8,flexShrink:0}}>
+        <div style={{height:44,borderBottom:`1px solid rgba(0,0,0,0.06)`,background:CHROME,display:"flex",alignItems:"center",padding:"0 8px",gap:8,flexShrink:0}}>
           <div style={{display:"flex",background:SUBTLE,borderRadius:99,padding:3,border:`1px solid ${LIGHTER}`}}>
             {[["map","Map"],["list","List"]].map(([m,lbl])=>(
               <button key={m} onClick={()=>setMapMode(m)}
