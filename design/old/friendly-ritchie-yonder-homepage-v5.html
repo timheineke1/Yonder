@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yonder — Land Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:     #ffffff;
+      --off-white: #f8f8f6;
+      --dark:      #1a1a18;
+      --muted:     #8a8a85;
+      --border:    #e8e8e4;
+      --green:     #2d5a3d;
+      --green-dim: rgba(45,90,61,0.08);
+
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Outfit', system-ui, sans-serif;
+
+      /* spacing */
+      --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px;
+      --s6:24px; --s7:32px; --s8:40px; --s9:48px; --s10:64px;
+      --s11:80px; --s12:96px;
+
+      /* radius */
+      --r-sm:6px; --r-md:8px; --r-lg:12px; --r-pill:100px;
+
+      /* shadow */
+      --sh1: 0 2px 8px rgba(0,0,0,0.08);
+      --sh2: 0 4px 20px rgba(0,0,0,0.12);
+      --sh3: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    html, body {
+      background: var(--white);
+      color: var(--dark);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      color: var(--dark);
+    }
+
+    .logo-icon { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .logo-name {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dark);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--dark);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.15s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-signin {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--dark);
+      text-decoration: none;
+      opacity: 0.7;
+      padding: 0 8px;
+      transition: opacity 0.15s;
+    }
+    .nav-signin:hover { opacity: 1; }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      color: var(--dark);
+      border: 1px solid rgba(26,26,24,0.22);
+      border-radius: var(--r-pill);
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 400;
+      font-family: var(--font-sans);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-outline:hover { opacity: 0.7; }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      background: var(--dark);
+      color: var(--white);
+      border: none;
+      border-radius: var(--r-pill);
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 400;
+      font-family: var(--font-sans);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-dark:hover { opacity: 0.8; }
+
+    /* ── HERO ─────────────────────────────────── */
+    .hero {
+      padding: 144px 32px 80px;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: var(--green-dim);
+      border-radius: var(--r-pill);
+      padding: 5px 14px;
+      margin-bottom: 32px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(42px, 6vw, 80px);
+      font-weight: 300;
+      line-height: 1.06;
+      letter-spacing: -0.01em;
+      color: var(--dark);
+      max-width: 700px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 460px;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-green {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      border-radius: var(--r-pill);
+      padding: 13px 24px;
+      font-size: 14px;
+      font-weight: 400;
+      font-family: var(--font-sans);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-green:hover { opacity: 0.85; }
+
+    .hero-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── HERO VISUAL ─────────────────────────── */
+    .hero-visual {
+      margin: 0 32px;
+      background: var(--off-white);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-visual-inner {
+      padding: 40px 28px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* landscape gradient stand-in */
+    .hero-map-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 65%, rgba(45,90,61,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 35%, rgba(130,160,120,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 85%, rgba(80,120,90,0.1) 0%, transparent 40%),
+        linear-gradient(170deg, rgba(200,210,190,0.25) 0%, rgba(170,185,165,0.2) 100%);
+      z-index: 0;
+    }
+
+    .app-window {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      border-radius: var(--r-md) var(--r-md) 0 0;
+      box-shadow: 0 6px 48px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 880px;
+      overflow: hidden;
+    }
+
+    .app-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--off-white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .adot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+    .app-titlebar span { font-size: 11.5px; color: var(--muted); margin-left: auto; }
+
+    .app-body {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      min-height: 300px;
+    }
+
+    /* sidebar */
+    .app-sidebar {
+      background: var(--off-white);
+      border-right: 1px solid var(--border);
+    }
+
+    .app-s-section {
+      padding: 14px 12px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .app-s-label {
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .app-s-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 6px 7px;
+      border-radius: var(--r-sm);
+      margin-bottom: 1px;
+      font-size: 12px;
+    }
+
+    .app-s-item.sel { background: rgba(0,0,0,0.045); }
+
+    .dot-spin {
+      width: 10px; height: 10px; flex-shrink: 0; margin-top: 2px;
+      border: 1.4px solid rgba(0,0,0,0.1);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .dot-check {
+      width: 10px; height: 10px; flex-shrink: 0; margin-top: 2px;
+      border: 1.4px solid rgba(0,0,0,0.18); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dot-check::after {
+      content: '';
+      width: 3.5px; height: 2px;
+      border-left: 1px solid #666; border-bottom: 1px solid #666;
+      transform: rotate(-45deg) translate(0.3px,-0.3px);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .app-s-name { font-size: 11.5px; font-weight: 500; color: var(--dark); line-height: 1.3; }
+    .app-s-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .app-s-time { font-size: 10px; color: #ccc; margin-left: auto; flex-shrink: 0; }
+
+    /* chat */
+    .app-chat {
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+    }
+
+    .app-chat-header {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px; font-weight: 500; color: var(--dark);
+    }
+
+    .app-chat-body {
+      flex: 1; padding: 14px;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+
+    .chat-prompt {
+      background: var(--off-white);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      font-size: 12px; color: #555; line-height: 1.55;
+    }
+
+    .chat-action { font-size: 11px; color: #bbb; display: flex; align-items: center; gap: 5px; }
+    .chat-link { color: var(--green); }
+    .chat-thought { font-size: 11px; color: #ccc; }
+    .chat-response { font-size: 12px; color: #666; line-height: 1.6; }
+
+    .chat-file {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--off-white); border: 1px solid var(--border);
+      border-radius: 4px; padding: 4px 8px;
+      font-size: 11px; color: #777;
+    }
+
+    /* preview */
+    .app-preview {
+      background: var(--white);
+      padding: 18px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .preview-url-bar {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--off-white); border-radius: var(--r-sm);
+      padding: 5px 10px; font-size: 11px; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .preview-site-title {
+      font-family: var(--font-serif);
+      font-size: 14px; color: var(--dark); font-weight: 400;
+      font-style: italic;
+    }
+
+    .preview-body-text { font-size: 11px; color: #888; line-height: 1.6; }
+
+    .preview-tag {
+      font-size: 9.5px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--green);
+    }
+
+    .preview-table { font-size: 11px; }
+    .preview-row {
+      display: flex; gap: 12px;
+      padding: 4px 0; border-bottom: 1px solid var(--border);
+      color: #aaa;
+    }
+    .preview-row .yr { color: #ccc; min-width: 36px; }
+    .preview-row .title { flex: 1; color: #666; }
+    .preview-row .status { color: #bbb; }
+
+    /* ── SECTION LABEL ───────────────────────── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── FEATURES ────────────────────────────── */
+    .features {
+      border-top: 1px solid var(--border);
+    }
+
+    .feature-block {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      min-height: 520px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feature-block.reverse {
+      grid-template-columns: 1fr 420px;
+    }
+
+    .feature-text {
+      padding: 64px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .feature-block.reverse .feature-text { order: 2; }
+    .feature-block.reverse .feature-visual { order: 1; }
+
+    .feature-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 400;
+      line-height: 1.25;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .feature-link {
+      font-size: 13.5px;
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 400;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: opacity 0.15s;
+    }
+    .feature-link:hover { opacity: 0.7; }
+
+    .feature-visual {
+      position: relative;
+      overflow: hidden;
+      background: var(--off-white);
+      border-left: 1px solid var(--border);
+    }
+
+    .feature-block.reverse .feature-visual {
+      border-left: none;
+      border-right: 1px solid var(--border);
+    }
+
+    .feat-gradient-warm {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 35% 55%, rgba(45,90,61,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 30%, rgba(130,165,120,0.15) 0%, transparent 50%),
+        linear-gradient(155deg, rgba(200,215,195,0.3) 0%, rgba(170,190,165,0.2) 100%);
+    }
+
+    .feat-gradient-cool {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 60% 45%, rgba(100,140,115,0.15) 0%, transparent 55%),
+        radial-gradient(ellipse at 30% 70%, rgba(140,170,130,0.12) 0%, transparent 50%),
+        linear-gradient(155deg, rgba(185,200,180,0.25) 0%, rgba(160,180,160,0.2) 100%);
+    }
+
+    .feature-window {
+      position: relative; z-index: 1;
+      margin: 36px 0 0 36px;
+      background: var(--white);
+      border-radius: var(--r-md) var(--r-md) 0 0;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .fw-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 9px 12px;
+      background: var(--off-white); border-bottom: 1px solid var(--border);
+      font-size: 11px; color: var(--muted);
+    }
+
+    .fw-bar .fdot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); }
+    .fw-bar .ftitle { margin: 0 auto; }
+    .fw-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* mini map */
+    .mini-map {
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      overflow: hidden; position: relative;
+    }
+
+    .mini-map-bg {
+      height: 160px;
+      background:
+        linear-gradient(to bottom, rgba(45,90,61,0.08), rgba(45,90,61,0.04)),
+        repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0,0,0,0.03) 20px),
+        repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0,0,0,0.03) 20px),
+        linear-gradient(to bottom, rgba(200,215,195,0.6), rgba(175,195,170,0.6));
+    }
+
+    .mini-map-pin {
+      position: absolute; top: 40%; left: 55%;
+      width: 10px; height: 10px;
+      background: var(--green); border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(45,90,61,0.18);
+    }
+
+    .mini-map-card {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--white); border-radius: var(--r-sm);
+      padding: 8px 10px; font-size: 10.5px;
+      box-shadow: var(--sh2); min-width: 110px;
+    }
+    .mini-map-card .mc-title { font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+    .mini-map-card .mc-row { color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+    .mini-map-card .mc-val { color: var(--dark); font-weight: 500; }
+    .mini-map-tag {
+      display: inline-block; margin-top: 5px;
+      background: var(--green-dim); color: var(--green);
+      border-radius: 3px; padding: 1px 5px; font-size: 9px; font-weight: 500;
+    }
+
+    /* constraint panel */
+    .constraint-panel {
+      border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden;
+    }
+    .cp-header {
+      padding: 8px 12px;
+      background: var(--off-white); border-bottom: 1px solid var(--border);
+      font-size: 11.5px; font-weight: 500; color: #555;
+    }
+    .cp-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 12px; border-bottom: 1px solid var(--border);
+      font-size: 11.5px;
+    }
+    .cp-row:last-child { border-bottom: none; }
+    .cp-key { color: var(--muted); }
+    .cp-val { font-weight: 500; color: var(--dark); }
+    .cp-good { color: var(--green); }
+    .cp-warn { color: #b45309; }
+
+    /* tracker */
+    .tracker-panel {
+      border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden;
+    }
+    .tp-header {
+      padding: 8px 12px;
+      background: var(--off-white); border-bottom: 1px solid var(--border);
+      font-size: 11.5px; font-weight: 500; color: #555;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .tp-badge {
+      background: var(--green-dim); color: var(--green);
+      border-radius: 3px; padding: 1px 6px; font-size: 10px; font-weight: 500;
+    }
+    .tp-row {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 9px 12px; border-bottom: 1px solid var(--border);
+      font-size: 11.5px;
+    }
+    .tp-row:last-child { border-bottom: none; }
+    .tp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-top: 3.5px; flex-shrink: 0; }
+    .tp-dot.grey { background: var(--border); }
+    .tp-text { flex: 1; color: #666; line-height: 1.4; }
+    .tp-time { font-size: 10px; color: #ccc; flex-shrink: 0; }
+
+    /* ── AUDIENCE CARDS ──────────────────────── */
+    .audience {
+      padding: 0 32px var(--s11);
+      border-top: 1px solid var(--border);
+    }
+
+    .audience-header {
+      padding: var(--s11) 0 var(--s9);
+    }
+
+    .audience h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 4vw, 46px);
+      font-weight: 300;
+      line-height: 1.12;
+      color: var(--dark);
+      max-width: 540px;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+    }
+
+    .audience-card {
+      background: var(--white);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: background 0.2s;
+    }
+    .audience-card:hover { background: var(--off-white); }
+
+    .ac-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--r-md);
+      background: var(--green-dim);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .ac-icon svg { color: var(--green); }
+
+    .ac-title {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 400;
+      color: var(--dark);
+      line-height: 1.3;
+    }
+
+    .ac-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .ac-link {
+      font-size: 13px;
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 400;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: opacity 0.15s;
+    }
+    .ac-link:hover { opacity: 0.7; }
+
+    /* ── TESTIMONIALS ────────────────────────── */
+    .testimonials {
+      padding: var(--s11) 32px;
+      border-top: 1px solid var(--border);
+      background: var(--off-white);
+    }
+
+    .testimonials h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--dark);
+      margin-bottom: 48px;
+      max-width: 480px;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+    }
+
+    .testimonial {
+      background: var(--off-white);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .t-quote {
+      font-size: 14.5px;
+      font-weight: 300;
+      color: var(--dark);
+      line-height: 1.75;
+    }
+
+    .t-person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .t-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #c8d8c0, #a8c0a0);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 500; color: var(--green);
+    }
+
+    .t-name { font-size: 13px; font-weight: 500; color: var(--dark); }
+    .t-role { font-size: 12px; color: var(--muted); }
+
+    /* ── PRICING ─────────────────────────────── */
+    .pricing {
+      padding: var(--s11) 32px;
+      border-top: 1px solid var(--border);
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .pricing-header {
+      margin-bottom: 48px;
+    }
+
+    .pricing h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 300;
+      line-height: 1.12;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .pricing-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .plan {
+      background: var(--white);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .plan-name {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .plan-price {
+      font-family: var(--font-serif);
+      font-size: 38px;
+      font-weight: 300;
+      color: var(--dark);
+      line-height: 1;
+    }
+
+    .plan-price span {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    .plan-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 300;
+      color: #555;
+    }
+
+    .plan-features li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .plan-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark);
+      color: var(--white);
+      border: none;
+      border-radius: var(--r-pill);
+      padding: 11px 20px;
+      font-size: 13px;
+      font-weight: 400;
+      font-family: var(--font-sans);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .plan-btn:hover { opacity: 0.8; }
+    .plan-btn.outline {
+      background: transparent;
+      color: var(--dark);
+      border: 1px solid rgba(26,26,24,0.22);
+    }
+
+    .pricing-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pricing-note a { color: var(--green); text-decoration: none; }
+
+    /* ── FOOTER ──────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--dark); }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── PRICING SECTION WRAPPER ─────────────── */
+    .pricing-wrap {
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── UTIL ────────────────────────────────── */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="#">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 16L12 5L19 16" stroke="#1a1a18" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 13H16" stroke="#1a1a18" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+      </svg>
+      <span class="logo-name">Yonder</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#product">Product</a>
+      <a href="#who">Who it's for</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Blog</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="nav-signin" href="#">Sign in</a>
+      <a class="btn-outline" href="#">Contact sales</a>
+      <a class="btn-dark" href="#">Request access</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-eyebrow">
+      <svg width="9" height="9" viewBox="0 0 9 9" fill="currentColor"><circle cx="4.5" cy="4.5" r="4.5"/></svg>
+      Land intelligence platform
+    </div>
+    <h1>Built to make you <em>extraordinarily</em> fast at finding land.</h1>
+    <p class="hero-sub">Search, screen, and track off-market land across any market — with AI that reasons over planning data the way you do.</p>
+    <div class="hero-actions">
+      <a class="btn-green" href="#">Try Yonder free ↓</a>
+      <span class="hero-note">No setup fees. Cancel any time.</span>
+    </div>
+  </section>
+
+  <!-- HERO APP MOCKUP -->
+  <div class="hero-visual">
+    <div class="hero-map-bg"></div>
+    <div class="hero-visual-inner">
+      <div class="app-window">
+        <div class="app-titlebar">
+          <div class="adot"></div>
+          <div class="adot"></div>
+          <div class="adot"></div>
+          <span>Yonder — Explorer</span>
+        </div>
+        <div class="app-body">
+
+          <!-- sidebar -->
+          <div class="app-sidebar">
+            <div class="app-s-section">
+              <div class="app-s-label">Active searches</div>
+              <div class="app-s-item sel">
+                <div class="dot-spin"></div>
+                <div>
+                  <div class="app-s-name">Wexford Coast</div>
+                  <div class="app-s-sub">Screening 140 plots</div>
+                </div>
+                <div class="app-s-time">now</div>
+              </div>
+              <div class="app-s-item">
+                <div class="dot-check"></div>
+                <div>
+                  <div class="app-s-name">Midlands R&amp;D</div>
+                  <div class="app-s-sub">12 candidates found</div>
+                </div>
+                <div class="app-s-time">2h</div>
+              </div>
+              <div class="app-s-item">
+                <div class="dot-check"></div>
+                <div>
+                  <div class="app-s-name">Dublin Logistics</div>
+                  <div class="app-s-sub">Report ready</div>
+                </div>
+                <div class="app-s-time">1d</div>
+              </div>
+            </div>
+            <div class="app-s-section">
+              <div class="app-s-label">Tracked parcels</div>
+              <div class="app-s-item">
+                <div class="dot-check"></div>
+                <div>
+                  <div class="app-s-name">Arklow site</div>
+                  <div class="app-s-sub">Owner contacted</div>
+                </div>
+                <div class="app-s-time">3d</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- chat -->
+          <div class="app-chat">
+            <div class="app-chat-header">Wexford Coast · Search</div>
+            <div class="app-chat-body">
+              <div class="chat-prompt">Find coastal sites 10–40ha, zoned agricultural or unzoned, within 2km of the N25, no flood risk.</div>
+              <div class="chat-action">
+                <span>↳ Searching</span>
+                <span class="chat-link">Wexford planning portal</span>
+              </div>
+              <div class="chat-thought">Filtering by flood zone exclusion…</div>
+              <div class="chat-response">Found 23 candidate sites. Top 4 match all constraints — I've pinned them on the map and drafted a one-page summary for each. Want me to reach out to the landowners?</div>
+              <div class="chat-file">
+                <span>📎</span>
+                <span>wexford_coast_shortlist.pdf</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- preview -->
+          <div class="app-preview">
+            <div class="preview-url-bar">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#ccc" stroke-width="1"/></svg>
+              yonder.app/explorer/wexford
+            </div>
+            <div class="preview-tag">Top result</div>
+            <div class="preview-site-title">Ballyconnigar Upper — 18.4 ha</div>
+            <div class="preview-body-text">Agricultural, single title. Coastal edge with elevated views. 1.1km N25 frontage. No flood risk designation. Owner traceable — one prior planning application (2018, lapsed).</div>
+            <div class="preview-table">
+              <div class="preview-row">
+                <span class="yr">2018</span>
+                <span class="title">Planning application (residential, 14 units)</span>
+                <span class="status">Lapsed</span>
+              </div>
+              <div class="preview-row">
+                <span class="yr">2021</span>
+                <span class="title">Boundary query — Land Registry</span>
+                <span class="status">Resolved</span>
+              </div>
+              <div class="preview-row">
+                <span class="yr">2024</span>
+                <span class="title">No recent activity</span>
+                <span class="status">—</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" id="product">
+
+    <!-- Feature 1: Search -->
+    <div class="feature-block">
+      <div class="feature-text">
+        <div class="section-label">Yonder Search</div>
+        <div class="feature-title">The new way to find land.</div>
+        <p class="feature-desc">Describe your requirements in plain language. Yonder reads planning portals, ownership records, and constraint data to surface the sites that match — not a list of unfiltered results, but a ranked shortlist with reasoning.</p>
+        <a class="feature-link" href="#">Learn about Yonder Search →</a>
+      </div>
+      <div class="feature-visual">
+        <div class="feat-gradient-warm"></div>
+        <div class="feature-window">
+          <div class="fw-bar">
+            <div class="fdot"></div><div class="fdot"></div><div class="fdot"></div>
+            <span class="ftitle">Search · Wexford Coast</span>
+          </div>
+          <div class="fw-body">
+            <div class="mini-map">
+              <div class="mini-map-bg"></div>
+              <div class="mini-map-pin"></div>
+              <div class="mini-map-card">
+                <div class="mc-title">Ballyconnigar Upper</div>
+                <div class="mc-row"><span>Area</span><span class="mc-val">18.4 ha</span></div>
+                <div class="mc-row"><span>Zone</span><span class="mc-val">Agricultural</span></div>
+                <div class="mc-row"><span>Risk</span><span class="mc-val">None</span></div>
+                <div class="mini-map-tag">✓ All constraints met</div>
+              </div>
+            </div>
+            <div class="constraint-panel">
+              <div class="cp-header">Constraint check</div>
+              <div class="cp-row"><span class="cp-key">Flood zone</span><span class="cp-val cp-good">Clear</span></div>
+              <div class="cp-row"><span class="cp-key">Protected structure</span><span class="cp-val cp-good">None</span></div>
+              <div class="cp-row"><span class="cp-key">N25 proximity</span><span class="cp-val cp-good">1.1 km</span></div>
+              <div class="cp-row"><span class="cp-key">Ownership</span><span class="cp-val cp-warn">Single, traceable</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: Tracker -->
+    <div class="feature-block reverse">
+      <div class="feature-text">
+        <div class="section-label">Tracker</div>
+        <div class="feature-title">Stay ahead in every market.</div>
+        <p class="feature-desc">Watch parcels over time. Yonder monitors planning activity, ownership changes, and market signals — and surfaces the moment something moves on a site you care about.</p>
+        <a class="feature-link" href="#">Learn about Tracker →</a>
+      </div>
+      <div class="feature-visual">
+        <div class="feat-gradient-cool"></div>
+        <div class="feature-window">
+          <div class="fw-bar">
+            <div class="fdot"></div><div class="fdot"></div><div class="fdot"></div>
+            <span class="ftitle">Tracker · 6 sites watching</span>
+          </div>
+          <div class="fw-body">
+            <div class="tracker-panel">
+              <div class="tp-header">
+                <span>Recent activity</span>
+                <span class="tp-badge">3 new</span>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot"></div>
+                <div class="tp-text">New planning application lodged — Arklow site (12-unit residential)</div>
+                <div class="tp-time">2h ago</div>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot"></div>
+                <div class="tp-text">Ownership transfer confirmed — Wicklow parcel (5.2 ha)</div>
+                <div class="tp-time">1d ago</div>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot"></div>
+                <div class="tp-text">Flood risk designation updated — cleared for Gorey North site</div>
+                <div class="tp-time">2d ago</div>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot grey"></div>
+                <div class="tp-text">No recent activity — Wexford Town parcel</div>
+                <div class="tp-time">7d ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- WHO IT'S FOR -->
+  <section class="audience" id="who">
+    <div class="audience-header">
+      <div class="section-label">Who it's for</div>
+      <h2>Built for professionals who acquire land for a living.</h2>
+    </div>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="ac-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" color="currentColor">
+            <rect x="3" y="10" width="3" height="7" rx="1" fill="#2d5a3d"/>
+            <rect x="8.5" y="6" width="3" height="11" rx="1" fill="#2d5a3d" opacity=".7"/>
+            <rect x="14" y="3" width="3" height="14" rx="1" fill="#2d5a3d" opacity=".45"/>
+          </svg>
+        </div>
+        <div class="ac-title">Investors &amp; developers</div>
+        <p class="ac-desc">Find off-market sites that match your criteria before they're listed. Screen hundreds of parcels in minutes, not weeks. Track competitive markets as they shift.</p>
+        <a class="ac-link" href="#">Explore for investors ↗</a>
+      </div>
+
+      <div class="audience-card">
+        <div class="ac-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="8" r="4" stroke="#2d5a3d" stroke-width="1.4"/>
+            <path d="M4 17c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#2d5a3d" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+          </svg>
+        </div>
+        <div class="ac-title">Energy &amp; infrastructure</div>
+        <p class="ac-desc">Identify suitable land for solar, wind, grid, and logistics. Model constraints against your technical requirements and get to landowners faster than the competition.</p>
+        <a class="ac-link" href="#">Explore for energy ↗</a>
+      </div>
+
+      <div class="audience-card">
+        <div class="ac-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 17L10 4L17 17" stroke="#2d5a3d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 13H14" stroke="#2d5a3d" stroke-width="1" stroke-linecap="round" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="ac-title">Agents &amp; advisors</div>
+        <p class="ac-desc">Deliver richer analysis to clients with less legwork. Generate professional site reports, track active mandates, and find comparable evidence across any market.</p>
+        <a class="ac-link" href="#">Explore for advisors ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-label">From the field</div>
+      <h2>What people are finding with Yonder.</h2>
+      <div class="testimonial-grid">
+        <div class="testimonial">
+          <p class="t-quote">"We screened a county's worth of agricultural land in an afternoon. What used to take weeks of desktop research now happens before lunch."</p>
+          <div class="t-person">
+            <div class="t-avatar">RP</div>
+            <div>
+              <div class="t-name">Roisín P.</div>
+              <div class="t-role">Land Director, Residential Developer</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <p class="t-quote">"The constraint checking alone saves us from expensive mistakes. Flood risk, protected structures, access — it flags everything in seconds."</p>
+          <div class="t-person">
+            <div class="t-avatar">CM</div>
+            <div>
+              <div class="t-name">Conor M.</div>
+              <div class="t-role">Development Manager, Energy Co.</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial">
+          <p class="t-quote">"I brief clients with Yonder reports now. It's sharper than anything I could produce manually and takes a fraction of the time."</p>
+          <div class="t-person">
+            <div class="t-avatar">SF</div>
+            <div>
+              <div class="t-name">Sinéad F.</div>
+              <div class="t-role">Senior Associate, Land Advisory</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <div class="pricing-wrap" id="pricing">
+    <section class="pricing">
+      <div class="pricing-header">
+        <div class="section-label">Pricing</div>
+        <h2>Start exploring. Scale when you're ready.</h2>
+        <p class="pricing-sub">No setup fees. No long-term contracts. Cancel any time.</p>
+      </div>
+
+      <div class="plan-grid">
+        <div class="plan">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">€0 <span>/ month</span></div>
+          <p class="plan-desc">For individuals getting started with land intelligence.</p>
+          <ul class="plan-features">
+            <li>5 AI searches per month</li>
+            <li>Basic constraint checking</li>
+            <li>PDF report export</li>
+          </ul>
+          <a class="plan-btn outline" href="#">Get started</a>
+        </div>
+
+        <div class="plan">
+          <div class="plan-name">Professional</div>
+          <div class="plan-price">€149 <span>/ month</span></div>
+          <p class="plan-desc">For active acquirers running multiple searches at once.</p>
+          <ul class="plan-features">
+            <li>Unlimited AI searches</li>
+            <li>Full constraint library</li>
+            <li>Parcel Tracker (up to 25 sites)</li>
+            <li>Landowner contact outreach</li>
+          </ul>
+          <a class="plan-btn" href="#">Get started</a>
+        </div>
+
+        <div class="plan">
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price">Custom</div>
+          <p class="plan-desc">For teams, advisories, and high-volume acquisition pipelines.</p>
+          <ul class="plan-features">
+            <li>Unlimited searches &amp; trackers</li>
+            <li>Team workspaces</li>
+            <li>API access</li>
+            <li>Dedicated support</li>
+          </ul>
+          <a class="plan-btn outline" href="#">Talk to us</a>
+        </div>
+      </div>
+
+      <p class="pricing-note">Transaction fees apply on closed deals — <a href="#">2% agent fee, capped at €10,000.</a></p>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="#">Product</a>
+      <a href="#">Pricing</a>
+      <a href="#">Blog</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-copy">© 2026 Yonder</div>
+  </footer>
+
+</body>
+</html>

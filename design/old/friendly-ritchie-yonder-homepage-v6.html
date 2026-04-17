@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yonder — Land Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── DESIGN TOKENS ─────────────────────── */
+    :root {
+      --background:          #F9F9F9;
+      --foreground:          #111111;
+      --border:              #E4E4E4;
+      --accent:              #F0F0F0;
+      --muted-foreground:    #888888;
+      --tertiary-foreground: #888888;
+
+      /* Orange — primary accent */
+      --orange:              #c84b0a;
+      --orange-foreground:   #F9F9F9;
+
+      /* Success */
+      --success:             #2d7a2d;
+      --success-foreground:  #F9F9F9;
+
+      /* Score thresholds */
+      --score-high: var(--success);
+      --score-mid:  var(--orange);
+      --score-low:  var(--muted-foreground);
+
+      /* Stage colors */
+      --stage-discovered: var(--muted-foreground);
+      --stage-agent-run:  #1a5276;
+      --stage-outreach:   #b8860b;
+      --stage-legal:      #8b5e3c;
+      --stage-offer:      var(--success);
+      --stage-closed:     var(--orange);
+
+      /* Zone fills */
+      --zone-rustico:        #d6e4c4;
+      --zone-rustico-stroke: #5a7a42;
+      --zone-ran:            #f0e8b0;
+      --zone-ran-stroke:     #a08020;
+      --zone-ren:            #b8dce0;
+      --zone-ren-stroke:     #2a8a94;
+
+      /* Typography — 5 variants */
+      --t-display:  20px; /* text-xl font-medium */
+      --t-heading:  16px; /* text-base font-medium */
+      --t-body:     14px; /* text-sm */
+      --t-caption:  12px; /* text-xs */
+
+      --font: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    html, body {
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font);
+      font-size: var(--t-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ──────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: rgba(249,249,249,0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--foreground);
+    }
+
+    /* Logo: foreground square with 4-square grid SVG */
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: var(--foreground);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-size: var(--t-body);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--foreground); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-signin {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      text-decoration: none;
+      padding: 0 8px;
+      transition: color 0.15s;
+    }
+    .nav-signin:hover { color: var(--foreground); }
+
+    /* Pill button variants */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border-radius: 9999px;
+      font-size: var(--t-body);
+      font-family: var(--font);
+      font-weight: 400;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
+      padding: 5px 16px;
+    }
+    .btn:hover { opacity: 0.75; }
+
+    .btn-ghost {
+      background: var(--accent);
+      border: 1px solid var(--border);
+      color: var(--muted-foreground);
+    }
+
+    .btn-primary {
+      background: var(--foreground);
+      color: var(--background);
+    }
+
+    .btn-orange {
+      background: var(--orange);
+      color: var(--orange-foreground);
+    }
+
+    /* ── HERO ─────────────────────────────── */
+    .hero {
+      padding: 112px 24px 56px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--t-caption);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--success);
+      background: rgba(45,122,45,0.08);
+      border-radius: 9999px;
+      padding: 4px 12px;
+      margin-bottom: 24px;
+    }
+
+    .hero-eyebrow-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .hero h1 {
+      font-size: var(--t-display);
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--foreground);
+      max-width: 520px;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
+
+    .hero-sub {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      line-height: 1.65;
+      max-width: 400px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-note {
+      font-size: var(--t-caption);
+      color: var(--muted-foreground);
+    }
+
+    /* ── APP SHELL MOCKUP (3-zone) ─────────── */
+    .hero-mockup {
+      margin: 40px 24px 0;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    /* Window chrome */
+    .mockup-chrome {
+      height: 36px;
+      background: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+
+    .chrome-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); }
+    .chrome-url {
+      margin: 0 auto;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 14px;
+      font-size: 11px;
+      color: var(--muted-foreground);
+      width: 260px;
+      text-align: center;
+    }
+
+    /* Three-zone shell */
+    .app-shell {
+      display: flex;
+      height: 460px;
+    }
+
+    /* Icon Rail — 52px */
+    .icon-rail {
+      width: 52px;
+      flex-shrink: 0;
+      background: var(--background);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 4px;
+    }
+
+    .rail-logo {
+      width: 32px; height: 32px;
+      background: var(--foreground);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .rail-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .rail-icon.active {
+      background: var(--accent);
+      border-color: var(--border);
+    }
+
+    .rail-avatar {
+      margin-top: auto;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Sidebar — ~300px */
+    .app-sidebar {
+      width: 300px;
+      flex-shrink: 0;
+      background: var(--background);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      height: 48px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header-title {
+      font-size: var(--t-body);
+      font-weight: 500;
+    }
+
+    .online-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: var(--t-caption);
+      color: var(--muted-foreground);
+    }
+
+    .online-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .sidebar-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Empty state hero text */
+    .sidebar-hero-text {
+      font-size: var(--t-display);
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--foreground);
+      letter-spacing: -0.01em;
+    }
+
+    .sidebar-hero-text em {
+      font-style: italic;
+      color: var(--orange);
+    }
+
+    .sidebar-sub {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+
+    .icp-label {
+      font-size: var(--t-caption);
+      color: var(--tertiary-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .icp-row {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .icp-row:hover { opacity: 0.55; }
+    .icp-row:last-child { border-bottom: none; }
+
+    .icp-icon {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      width: 20px;
+      text-align: center;
+    }
+
+    .icp-title {
+      font-size: var(--t-body);
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    .icp-desc {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+    }
+
+    .icp-arrow {
+      font-size: var(--t-caption);
+      color: var(--tertiary-foreground);
+      margin-left: auto;
+    }
+
+    /* Resize handle */
+    .resize-handle {
+      width: 5px;
+      flex-shrink: 0;
+      background: var(--border);
+      cursor: col-resize;
+      transition: background 0.15s;
+    }
+    .resize-handle:hover { background: var(--orange); }
+
+    /* Main content */
+    .app-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Toolbar */
+    .main-toolbar {
+      height: 48px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background);
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Tab toggle */
+    .tab-toggle {
+      background: var(--accent);
+      border-radius: 9999px;
+      padding: 3px;
+      border: 1px solid var(--border);
+      display: flex;
+      gap: 2px;
+    }
+
+    .tab-btn {
+      border-radius: 9999px;
+      padding: 4px 16px;
+      font-size: var(--t-caption);
+      font-family: var(--font);
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted-foreground);
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background: var(--background);
+      border-color: var(--border);
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    /* Cadastre toggle */
+    .cadastre-toggle {
+      border-radius: 9999px;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--t-caption);
+      font-family: var(--font);
+      background: var(--background);
+      color: var(--muted-foreground);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cadastre-toggle.active {
+      border-color: var(--orange);
+      background: rgba(200,75,10,0.08);
+      color: var(--orange);
+      font-weight: 500;
+    }
+
+    /* Active plot indicator */
+    .active-plot {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--t-caption);
+    }
+
+    .active-plot-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
+
+    .active-plot-id {
+      font-size: var(--t-caption);
+      color: var(--orange);
+      font-weight: 500;
+    }
+
+    .active-plot-close {
+      font-size: var(--t-caption);
+      color: var(--tertiary-foreground);
+      cursor: pointer;
+    }
+
+    /* Map area */
+    .map-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(170deg, rgba(45,90,61,0.06) 0%, rgba(180,200,170,0.15) 100%),
+        repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(0,0,0,0.025) 30px),
+        repeating-linear-gradient(90deg, transparent, transparent 29px, rgba(0,0,0,0.025) 30px),
+        #eef2ea;
+    }
+
+    /* Zone polygons (CSS approximation) */
+    .zone-rustico {
+      position: absolute;
+      top: 20%; left: 15%;
+      width: 28%; height: 35%;
+      background: var(--zone-rustico);
+      border: 1.2px solid var(--zone-rustico-stroke);
+      opacity: 0.75;
+      clip-path: polygon(10% 0%, 90% 5%, 100% 50%, 85% 100%, 5% 95%, 0% 45%);
+    }
+
+    .zone-ran {
+      position: absolute;
+      top: 30%; left: 42%;
+      width: 22%; height: 28%;
+      background: var(--zone-ran);
+      border: 1.2px solid var(--zone-ran-stroke);
+      opacity: 0.75;
+      clip-path: polygon(5% 10%, 95% 0%, 100% 85%, 15% 100%, 0% 55%);
+    }
+
+    .zone-ren {
+      position: absolute;
+      top: 55%; left: 55%;
+      width: 24%; height: 26%;
+      background: var(--zone-ren);
+      border: 1.2px solid var(--zone-ren-stroke);
+      opacity: 0.75;
+      clip-path: polygon(0% 20%, 80% 0%, 100% 70%, 70% 100%, 10% 90%);
+    }
+
+    /* Selected parcel */
+    .zone-selected {
+      position: absolute;
+      top: 22%; left: 28%;
+      width: 14%; height: 18%;
+      background: rgba(200,75,10,0.12);
+      border: 2.5px solid var(--orange);
+      clip-path: polygon(5% 0%, 95% 10%, 100% 80%, 60% 100%, 0% 85%);
+    }
+
+    /* Map pins */
+    .map-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: pinDrop 0.2s ease-out both;
+      cursor: pointer;
+    }
+
+    .map-pin-body {
+      width: 20px; height: 28px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .map-pin-body.score-high { background: var(--success); }
+    .map-pin-body.score-mid  { background: var(--orange); }
+    .map-pin-body.score-low  { background: var(--muted-foreground); }
+
+    /* Pin popup */
+    .pin-popup {
+      position: absolute;
+      background: rgba(17,17,17,0.92);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: #F9F9F9;
+      white-space: nowrap;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    /* Score ring on map */
+    .score-ring {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(249,249,249,0.95);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .score-ring-label {
+      font-size: var(--t-caption);
+      color: var(--muted-foreground);
+    }
+
+    .score-ring-val {
+      font-size: var(--t-display);
+      font-weight: 500;
+      color: var(--orange);
+    }
+
+    .score-ring-badge {
+      background: rgba(45,122,45,0.08);
+      color: var(--success);
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: var(--t-caption);
+      font-weight: 500;
+    }
+
+    /* Zone legend */
+    .zone-legend {
+      position: absolute;
+      bottom: 12px; left: 12px;
+      background: rgba(249,249,249,0.95);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10px;
+      color: var(--muted-foreground);
+    }
+
+    .legend-swatch {
+      width: 12px; height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    @keyframes pinDrop {
+      from { opacity: 0; transform: translate(-50%, -70%); }
+      to   { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    /* ── SECTION WRAPPER ──────────────────── */
+    section {
+      border-top: 1px solid var(--border);
+    }
+
+    .section-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+
+    .section-label {
+      font-size: var(--t-caption);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      margin-bottom: 12px;
+    }
+
+    /* ── FEATURES ─────────────────────────── */
+    .features { padding: 0; }
+
+    .feature-block {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      min-height: 440px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feature-block.reverse {
+      grid-template-columns: 1fr 360px;
+    }
+
+    .feature-text {
+      padding: 56px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border-right: 1px solid var(--border);
+    }
+
+    .feature-block.reverse .feature-text {
+      border-right: none;
+      border-left: 1px solid var(--border);
+      order: 2;
+    }
+    .feature-block.reverse .feature-visual { order: 1; }
+
+    .feature-title {
+      font-size: var(--t-heading);
+      font-weight: 500;
+      color: var(--foreground);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .feature-desc {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .feature-link {
+      font-size: var(--t-body);
+      color: var(--orange);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: opacity 0.15s;
+    }
+    .feature-link:hover { opacity: 0.7; }
+
+    .feature-visual {
+      background: var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feat-window {
+      position: relative; z-index: 1;
+      margin: 28px 0 0 28px;
+      background: var(--background);
+      border-radius: 8px 8px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .fw-bar {
+      height: 32px;
+      background: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 5px;
+    }
+
+    .fw-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+    .fw-title {
+      margin: 0 auto;
+      font-size: 10px;
+      color: var(--muted-foreground);
+    }
+
+    .fw-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* Mini map inside feature */
+    .mini-map {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mini-map-bg {
+      height: 130px;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0,0,0,0.025) 20px),
+        repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0,0,0,0.025) 20px),
+        linear-gradient(to bottom, #e8eedf, #d8e8d0);
+    }
+
+    .mini-map-pin {
+      position: absolute; top: 38%; left: 52%;
+      width: 10px; height: 10px;
+      background: var(--orange); border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(200,75,10,0.18);
+    }
+
+    .mini-map-card {
+      position: absolute; top: 10px; right: 10px;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 9px;
+      font-size: 10.5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .mc-title { font-weight: 500; color: var(--foreground); margin-bottom: 4px; font-size: 11px; }
+    .mc-row { color: var(--muted-foreground); display: flex; justify-content: space-between; gap: 8px; font-size: 10px; }
+    .mc-val { color: var(--foreground); font-weight: 500; }
+
+    .mc-verdict {
+      margin-top: 5px;
+      background: rgba(45,122,45,0.08);
+      color: var(--success);
+      border-radius: 9999px;
+      padding: 1px 7px;
+      font-size: 10px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    /* Constraint panel */
+    .constraint-panel {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .cp-header {
+      padding: 7px 11px;
+      background: var(--accent);
+      border-bottom: 1px solid var(--border);
+      font-size: var(--t-caption);
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    .cp-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 11px;
+      border-bottom: 1px solid var(--border);
+      font-size: var(--t-caption);
+    }
+
+    .cp-row:last-child { border-bottom: none; }
+    .cp-key { color: var(--muted-foreground); }
+    .cp-good { color: var(--success); font-weight: 500; }
+    .cp-warn { color: var(--orange); font-weight: 500; }
+
+    /* Tracker */
+    .tracker-panel {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .tp-header {
+      padding: 7px 11px;
+      background: var(--accent);
+      border-bottom: 1px solid var(--border);
+      font-size: var(--t-caption);
+      font-weight: 500;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tp-badge {
+      background: rgba(200,75,10,0.08);
+      color: var(--orange);
+      border-radius: 9999px;
+      padding: 1px 7px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .tp-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 8px 11px;
+      border-bottom: 1px solid var(--border);
+      font-size: var(--t-caption);
+    }
+
+    .tp-row:last-child { border-bottom: none; }
+
+    .tp-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .tp-dot.dim { background: var(--border); }
+    .tp-text { flex: 1; color: var(--muted-foreground); line-height: 1.4; }
+    .tp-time { color: #C8C8C8; flex-shrink: 0; }
+
+    /* Stage pill */
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stage-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+
+    .stage-label {
+      font-size: var(--t-caption);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── AUDIENCE ─────────────────────────── */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 32px;
+    }
+
+    .audience-card {
+      background: var(--background);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: background 0.15s;
+    }
+
+    .audience-card:hover { background: var(--accent); }
+
+    .ac-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(200,75,10,0.08);
+      border: 1px solid rgba(200,75,10,0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--orange);
+      font-size: 16px;
+    }
+
+    .ac-title {
+      font-size: var(--t-heading);
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    .ac-desc {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .ac-link {
+      font-size: var(--t-body);
+      color: var(--orange);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: opacity 0.15s;
+    }
+    .ac-link:hover { opacity: 0.7; }
+
+    /* ── TESTIMONIALS ─────────────────────── */
+    .testimonials-inner {
+      background: var(--accent);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 32px;
+    }
+
+    .testimonial {
+      background: var(--accent);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .t-quote {
+      font-size: var(--t-body);
+      color: var(--foreground);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .t-person { display: flex; align-items: center; gap: 10px; }
+
+    .t-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: var(--t-caption);
+      font-weight: 500;
+      color: var(--muted-foreground);
+      flex-shrink: 0;
+    }
+
+    .t-name { font-size: var(--t-body); font-weight: 500; color: var(--foreground); }
+    .t-role { font-size: var(--t-caption); color: var(--muted-foreground); }
+
+    /* ── PRICING ──────────────────────────── */
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    .plan {
+      background: var(--background);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .plan-name {
+      font-size: var(--t-caption);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+    }
+
+    .plan-price {
+      font-size: var(--t-display);
+      font-weight: 500;
+      color: var(--foreground);
+      line-height: 1;
+    }
+
+    .plan-price span {
+      font-size: var(--t-body);
+      font-weight: 400;
+      color: var(--muted-foreground);
+    }
+
+    .plan-desc {
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+      line-height: 1.6;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: var(--t-body);
+      color: var(--muted-foreground);
+    }
+
+    .plan-features li::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .plan-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--foreground);
+      color: var(--background);
+      border: none;
+      border-radius: 9999px;
+      padding: 8px 20px;
+      font-size: var(--t-body);
+      font-weight: 500;
+      font-family: var(--font);
+      text-decoration: none;
+      transition: opacity 0.15s;
+      cursor: pointer;
+    }
+
+    .plan-btn:hover { opacity: 0.8; }
+
+    .plan-btn.outline {
+      background: transparent;
+      color: var(--foreground);
+      border: 1px solid var(--border);
+    }
+
+    .pricing-note {
+      font-size: var(--t-caption);
+      color: var(--muted-foreground);
+    }
+
+    .pricing-note a { color: var(--orange); text-decoration: none; }
+
+    /* ── FOOTER ───────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: var(--t-caption);
+      color: var(--muted-foreground);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--foreground); }
+
+    .footer-copy {
+      font-size: var(--t-caption);
+      color: var(--muted-foreground);
+    }
+
+    footer-wrap {
+      border-top: 1px solid var(--border);
+    }
+
+    /* Mono ref */
+    .mono { font-family: var(--font-mono); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="#">
+      <div class="logo-mark">
+        <!-- 4-square grid: 3 cream, 1 orange -->
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="1" y="1" width="7" height="7" rx="1.5" fill="#F9F9F9" opacity="0.9"/>
+          <rect x="10" y="1" width="7" height="7" rx="1.5" fill="#F9F9F9" opacity="0.9"/>
+          <rect x="1" y="10" width="7" height="7" rx="1.5" fill="#F9F9F9" opacity="0.9"/>
+          <rect x="10" y="10" width="7" height="7" rx="1.5" fill="#c84b0a"/>
+        </svg>
+      </div>
+      <span class="logo-name">Yonder</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#product">Product</a>
+      <a href="#who">Who it's for</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Blog</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="nav-signin" href="#">Sign in</a>
+      <a class="btn btn-ghost" href="#">Contact sales</a>
+      <a class="btn btn-primary" href="#">Request access</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div style="max-width:980px;margin:0 auto;">
+    <div class="hero">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        Land intelligence platform
+      </div>
+      <h1>Built to make you <em>extraordinarily</em> fast at finding land.</h1>
+      <p class="hero-sub">Search, screen, and track off-market land across any market — with AI that reasons over planning data the way you do.</p>
+      <div class="hero-actions">
+        <a class="btn btn-orange" style="padding:8px 20px;font-size:var(--t-body);" href="#">Try Yonder free</a>
+        <span class="hero-note">No setup fees · Cancel any time</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP SHELL MOCKUP -->
+  <div class="hero-mockup">
+    <div class="mockup-chrome">
+      <div class="chrome-dot"></div>
+      <div class="chrome-dot"></div>
+      <div class="chrome-dot"></div>
+      <div class="chrome-url">yonder.app/explorer</div>
+    </div>
+
+    <div class="app-shell">
+
+      <!-- Icon Rail -->
+      <div class="icon-rail">
+        <div class="rail-logo">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="1" y="1" width="7" height="7" rx="1.5" fill="#F9F9F9" opacity="0.9"/>
+            <rect x="10" y="1" width="7" height="7" rx="1.5" fill="#F9F9F9" opacity="0.9"/>
+            <rect x="1" y="10" width="7" height="7" rx="1.5" fill="#F9F9F9" opacity="0.9"/>
+            <rect x="10" y="10" width="7" height="7" rx="1.5" fill="#c84b0a"/>
+          </svg>
+        </div>
+
+        <!-- Search icon (active) -->
+        <div class="rail-icon active">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="8" cy="8" r="5"/>
+            <line x1="12" y1="12" x2="16" y2="16"/>
+          </svg>
+        </div>
+
+        <!-- Projects icon -->
+        <div class="rail-icon" style="color:var(--muted-foreground)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <rect x="2" y="2" width="6" height="6" rx="1.5"/>
+            <rect x="10" y="2" width="6" height="6" rx="1.5"/>
+            <rect x="2" y="10" width="6" height="6" rx="1.5"/>
+            <rect x="10" y="10" width="6" height="6" rx="1.5"/>
+          </svg>
+        </div>
+
+        <div class="rail-avatar" style="margin-top:auto;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--muted-foreground)" stroke-width="1.4" stroke-linecap="round">
+            <circle cx="8" cy="6" r="3"/>
+            <path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="app-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-header-title">Yonder</span>
+          <div class="online-badge">
+            <div class="online-dot"></div>
+            Online
+          </div>
+        </div>
+        <div class="sidebar-body">
+          <div>
+            <div class="sidebar-hero-text">Find land in<br /><em>Portugal.</em></div>
+            <div class="sidebar-sub">Describe what you need. Yonder does the rest.</div>
+          </div>
+
+          <div>
+            <div class="icp-label">Starting points</div>
+            <div class="icp-row">
+              <span class="icp-icon">🌾</span>
+              <div>
+                <div class="icp-title">Agricultural to residential</div>
+                <div class="icp-desc">5–20ha, reclassification potential</div>
+              </div>
+              <span class="icp-arrow">›</span>
+            </div>
+            <div class="icp-row">
+              <span class="icp-icon">⚡</span>
+              <div>
+                <div class="icp-title">Solar development sites</div>
+                <div class="icp-desc">10ha+, south-facing, RAN check</div>
+              </div>
+              <span class="icp-arrow">›</span>
+            </div>
+            <div class="icp-row">
+              <span class="icp-icon">🏖</span>
+              <div>
+                <div class="icp-title">Coastal tourism land</div>
+                <div class="icp-desc">Within 2km coast, no flood risk</div>
+              </div>
+              <span class="icp-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resize handle -->
+      <div class="resize-handle"></div>
+
+      <!-- Main content -->
+      <div class="app-main">
+        <div class="main-toolbar">
+          <div class="tab-toggle">
+            <button class="tab-btn active">Map</button>
+            <button class="tab-btn">List</button>
+          </div>
+
+          <div class="cadastre-toggle active">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="1" y="1" width="4" height="4" rx="0.8"/>
+              <rect x="7" y="1" width="4" height="4" rx="0.8"/>
+              <rect x="1" y="7" width="4" height="4" rx="0.8"/>
+              <rect x="7" y="7" width="4" height="4" rx="0.8"/>
+            </svg>
+            Cadastre
+          </div>
+
+          <div class="active-plot" style="margin-left:auto;">
+            <div class="active-plot-dot"></div>
+            <span class="active-plot-id mono">PT-SB-0182-A</span>
+            <span class="active-plot-close">×</span>
+          </div>
+        </div>
+
+        <!-- Map area -->
+        <div class="map-area">
+          <!-- Zone fills -->
+          <div class="zone-rustico"></div>
+          <div class="zone-ran"></div>
+          <div class="zone-ren"></div>
+          <div class="zone-selected"></div>
+
+          <!-- Pins -->
+          <div class="map-pin" style="top:32%;left:34%">
+            <div style="position:relative">
+              <div class="pin-popup">PT-0182 · 94</div>
+              <div class="map-pin-body score-high"></div>
+            </div>
+          </div>
+
+          <div class="map-pin" style="top:48%;left:55%">
+            <div class="map-pin-body score-mid"></div>
+          </div>
+
+          <div class="map-pin" style="top:62%;left:42%">
+            <div class="map-pin-body score-low"></div>
+          </div>
+
+          <!-- Score badge -->
+          <div class="score-ring">
+            <div>
+              <div class="score-ring-label">PT-SB-0182-A</div>
+              <div style="display:flex;align-items:baseline;gap:4px;">
+                <span class="score-ring-val">94</span>
+                <span style="font-size:var(--t-caption);color:var(--muted-foreground)">/100</span>
+              </div>
+            </div>
+            <div class="score-ring-badge">Great match</div>
+          </div>
+
+          <!-- Zone legend -->
+          <div class="zone-legend">
+            <div class="legend-row">
+              <div class="legend-swatch" style="background:var(--zone-rustico);border:1px solid var(--zone-rustico-stroke)"></div>
+              Rústico
+            </div>
+            <div class="legend-row">
+              <div class="legend-swatch" style="background:var(--zone-ran);border:1px solid var(--zone-ran-stroke)"></div>
+              RAN
+            </div>
+            <div class="legend-row">
+              <div class="legend-swatch" style="background:var(--zone-ren);border:1px solid var(--zone-ren-stroke)"></div>
+              REN
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end app-shell -->
+  </div><!-- end hero-mockup -->
+
+  <!-- FEATURES -->
+  <section class="features" id="product">
+
+    <div class="feature-block">
+      <div class="feature-text">
+        <div class="section-label">Yonder Search</div>
+        <div class="feature-title">The new way to find land.</div>
+        <p class="feature-desc">Describe your requirements in plain language. Yonder reads planning portals, ownership records, and constraint data to surface a ranked shortlist — with reasoning, not just results.</p>
+        <a class="feature-link" href="#">Learn about Yonder Search →</a>
+      </div>
+      <div class="feature-visual">
+        <div class="feat-window">
+          <div class="fw-bar">
+            <div class="fw-dot"></div><div class="fw-dot"></div><div class="fw-dot"></div>
+            <span class="fw-title">Search results · Comporta</span>
+          </div>
+          <div class="fw-body">
+            <div class="mini-map">
+              <div class="mini-map-bg"></div>
+              <div class="mini-map-pin"></div>
+              <div class="mini-map-card">
+                <div class="mc-title">Herdade do Pinheiro</div>
+                <div class="mc-row"><span>Area</span><span class="mc-val">14.2 ha</span></div>
+                <div class="mc-row"><span>Zone</span><span class="mc-val mono" style="font-size:10px">Rústico</span></div>
+                <div class="mc-row"><span>Score</span><span class="mc-val" style="color:var(--success)">94</span></div>
+                <div class="mc-verdict">✓ Great match</div>
+              </div>
+            </div>
+            <div class="constraint-panel">
+              <div class="cp-header">Constraint check</div>
+              <div class="cp-row"><span class="cp-key">Flood zone</span><span class="cp-good">Clear</span></div>
+              <div class="cp-row"><span class="cp-key">RAN restriction</span><span class="cp-good">None</span></div>
+              <div class="cp-row"><span class="cp-key">Road access</span><span class="cp-good">EN261 — 0.8 km</span></div>
+              <div class="cp-row"><span class="cp-key">Ownership</span><span class="cp-warn">Traceable — 1 title</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-block reverse">
+      <div class="feature-text">
+        <div class="section-label">Tracker</div>
+        <div class="feature-title">Stay ahead in every market.</div>
+        <p class="feature-desc">Watch parcels over time. Yonder monitors planning activity, ownership changes, and zone updates — and tells you the moment something moves on a site you care about.</p>
+        <a class="feature-link" href="#">Learn about Tracker →</a>
+      </div>
+      <div class="feature-visual">
+        <div class="feat-window">
+          <div class="fw-bar">
+            <div class="fw-dot"></div><div class="fw-dot"></div><div class="fw-dot"></div>
+            <span class="fw-title">Tracker · 8 sites watching</span>
+          </div>
+          <div class="fw-body">
+            <div class="tracker-panel">
+              <div class="tp-header">
+                <span>Recent activity</span>
+                <span class="tp-badge">3 new</span>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot"></div>
+                <div class="tp-text">New planning application — Comporta plot (28-unit tourism)</div>
+                <div class="tp-time">2h</div>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot"></div>
+                <div class="tp-text">Ownership transfer confirmed — Grândola parcel (8.4 ha)</div>
+                <div class="tp-time">1d</div>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot"></div>
+                <div class="tp-text">REN designation updated — cleared for Alcácer do Sal site</div>
+                <div class="tp-time">2d</div>
+              </div>
+              <div class="tp-row">
+                <div class="tp-dot dim"></div>
+                <div class="tp-text">No recent activity — Setúbal peninsula parcel</div>
+                <div class="tp-time">8d</div>
+              </div>
+            </div>
+            <!-- Stage pills -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="font-size:var(--t-caption);color:var(--muted-foreground);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">Pipeline stages</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <div class="stage-pill"><div class="stage-dot" style="background:var(--stage-outreach)"></div><span class="stage-label" style="color:var(--stage-outreach)">Outreach</span></div>
+                <div class="stage-pill"><div class="stage-dot" style="background:var(--stage-legal)"></div><span class="stage-label" style="color:var(--stage-legal)">Legal</span></div>
+                <div class="stage-pill"><div class="stage-dot" style="background:var(--stage-offer)"></div><span class="stage-label" style="color:var(--stage-offer)">Offer</span></div>
+                <div class="stage-pill"><div class="stage-dot" style="background:var(--stage-closed)"></div><span class="stage-label" style="color:var(--stage-closed)">Closed</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- WHO IT'S FOR -->
+  <section id="who">
+    <div class="section-inner">
+      <div class="section-label">Who it's for</div>
+      <div style="font-size:var(--t-heading);font-weight:500;color:var(--foreground);max-width:440px;line-height:1.4;">Built for professionals who acquire land for a living.</div>
+
+      <div class="audience-grid">
+        <div class="audience-card">
+          <div class="ac-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="10" width="3" height="6" rx="1" fill="currentColor"/>
+              <rect x="7.5" y="6" width="3" height="10" rx="1" fill="currentColor" opacity=".65"/>
+              <rect x="13" y="3" width="3" height="13" rx="1" fill="currentColor" opacity=".4"/>
+            </svg>
+          </div>
+          <div class="ac-title">Investors &amp; developers</div>
+          <p class="ac-desc">Find off-market sites before they're listed. Screen hundreds of parcels in minutes, not weeks.</p>
+          <a class="ac-link" href="#">Explore for investors ↗</a>
+        </div>
+
+        <div class="audience-card">
+          <div class="ac-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M2 17c0-3.87 3.13-7 7-7s7 3.13 7 7" opacity=".55"/>
+            </svg>
+          </div>
+          <div class="ac-title">Energy &amp; infrastructure</div>
+          <p class="ac-desc">Identify suitable land for solar, wind, and logistics. Model constraints against your technical requirements.</p>
+          <a class="ac-link" href="#">Explore for energy ↗</a>
+        </div>
+
+        <div class="audience-card">
+          <div class="ac-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <path d="M3 16L9 4L15 16"/>
+              <path d="M6 12H12" opacity=".5"/>
+            </svg>
+          </div>
+          <div class="ac-title">Agents &amp; advisors</div>
+          <p class="ac-desc">Deliver richer analysis to clients with less legwork. Generate professional site reports in seconds.</p>
+          <a class="ac-link" href="#">Explore for advisors ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section>
+    <div class="section-inner testimonials-inner" style="background:var(--accent);max-width:100%;padding:64px 24px;">
+      <div style="max-width:980px;margin:0 auto;">
+        <div class="section-label">From the field</div>
+        <div style="font-size:var(--t-heading);font-weight:500;color:var(--foreground);">What people are finding with Yonder.</div>
+        <div class="testimonial-grid">
+          <div class="testimonial">
+            <p class="t-quote">"We screened a county's worth of agricultural land in an afternoon. What used to take weeks of desktop research now happens before lunch."</p>
+            <div class="t-person">
+              <div class="t-avatar">RP</div>
+              <div>
+                <div class="t-name">Roisín P.</div>
+                <div class="t-role">Land Director, Residential Developer</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial">
+            <p class="t-quote">"The constraint checking alone saves us from expensive mistakes. Flood risk, zone restrictions, access — it flags everything in seconds."</p>
+            <div class="t-person">
+              <div class="t-avatar">CM</div>
+              <div>
+                <div class="t-name">Conor M.</div>
+                <div class="t-role">Development Manager, Energy Co.</div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial">
+            <p class="t-quote">"I brief clients with Yonder reports now. It's sharper than anything I could produce manually and takes a fraction of the time."</p>
+            <div class="t-person">
+              <div class="t-avatar">SF</div>
+              <div>
+                <div class="t-name">Sinéad F.</div>
+                <div class="t-role">Senior Associate, Land Advisory</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-inner">
+      <div class="section-label">Pricing</div>
+      <div style="font-size:var(--t-heading);font-weight:500;color:var(--foreground);">Start exploring. Scale when you're ready.</div>
+      <div style="font-size:var(--t-body);color:var(--muted-foreground);margin-top:6px;">No setup fees. No long-term contracts. Cancel any time.</div>
+
+      <div class="plan-grid">
+        <div class="plan">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">€0 <span>/ month</span></div>
+          <p class="plan-desc">For individuals getting started with land intelligence.</p>
+          <ul class="plan-features">
+            <li>5 AI searches per month</li>
+            <li>Basic constraint checking</li>
+            <li>PDF report export</li>
+          </ul>
+          <a class="plan-btn outline" href="#">Get started</a>
+        </div>
+
+        <div class="plan">
+          <div class="plan-name">Professional</div>
+          <div class="plan-price">€149 <span>/ month</span></div>
+          <p class="plan-desc">For active acquirers running multiple searches at once.</p>
+          <ul class="plan-features">
+            <li>Unlimited AI searches</li>
+            <li>Full constraint library</li>
+            <li>Parcel Tracker (up to 25 sites)</li>
+            <li>Landowner contact outreach</li>
+          </ul>
+          <a class="plan-btn" href="#">Get started</a>
+        </div>
+
+        <div class="plan">
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price">Custom</div>
+          <p class="plan-desc">For teams, advisories, and high-volume acquisition pipelines.</p>
+          <ul class="plan-features">
+            <li>Unlimited searches &amp; trackers</li>
+            <li>Team workspaces</li>
+            <li>API access</li>
+            <li>Dedicated support</li>
+          </ul>
+          <a class="plan-btn outline" href="#">Talk to us</a>
+        </div>
+      </div>
+
+      <p class="pricing-note">Transaction fees apply on closed deals — <a href="#">2% agent fee, capped at €10,000.</a></p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div style="border-top:1px solid var(--border);">
+    <footer>
+      <div class="footer-links">
+        <a href="#">Product</a>
+        <a href="#">Pricing</a>
+        <a href="#">Blog</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-copy">© 2026 Yonder</div>
+    </footer>
+  </div>
+
+</body>
+</html>
