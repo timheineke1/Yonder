@@ -1568,6 +1568,178 @@ function DashboardView({onOpenListing,upgraded,onUpgrade}){
   );
 }
 
+// ── PROJECT SWITCHER ─────────────────────────────────────────────────────────
+function ProjectSwitcher({ activeProject, onSwitch }) {
+  const [open, setOpen] = useState(false);
+  const name = activeProject?.name ?? "Select project";
+  return (
+    <div style={{position:"relative"}}>
+      <button type="button" onClick={()=>setOpen(o=>!o)}
+        style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",padding:"4px 6px",borderRadius:8,fontFamily:FF}}>
+        <span style={{fontSize:"17px",fontWeight:700,color:INK,letterSpacing:"-0.01em"}}>{name}</span>
+        <span style={{color:INK4,fontSize:"11px",marginTop:1}}>▾</span>
+      </button>
+      {open&&(
+        <>
+          <div style={{position:"fixed",inset:0,zIndex:199}} onClick={()=>setOpen(false)}/>
+          <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,zIndex:200,background:PAPER,border:`1px solid ${LINE}`,borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.1)",minWidth:220,overflow:"hidden"}}>
+            {INIT_PROJECTS.map(p=>(
+              <button key={p.id} type="button" onClick={()=>{onSwitch(p);setOpen(false);}}
+                style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:activeProject?.id===p.id?CANVAS:PAPER,border:"none",cursor:"pointer",textAlign:"left",fontFamily:FF}}>
+                <div style={{width:28,height:28,borderRadius:7,background:`${p.color}15`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",flexShrink:0}}>{p.icon}</div>
+                <div>
+                  <div style={{fontSize:"13px",fontWeight:600,color:INK}}>{p.name}</div>
+                  <div style={{fontSize:"11px",color:INK3}}>{p.desc?.split(" ").slice(0,5).join(" ")}…</div>
+                </div>
+                {activeProject?.id===p.id&&<span style={{marginLeft:"auto",color:ACCENT,fontSize:"13px"}}>✓</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── LAND ANALYSIS STEPS ──────────────────────────────────────────────────────
+const ANALYSIS_STEPS = [
+  { id:"loc",      label:"Fetching location data",        source:"Location",    detail:"Resolving listing coordinates and parcel bounds from registry." },
+  { id:"geo",      label:"Querying geographic layers",    source:"Geo Layers",  detail:"15 layers loaded: RAN, REN, POSIT, PDM, flood zones, fire risk, slope, Natura 2000." },
+  { id:"interp",   label:"Interpreting layer data",       source:"Land Use",    detail:"Cross-referencing parcel against RAN/REN agricultural and ecological reserves." },
+  { id:"muni",     label:"Identifying municipality",      source:"Municipality",detail:"Confirmed municipality and CAOP boundaries for PDM article lookup." },
+  { id:"pdm",      label:"Checking PDM regulations",      source:"PDM",         detail:"Municipal PDM article found — permitted uses, setbacks, and height limits assessed." },
+  { id:"zoning",   label:"Querying zoning rules",         source:"Zoning",      detail:"General land classification confirmed. Overlay flags (RAN, REN, Natura) checked." },
+  { id:"cadastre", label:"Linking cadastre parcel",       source:"Cadastre",    detail:"AT cadastre ID confirmed. Parcel area and ownership flags loaded." },
+  { id:"registry", label:"Checking registry & title",     source:"Registry",    detail:"Title search complete. Encumbrances and ownership chain verified." },
+  { id:"gis",      label:"GIS constraints analysis",      source:"GIS",         detail:"Flood zone: clear. Fire risk: moderate. Slope <8%. Paved access within 200m." },
+  { id:"report",   label:"Generating AI land report",     source:"Report",      detail:"Synthesising all layers into buildability verdict and key highlights." },
+];
+
+function LandAnalysisBlock({ completedCount, done }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [expandedStep, setExpandedStep] = useState(null);
+  const total = ANALYSIS_STEPS.length;
+  const pct = done ? 100 : Math.round((completedCount / total) * 100);
+
+  return (
+    <div style={{background:PAPER,border:`1px solid ${LINE}`,borderRadius:12,overflow:"hidden",fontFamily:FF}}>
+      {/* Header row */}
+      <div onClick={()=>setCollapsed(c=>!c)}
+        style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",cursor:"pointer",background:done?SUCCESS_WASH:ACCENT_WASH,borderBottom:collapsed?`none`:`1px solid ${done?`${SUCCESS}28`:LINE}`}}>
+        <div style={{width:28,height:28,borderRadius:"50%",background:done?SUCCESS:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          {done
+            ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7.2 5.5 9.8 11 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            : <div style={{width:10,height:10,borderRadius:"50%",border:"2px solid rgba(255,255,255,0.4)",borderTopColor:"white",animation:"spin 0.9s linear infinite"}}/>
+          }
+        </div>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontSize:"13px",fontWeight:600,color:INK,lineHeight:1.2}}>
+            {done ? "Analysis complete" : ANALYSIS_STEPS[completedCount]?.label ?? "Analyzing…"}
+          </div>
+          <div style={{fontSize:"11px",color:INK3,marginTop:2}}>
+            {done ? `${total} layers checked` : `${completedCount} / ${total} layers · ${pct}%`}
+          </div>
+        </div>
+        <span style={{fontSize:"11px",color:INK3,flexShrink:0}}>{collapsed?"▾":"▴"}</span>
+      </div>
+
+      {/* Step list */}
+      {!collapsed&&(
+        <div>
+          {ANALYSIS_STEPS.map((step, i) => {
+            const status = done || i < completedCount ? "done" : i === completedCount ? "running" : "pending";
+            const isOpen = expandedStep === i;
+            return (
+              <div key={step.id}
+                style={{borderBottom:i<ANALYSIS_STEPS.length-1?`1px solid ${LINE2}`:"none"}}>
+                <div onClick={()=>setExpandedStep(isOpen?null:i)}
+                  style={{display:"flex",alignItems:"center",gap:10,padding:"8px 14px",cursor:"pointer",background:"transparent",transition:"background 0.1s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background=CANVAS}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  {/* Status icon */}
+                  <div style={{width:16,height:16,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    {status==="done"&&(
+                      <div style={{width:16,height:16,borderRadius:"50%",background:SUCCESS,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                        <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2 4.5 3.8 6.3 7 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                    )}
+                    {status==="running"&&<div style={{width:12,height:12,borderRadius:"50%",border:"1.5px solid rgba(0,0,0,0.12)",borderTopColor:ACCENT,animation:"spin 0.9s linear infinite"}}/>}
+                    {status==="pending"&&<div style={{width:8,height:8,borderRadius:"50%",background:LINE,margin:"0 auto"}}/>}
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <span style={{fontSize:"13px",fontWeight:status==="pending"?400:500,color:status==="pending"?INK3:INK}}>{step.label}</span>
+                  </div>
+                  <span style={{fontSize:"11px",fontWeight:600,color:status==="done"?SUCCESS:status==="running"?ACCENT:INK4,flexShrink:0,letterSpacing:"0.03em"}}>{step.source}</span>
+                  <span style={{fontSize:"10px",color:INK4,marginLeft:2}}>{isOpen?"▴":"▾"}</span>
+                </div>
+                {isOpen&&(
+                  <div style={{padding:"0 14px 10px 40px",fontSize:"12px",color:INK3,lineHeight:1.55,background:CANVAS}}>
+                    {status==="running"
+                      ? <span style={{color:ACCENT,fontWeight:500}}>Running… {step.detail}</span>
+                      : status==="pending"
+                      ? <span style={{color:INK4}}>Pending</span>
+                      : step.detail}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LandReportCard({ data, plot, onOpenReport }) {
+  const buildable = data.verdict === "buildable";
+  const good = data.restrictions.filter(r=>r.status==="clear").map(r=>r.name);
+  const bad  = data.restrictions.filter(r=>r.status==="blocking").map(r=>r.name);
+  const highlights = [
+    ...good.map(n=>({ label:n+" clear", type:"good" })),
+    ...bad.map(n=>({ label:n+" applies", type:"bad" })),
+    { label: data.keyFacts?.[1]?.value||"—", type:"neutral" },
+  ].slice(0,4);
+
+  return (
+    <div style={{background:PAPER,border:`1px solid ${LINE}`,borderRadius:12,overflow:"hidden",fontFamily:FF}}>
+      {/* Verdict header */}
+      <div style={{padding:"12px 14px",background:buildable?SUCCESS_WASH:WARN_WASH,borderBottom:`1px solid ${buildable?`${SUCCESS}28`:`${WARN}28`}`}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+          <span style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",color:INK3}}>Land Report · Summary</span>
+          <span style={{fontSize:"12px",fontWeight:700,color:buildable?SUCCESS:WARN,background:buildable?`${SUCCESS}18`:`${WARN}18`,border:`1px solid ${buildable?`${SUCCESS}35`:`${WARN}35`}`,borderRadius:99,padding:"2px 8px"}}>
+            {data.verdictLabel}
+          </span>
+        </div>
+        <div style={{fontSize:"15px",fontWeight:700,color:INK,marginBottom:2}}>{plot?.name||data.location}</div>
+        <div style={{fontSize:"12px",color:INK3}}>{data.zoningShort} · {data.area}</div>
+      </div>
+
+      {/* Highlights */}
+      <div style={{padding:"10px 14px",display:"flex",flexDirection:"column",gap:4}}>
+        {highlights.map((h,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:7}}>
+            <div style={{width:14,height:14,borderRadius:"50%",flexShrink:0,background:h.type==="good"?SUCCESS:h.type==="bad"?"#d93025":INK3,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {h.type==="good"&&<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4 3 5.5 6.5 2" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              {h.type==="bad"&&<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M2 2 6 6M6 2 2 6" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              {h.type==="neutral"&&<div style={{width:4,height:4,borderRadius:"50%",background:"white"}}/>}
+            </div>
+            <span style={{fontSize:"13px",color:INK,fontWeight:h.type==="bad"?500:400}}>{h.label}</span>
+          </div>
+        ))}
+        <div style={{fontSize:"12px",color:INK3,lineHeight:1.5,marginTop:4}}>{data.verdictSummary}</div>
+      </div>
+
+      {/* Footer CTA */}
+      <div style={{padding:"10px 14px",borderTop:`1px solid ${LINE}`,display:"flex",gap:8}}>
+        <button type="button" onClick={onOpenReport}
+          style={{flex:1,background:INK,border:"none",borderRadius:99,padding:"9px",fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer",fontFamily:FF}}>
+          Open full report →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── MAP FILTERS (listings) ───────────────────────────────────────────────────
 function parseListingPriceEuro(plot) {
   if (!plot?.price) return null;
@@ -4067,7 +4239,7 @@ function VerdictMessage({p, projectPlots, onOpenListing, handleAddToProject, hid
     </div>
   );
 }
-function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipeline,projectPlots,onGoToDashboard,onOpenListing,listingSavedScans,persistListingScan,pipelineFocusCanonicalId,onPipelineFocusConsumed,pipelineOnMapTick=0}){
+function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipeline,projectPlots,onGoToDashboard,onOpenListing,listingSavedScans,persistListingScan,pipelineFocusCanonicalId,onPipelineFocusConsumed,pipelineOnMapTick=0,activeProject,onSwitchProject}){
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   useEffect(()=>{
     const onResize = ()=>setIsMobile(window.innerWidth<768);
@@ -4412,62 +4584,26 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     const label=resolvedPlot.name||listingId;
     setMessages(m=>[...m, {role:"user", text:`Land report — ${label} (${listingId})`}]);
 
-    const landAgentSteps=[
-      "Analyzing location…",
-      "Fetching listing and source pointers…",
-      "Querying geographic layers…",
-      "Interpreting layer data…",
-      "Identifying municipality and planning context…",
-    ];
-    const regulatorySteps=[
-      "Querying General Zoning Rules…",
-      "Querying Municipal PDM rules…",
-      "Querying Plot analysis and land-use layers (RAN/REN)…",
-      "Querying Cadastre and parcel identifiers…",
-      "Checking registry and title constraints…",
-      "Assessing buildability, access, and environmental factors…",
-      "Generating AI land report…",
-    ];
+    const thinkId = Date.now();
+    setMessages(m=>[...m, {role:"assistant", isThinking:true, id:thinkId, completedCount:0, done:false}]);
 
-    const agentThinkId=Date.now();
-    const deepThinkId=agentThinkId+1;
-    setMessages(m=>[...m, {role:"assistant", isThinking:true, id:agentThinkId, steps:[]}]);
-
-    const landMs=420;
-    landAgentSteps.forEach((step,i)=>{
+    const stepMs = 480;
+    ANALYSIS_STEPS.forEach((_step, i) => {
       setTimeout(()=>{
-        setMessages(m=>m.map(msg=>msg.id===agentThinkId?{...msg, steps:[...msg.steps, step]}:msg));
-      },(i+1)*landMs);
-    });
-
-    const afterLand=(landAgentSteps.length+1)*landMs+400;
-    const bridgeText="**Land agent** — source layers are loaded. Running full AI analysis across zoning, PDM, plot/land-use, and cadastre.";
-    const regStepMs=480;
-    setTimeout(()=>{
-      // Keep the first step timeline visible; add bridge as a new message.
-      setMessages(m=>[...m,{role:"assistant", text:bridgeText}]);
-      setMessages(m=>[...m, {role:"assistant", isThinking:true, id:deepThinkId, steps:[]}]);
-
-      regulatorySteps.forEach((step,j)=>{
-        setTimeout(()=>{
-          setMessages(m=>m.map(msg=>msg.id===deepThinkId?{...msg, steps:[...msg.steps, step]}:msg));
-          if(j===regulatorySteps.length-1){
+        setMessages(m=>m.map(msg=>msg.id===thinkId ? {...msg, completedCount:i+1} : msg));
+        if(i === ANALYSIS_STEPS.length-1){
+          setTimeout(()=>{
+            setMessages(m=>m.map(msg=>msg.id===thinkId ? {...msg, done:true} : msg));
+            setAnalysisState("done");
             setTimeout(()=>{
-              setAnalysisState("done");
-              // Keep the full analysis trace in chat; append report instead of replacing steps.
-              setMessages((m)=>[
-                ...m,
-                {role:"assistant", text:"Analysis complete. Building AI land report…"},
-                {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot},
-              ]);
-              setTimeout(()=>{
-                persistListingScan(listingId,buildListingRecapData(resolvedPlot));
-              },0);
-            },650);
-          }
-        },(j+1)*regStepMs);
-      });
-    },afterLand);
+              const recap = buildListingRecapData(resolvedPlot);
+              setMessages(m=>[...m, {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot, recap}]);
+              persistListingScan(listingId, recap);
+            }, 500);
+          }, 400);
+        }
+      }, (i+1)*stepMs);
+    });
   }
 
   function runAnalysis(){
@@ -4634,9 +4770,9 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
       <div style={{width:sidebarW,flexShrink:0,background:PAPER,display:"flex",flexDirection:"column",height:"100%",position:"relative",borderRight:`1px solid ${LINE}`}}>
 
         {/* Header */}
-        <div style={{height:48,padding:"0 20px",borderBottom:`1px solid ${LINE}`,display:"flex",alignItems:"center",gap:8,flexShrink:0,background:PAPER}}>
-          <div style={{flex:1,fontFamily:FF,fontSize:"20px",fontWeight:600,letterSpacing:"-0.005em",color:INK,lineHeight:"26px"}}>Home Project</div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
+        <div style={{height:48,padding:"0 16px",borderBottom:`1px solid ${LINE}`,display:"flex",alignItems:"center",gap:8,flexShrink:0,background:PAPER,position:"relative"}}>
+          <ProjectSwitcher activeProject={activeProject} onSwitch={onSwitchProject}/>
+          <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:6}}>
             <div style={{width:5,height:5,borderRadius:"50%",background:ONLINE}}/>
             <span style={{fontFamily:FF,fontSize:"12px",color:INK3}}>Online</span>
           </div>
@@ -4691,28 +4827,15 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
 
               {/* LAND ANALYSIS · RUNNING */}
               {msg.role==="assistant"&&msg.isThinking&&(
-                <ChatEventCard
-                  eyebrow="Land Analysis · Running"
-                  media={
-                    <div style={{width:"100%",height:"100%",background:ACCENT_WASH,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                      <div style={{width:12,height:12,borderRadius:"50%",background:ACCENT,animation:"agent-pulse 1.5s ease-in-out infinite"}}/>
-                    </div>
-                  }
-                  title={msg.steps.length>0?msg.steps[msg.steps.length-1]:"Analysing…"}
-                  sub={msg.steps.length>1?msg.steps.slice(0,-1).map(s=>analysisStepSource(s)).filter((v,i,a)=>a.indexOf(v)===i).join(" · "):"Checking zoning · utilities · flood risk"}
-                  trailing={msg.steps.length?`${Math.min(99,Math.round(msg.steps.length/7*100))}%`:null}
-                />
+                <LandAnalysisBlock completedCount={msg.completedCount||0} done={!!msg.done}/>
               )}
 
               {/* LAND REPORT · SUMMARY */}
-              {msg.role==="assistant"&&msg.isVerdict&&msg.plot&&(
-                <ChatEventCard
-                  eyebrow="Land Report · Summary"
-                  media={<PlotImage plot={msg.plot} type={msg.plot.type} index={0} style={{width:"100%",height:"100%",display:"block"}}/>}
-                  title={`${msg.plot.name}`}
-                  sub={`${msg.plot.area} · ${msg.plot.type} · ${msg.plot.price}`}
-                  trailing="Open report →"
-                  onClick={()=>onOpenListing(plotListingOpenId(msg.plot))}
+              {msg.role==="assistant"&&msg.isVerdict&&msg.plot&&msg.recap&&(
+                <LandReportCard
+                  data={msg.recap}
+                  plot={msg.plot}
+                  onOpenReport={()=>onOpenListing(plotListingOpenId(msg.plot))}
                 />
               )}
 
@@ -5020,9 +5143,9 @@ function mapPlotIdsForPipeline(plots, savedCanonicalIds) {
   return plots.filter((p) => saved.has(canonicalPipelineId(plotListingOpenId(p)))).map((p) => p.id);
 }
 
-function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddToProject, setActiveNav, listingSavedScans, onInspectPlotInSearch, onViewPipelineOnMap}){
+function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddToProject, setActiveNav, listingSavedScans, onInspectPlotInSearch, onViewPipelineOnMap, activeProject, onSetActiveProject}){
   const [projects, setProjects] = useState(INIT_PROJECTS);
-  const [activeProject, setActiveProject] = useState(null);
+  function setActiveProject(p) { onSetActiveProject?.(p); }
   const [view, setView] = useState("list"); // list | kanban
   const [selected, setSelected] = useState([]); // selected plot ids
   const [bulkState, setBulkState] = useState("idle"); // idle | running | done
@@ -5924,6 +6047,7 @@ export default function YonderExplorerAppInner({
   const openAppFirst = embed || skipLanding;
   const [view, setView] = useState(openAppFirst ? "app" : "landing");
   const [activeNav,setActiveNav]=useState("Search");
+  const [activeProject,setActiveProject]=useState(INIT_PROJECTS[0]);
   const [upgraded,setUpgraded]=useState(false);
   const [showUpgradeModal,setShowUpgradeModal]=useState(false);
   const [upgradeModalReason,setUpgradeModalReason]=useState(null);
@@ -6039,8 +6163,8 @@ export default function YonderExplorerAppInner({
             <PlotListingPage plotId={listingPlot} upgraded={upgraded} onUpgrade={()=>requestUpgrade("plot")} onBack={closeListing} onAddToProject={handleAddToProject} inProject={projectPlots.includes(listingPlot)} savedAiRecap={listingRecapFromStore(listingSavedScans, canonicalPipelineId(listingPlot))}/>
           </div>
         )}
-        {activeNav==="Search"&&<ChatMapView upgraded={upgraded} requestUpgrade={requestUpgrade} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)} pipelineOnMapTick={pipelineOnMapTick}/>}
-        {activeNav==="Projects"&&<ProjectsView onOpenListing={openListing} upgraded={upgraded} onUpgrade={()=>requestUpgrade(null)} projectPlots={projectPlots} onAddToProject={handleAddToProject} setActiveNav={setActiveNav} listingSavedScans={listingSavedScans} onInspectPlotInSearch={(id)=>{setPipelineFocusCanonicalId(id);setActiveNav("Search");}} onViewPipelineOnMap={()=>{setActiveNav("Search");setPipelineOnMapTick((t)=>t+1);}}/>}
+        {activeNav==="Search"&&<ChatMapView upgraded={upgraded} requestUpgrade={requestUpgrade} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)} pipelineOnMapTick={pipelineOnMapTick} activeProject={activeProject} onSwitchProject={(p)=>{setActiveProject(p);setActiveNav("Projects");}}/>}
+        {activeNav==="Projects"&&<ProjectsView onOpenListing={openListing} upgraded={upgraded} onUpgrade={()=>requestUpgrade(null)} projectPlots={projectPlots} onAddToProject={handleAddToProject} setActiveNav={setActiveNav} listingSavedScans={listingSavedScans} onInspectPlotInSearch={(id)=>{setPipelineFocusCanonicalId(id);setActiveNav("Search");}} onViewPipelineOnMap={()=>{setActiveNav("Search");setPipelineOnMapTick((t)=>t+1);}} activeProject={activeProject} onSetActiveProject={setActiveProject}/>}
       </div>
     </div>
   );
