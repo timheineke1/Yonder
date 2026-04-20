@@ -1,58 +1,83 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F9F9F9;
-  --foreground: #171717;
-  --bg-card: #f0f0f0;
-  --muted: #666666;
-  --accent: #3B82F6;
-  --orange: #c84b0a;
-  /* App / marketing shared surfaces — explorer chrome */
-  --surface-panel: #f5f5f5;
-  --surface-subtle: #fafafa;
-  --surface-warm: #f8f7f4;
-  --border-default: rgba(0, 0, 0, 0.08);
-  --border-soft: rgba(0, 0, 0, 0.06);
-  --text-tertiary: #666666;
-  --text-hint: #808080;
-  --success: #2d7a2d;
-  --success-bright: #4a9a4a;
-  --online: #22c55e;
+  /* ── Yonder Design System tokens ─────────────────────────────────────────── */
+  --paper:         #FFFFFF;
+  --canvas:        #EEEEEA;
+  --canvas-dark:   #1B1B1B;
+  --ink:           #111111;
+  --ink-2:         #3A3A38;
+  --ink-3:         #6B6B68;
+  --ink-4:         #A6A6A1;
+  --line:          #E6E5DF;
+  --line-2:        #F1F0EC;
+  --accent:        #E85D3A;
+  --accent-ink:    #C54827;
+  --accent-wash:   #FCEDE7;
+  --success:       #2E7D52;
+  --success-wash:  #E6F1EA;
+  --warn:          #8A6A1E;
+  --warn-wash:     #F1ECDB;
 
-  /* ── Type ramp (canonical) — Geist only; rem-based, minimal scale ─────────── */
-  --type-hero: clamp(2rem, 6vw, 3rem);
-  --type-h2: clamp(1.375rem, 3.2vw, 1.875rem);
-  --type-display: 1.75rem;
-  --type-title: 1.25rem;
-  --type-h3: 1.125rem;
-  --type-lead: 1rem;
-  --type-body: 0.9375rem;
-  --type-body-sm: 0.875rem;
-  --type-nav: 0.8125rem;
-  --type-app-body: 0.875rem;
-  --type-app-secondary: 0.75rem;
-  --type-caption: 0.6875rem;
-  --type-mono-sm: var(--type-caption);
-  --type-overline: 0.625rem;
-  --type-micro: 0.5625rem;
+  /* Legacy aliases used throughout the app */
+  --background:        var(--canvas);
+  --foreground:        var(--ink);
+  --muted:             var(--ink-3);
+  --muted-foreground:  var(--ink-3);
+  --bg-card:           var(--paper);
+  --border:            var(--line);
+  --surface-panel:     var(--paper);
+  --surface-subtle:    var(--canvas);
+  --surface-warm:      var(--canvas);
+  --border-default:    var(--line);
+  --border-soft:       var(--line-2);
+  --text-tertiary:     var(--ink-3);
+  --text-hint:         var(--ink-4);
+  --online:            #22c55e;
+  --orange:            var(--accent);
 
-  /* App UI: four sizes for dense surfaces (explorer); prefer over ad-hoc px */
-  --type-ui-body: var(--type-app-body);
-  --type-ui-sm: var(--type-app-secondary);
-  --type-ui-label: var(--type-caption);
-  --type-ui-mono: var(--type-mono-sm);
+  /* Spacing — 4pt grid */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
 
-  /* Legacy aliases — prefer --type-* / theme utilities in new code */
-  --text-hero: var(--type-hero);
-  --text-h2: var(--type-h2);
-  --text-h3: var(--type-h3);
-  --text-body: var(--type-body);
+  /* Radii */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   12px;
+  --r-full: 999px;
+
+  /* ── Type ramp ───────────────────────────────────────────────────────────── */
+  --type-hero:         clamp(2rem, 6vw, 3rem);
+  --type-h2:           clamp(1.375rem, 3.2vw, 1.875rem);
+  --type-display:      1.75rem;   /* 28px */
+  --type-title:        1.25rem;   /* 20px */
+  --type-h3:           1.125rem;  /* 18px */
+  --type-lead:         1rem;      /* 16px */
+  --type-body:         0.9375rem; /* 15px */
+  --type-body-sm:      0.875rem;  /* 14px */
+  --type-nav:          0.8125rem; /* 13px */
+  --type-app-body:     0.875rem;  /* 14px */
+  --type-app-secondary:0.75rem;   /* 12px */
+  --type-caption:      0.6875rem; /* 11px */
+  --type-mono-sm:      var(--type-caption);
+  --type-overline:     0.625rem;
+  --type-micro:        0.5625rem;
+
+  --type-ui-body:   var(--type-app-body);
+  --type-ui-sm:     var(--type-app-secondary);
+  --type-ui-label:  var(--type-caption);
+  --type-ui-mono:   var(--type-mono-sm);
+
+  /* Legacy text aliases */
+  --text-hero:    var(--type-hero);
+  --text-h2:      var(--type-h2);
+  --text-h3:      var(--type-h3);
+  --text-body:    var(--type-body);
   --text-body-sm: var(--type-body-sm);
-  --text-muted: var(--type-nav);
+  --text-muted:   var(--type-nav);
   --text-caption: var(--type-caption);
   --text-eyebrow: var(--type-overline);
 
-  /* Spacing */
   --section-py: 4rem;
   --section-py-lg: 5rem;
   --heading-desc-gap: 0.75rem;
@@ -60,302 +85,216 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--canvas);
+  --color-foreground: var(--ink);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Font sizes → Tailwind utilities text-hero, text-nav, text-body, … */
-  --text-hero: var(--type-hero);
-  --text-h2: var(--type-h2);
-  --text-display: var(--type-display);
-  --text-title: var(--type-title);
-  --text-h3: var(--type-h3);
-  --text-lead: var(--type-lead);
-  --text-body: var(--type-body);
-  --text-body-sm: var(--type-body-sm);
-  --text-nav: var(--type-nav);
-  --text-caption: var(--type-caption);
-  --text-overline: var(--type-overline);
-  --text-app-body: var(--type-app-body);
-  --text-app-secondary: var(--type-app-secondary);
-  --text-mono-sm: var(--type-mono-sm);
-  --text-micro: var(--type-micro);
+  --text-hero:         var(--type-hero);
+  --text-h2:           var(--type-h2);
+  --text-display:      var(--type-display);
+  --text-title:        var(--type-title);
+  --text-h3:           var(--type-h3);
+  --text-lead:         var(--type-lead);
+  --text-body:         var(--type-body);
+  --text-body-sm:      var(--type-body-sm);
+  --text-nav:          var(--type-nav);
+  --text-caption:      var(--type-caption);
+  --text-overline:     var(--type-overline);
+  --text-app-body:     var(--type-app-body);
+  --text-app-secondary:var(--type-app-secondary);
+  --text-mono-sm:      var(--type-mono-sm);
+  --text-micro:        var(--type-micro);
 }
 
 body {
-  /* Next/font sets --font-geist-* on this element; stacks are the single source for app + inline styles */
-  --font-sans-stack: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans-stack: "Helvetica Neue", var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono-stack: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--canvas);
+  color: var(--ink-2);
   font-family: var(--font-sans-stack);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-/* Explorer — airy chat (light grey chrome), blue accents, mint/amber/blush verdict cards */
+/* ── Explorer page ───────────────────────────────────────────────────────── */
 .yonder-explorer-page {
-  --explorer-bg: #ffffff;
-  --explorer-sidebar: #fafafa;
-  --explorer-chrome: #ffffff;
-  --explorer-card: #ffffff;
-  --explorer-muted-surface: #fafafa;
-  --explorer-input-bg: #ffffff;
-  --explorer-accent: #2563eb;
-  --explorer-success-bg: #dcfce7;
-  --explorer-success-text: #166534;
-  --explorer-success-icon: #16a34a;
-  --explorer-active-row: #eff6ff;
-  --chat-card-positive-bg: #ecfdf5;
-  --chat-card-positive-border: rgba(16, 185, 129, 0.2);
-  --chat-card-caution-bg: #fffbeb;
-  --chat-card-caution-border: rgba(245, 158, 11, 0.25);
-  --chat-card-note-bg: #fdf2f8;
-  --chat-card-note-border: rgba(236, 72, 153, 0.2);
-  --chat-thinking-bg: #f0fdf4;
-  --chat-thinking-border: rgba(16, 185, 129, 0.12);
-  --chat-user-bg: #eff6ff;
-  --chat-user-border: rgba(37, 99, 235, 0.14);
-  --border-default: rgba(0, 0, 0, 0.08);
-  --text-tertiary: #888888;
-  --text-hint: #999999;
-  background-color: var(--explorer-bg);
-  color: var(--foreground);
+  --explorer-bg:           var(--canvas);
+  --explorer-sidebar:      var(--paper);
+  --explorer-chrome:       var(--paper);
+  --explorer-card:         var(--paper);
+  --explorer-muted-surface:var(--canvas);
+  --explorer-input-bg:     var(--paper);
+  --explorer-accent:       var(--accent);
+  --explorer-success-bg:   var(--success-wash);
+  --explorer-success-text: var(--success);
+  --explorer-success-icon: var(--success);
+  --explorer-active-row:   var(--accent-wash);
+  --chat-card-positive-bg:     var(--success-wash);
+  --chat-card-positive-border: rgba(46,125,82,0.18);
+  --chat-card-caution-bg:      var(--warn-wash);
+  --chat-card-caution-border:  rgba(138,106,30,0.2);
+  --chat-card-note-bg:         var(--line-2);
+  --chat-card-note-border:     var(--line);
+  --chat-thinking-bg:          var(--accent-wash);
+  --chat-thinking-border:      rgba(232,93,58,0.15);
+  --chat-user-bg:              var(--canvas);
+  --chat-user-border:          var(--line);
+  --border-default:            var(--line);
+  --text-tertiary:             var(--ink-3);
+  --text-hint:                 var(--ink-4);
+  background-color: var(--canvas);
+  color: var(--ink-2);
   font-family: var(--font-sans-stack);
   min-height: 100dvh;
 }
 
 .yonder-explorer-page .mini-spin,
 .yonder-explorer-page .agent-spin {
-  border-top-color: var(--explorer-accent);
+  border-top-color: var(--accent);
 }
 
-/* Map → List: card grid (2 per row; not scoped to explorer root so it always applies) */
+/* Map list grid */
 .ye-map-list-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   align-items: stretch;
 }
-
 @media (max-width: 520px) {
-  .ye-map-list-grid {
-    grid-template-columns: 1fr;
-  }
+  .ye-map-list-grid { grid-template-columns: 1fr; }
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* Spinners */
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .mini-spin {
-  width: 11px;
-  height: 11px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  border: 1.3px solid rgba(0, 0, 0, 0.1);
-  border-top-color: var(--orange);
+  width: 11px; height: 11px; flex-shrink: 0; margin-top: 1px;
+  border: 1.3px solid rgba(0,0,0,0.1);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
 }
 
 .mini-check {
-  width: 11px;
-  height: 11px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  border: 1.3px solid rgba(0, 0, 0, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 11px; height: 11px; flex-shrink: 0; margin-top: 1px;
+  border: 1.3px solid rgba(0,0,0,0.2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
-
 .mini-check::after {
   content: "";
-  width: 4px;
-  height: 2.5px;
-  border-left: 1px solid #555;
-  border-bottom: 1px solid #555;
-  transform: rotate(-45deg) translate(0.3px, -0.3px);
+  width: 4px; height: 2.5px;
+  border-left: 1px solid var(--ink-3);
+  border-bottom: 1px solid var(--ink-3);
+  transform: rotate(-45deg) translate(0.3px,-0.3px);
 }
 
 .pf-check {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px;
+  border: 1px solid var(--line); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
-
 .pf-check::after {
   content: "";
-  width: 4.5px;
-  height: 2.5px;
-  border-left: 1px solid #888;
-  border-bottom: 1px solid #888;
-  transform: rotate(-45deg) translate(0.3px, -0.3px);
+  width: 4.5px; height: 2.5px;
+  border-left: 1px solid var(--ink-3);
+  border-bottom: 1px solid var(--ink-3);
+  transform: rotate(-45deg) translate(0.3px,-0.3px);
 }
 
-.plan.featured .pf-check {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.plan.featured .pf-check::after {
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Cadastral / technical layer patterns — GIS/cadastral feel */
-.cadastral-grid {
-  background-image:
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 24px),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 24px);
-}
-
-.cadastral-grid-dense {
-  background-image:
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 20px),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 20px);
-}
-
-.cadastral-lines {
-  background-image:
-    repeating-linear-gradient(0deg, transparent 0px, transparent 39px, rgba(0,0,0,0.07) 40px, rgba(0,0,0,0.07) 41px),
-    repeating-linear-gradient(90deg, transparent 0px, transparent 39px, rgba(0,0,0,0.07) 40px, rgba(0,0,0,0.07) 41px);
-}
-
-.cadastral-dashed {
-  background-image:
-    repeating-linear-gradient(0deg, transparent 0px, transparent 23px, rgba(0,0,0,0.05) 24px, rgba(0,0,0,0.05) 25px),
-    repeating-linear-gradient(90deg, transparent 0px, transparent 23px, rgba(0,0,0,0.05) 24px, rgba(0,0,0,0.05) 25px);
-}
-
-/* Agent spinner for UI mockups — orange per Yonder style */
+/* Agent spinner */
 .agent-spin {
-  width: 10px;
-  height: 10px;
-  flex-shrink: 0;
+  width: 10px; height: 10px; flex-shrink: 0;
   border: 1.5px solid rgba(0,0,0,0.1);
-  border-top-color: var(--orange);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
 .agent-spin-on-dark {
   border-color: rgba(255,255,255,0.25);
-  border-top-color: #f97316;
+  border-top-color: var(--accent);
 }
 
-
-
-/* Cadastral-style block — dashed borders, parcel grid, technical feel */
+/* Cadastral patterns */
+.cadastral-grid {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 24px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 24px);
+}
+.cadastral-grid-dense {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 20px);
+}
+.cadastral-lines {
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0px, transparent 39px, rgba(0,0,0,0.06) 40px, rgba(0,0,0,0.06) 41px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 39px, rgba(0,0,0,0.06) 40px, rgba(0,0,0,0.06) 41px);
+}
 .cadastral-block {
   position: relative;
-  border: 1px dashed rgba(0,0,0,0.18);
+  border: 1px dashed var(--line);
   background-image:
-    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
   background-size: 16px 16px;
 }
 
-/* Feature mini UI — agents in action */
-@keyframes pdf-scan {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
+/* Animations */
+@keyframes pdf-scan      { 0%,100%{opacity:.4} 50%{opacity:1} }
+@keyframes type-cursor   { 0%,45%{opacity:1} 50%,95%{opacity:0} 100%{opacity:1} }
+@keyframes agent-pulse   { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.05)} }
+@keyframes pdf-scan-line { 0%{top:0;opacity:.8} 100%{top:100%;opacity:.4} }
+@keyframes fadeIn        { from{opacity:0} to{opacity:1} }
+@keyframes pulse         { 0%,100%{opacity:.35;transform:scale(.9)} 50%{opacity:1;transform:scale(1.1)} }
+@keyframes nav-dot-pulse { 0%,100%{opacity:.3;transform:scale(.9)} 50%{opacity:1;transform:scale(1)} }
 
-@keyframes type-cursor {
-  0%, 45% { opacity: 1; }
-  50%, 95% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes agent-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-
-.pdf-line-scan {
-  animation: pdf-scan 2s ease-in-out infinite;
-}
-
-/* PDF scan line — AI checking document */
-@keyframes pdf-scan-line {
-  0% { top: 0; opacity: 0.8; }
-  100% { top: 100%; opacity: 0.4; }
-}
-
-.pdf-scan-container {
-  position: relative;
-  overflow: hidden;
-}
-
+.pdf-line-scan  { animation: pdf-scan 2s ease-in-out infinite; }
+.pdf-scan-container { position: relative; overflow: hidden; }
 .pdf-scan-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(180deg, transparent, rgba(200,75,10,0.35), transparent);
+  position: absolute; left: 0; right: 0; height: 6px;
+  background: linear-gradient(180deg, transparent, rgba(232,93,58,0.3), transparent);
   border-radius: 2px;
   animation: pdf-scan-line 3s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
+  pointer-events: none; z-index: 1;
 }
+.type-cursor  { animation: type-cursor 1.2s step-end infinite; }
+.agent-pulse  { animation: agent-pulse 1.5s ease-in-out infinite; }
 
-.type-cursor {
-  animation: type-cursor 1.2s step-end infinite;
-}
+.nav-thinking .dot { animation: nav-dot-pulse 1.2s ease-in-out infinite; }
+.nav-thinking .dot:nth-child(2) { animation-delay: .2s; }
+.nav-thinking .dot:nth-child(3) { animation-delay: .4s; }
 
-.agent-pulse {
-  animation: agent-pulse 1.5s ease-in-out infinite;
-}
-
-/* Cadastral annotations — subtle labels in white spaces */
 .cadastral-annotation {
   font-family: var(--font-mono), monospace;
   font-size: var(--type-micro);
   font-weight: 500;
-  letter-spacing: 0.03em;
-  color: rgba(0,0,0,0.2);
+  letter-spacing: .03em;
+  color: rgba(0,0,0,0.18);
   pointer-events: none;
 }
 
-.cadastral-annotation.orange {
-  color: rgba(200,75,10,0.5);
+:root {
+  /* Score zone colors */
+  --score-high: var(--success);
+  --score-mid:  var(--accent);
+  --score-low:  var(--ink-4);
+
+  /* Stage pipeline */
+  --stage-discovered:   var(--ink-4);
+  --stage-agent-run:    #1a5276;
+  --stage-outreach:     var(--warn);
+  --stage-legal:        #8b5e3c;
+  --stage-offer:        var(--success);
+  --stage-closed:       var(--accent);
+
+  /* Cadastre zone fills */
+  --zone-urbano:        #e8dfc8;
+  --zone-urbano-stroke: #8a7a50;
+  --zone-rustico:       #d6e4c4;
+  --zone-rustico-stroke:#5a7a42;
+  --zone-ran:           #f0e8b0;
+  --zone-ran-stroke:    #a08020;
+  --zone-ren:           #b8dce0;
+  --zone-ren-stroke:    #2a8a94;
 }
-
-/* Typography utilities — use for consistency */
-.text-hero {
-  font-size: var(--type-hero);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
-.text-h2 {
-  font-size: var(--type-h2);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-/* Header "thinking" spinners — AI feel */
-@keyframes nav-dot-pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
-.nav-thinking .dot {
-  animation: nav-dot-pulse 1.2s ease-in-out infinite;
-}
-
-.nav-thinking .dot:nth-child(2) { animation-delay: 0.2s; }
-.nav-thinking .dot:nth-child(3) { animation-delay: 0.4s; }
-
