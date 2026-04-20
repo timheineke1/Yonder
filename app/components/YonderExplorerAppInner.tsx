@@ -339,15 +339,21 @@ function normalizeListingScanStorage(raw) {
   return out;
 }
 
+const DEMO_LISTING_SCANS = {
+  "PT-0556-BEJ": wrapLandAgentListingScan({ id:"PT-0556-BEJ", verdict:"buildable", verdictLabel:"Likely buildable", verdictSummary:"Solar / Energy infrastructure. No major RAN/REN flags. Grid connection feasibility HIGH. Confirm setbacks with Câmara.", location:"Baixo Alentejo", zoningShort:"Solar / Agricultural", area:"42,000 m²", keyFacts:[{label:"Zone",value:"Agricultural",note:"Energy permitted"},{label:"Area",value:"42,000 m²",note:"€9.3/m²"},{label:"RAN / REN",value:"Clear",note:"No overlay flags (demo)"}], restrictions:[{name:"RAN",status:"clear",note:"Not applicable"},{name:"REN",status:"clear",note:"Not applicable"},{name:"PDM",status:"clear",note:"Energy infrastructure permitted"},{name:"Natura 2000",status:"clear",note:"Verify live layer"}] }),
+  "PT-0392-ALE": wrapLandAgentListingScan({ id:"PT-0392-ALE", verdict:"buildable", verdictLabel:"Likely buildable", verdictSummary:"Urban zoning. PDM permits residential + commercial mixed use up to 4 floors. Reclassified 2022. Confirm COS and height limits.", location:"Setúbal", zoningShort:"Solo Urbano — Residencial", area:"3,200 m²", keyFacts:[{label:"Zone",value:"Urban",note:"Mixed use"},{label:"Area",value:"3,200 m²",note:"€87.5/m²"},{label:"RAN / REN",value:"Clear",note:"No overlay flags (demo)"}], restrictions:[{name:"RAN",status:"clear",note:"Not applicable"},{name:"REN",status:"clear",note:"Not applicable"},{name:"PDM",status:"clear",note:"4-floor residential/commercial"},{name:"Natura 2000",status:"clear",note:"Urban zone — not applicable"}] }),
+};
+
 function loadListingScansFromStorage() {
-  if (typeof window === "undefined") return {};
+  if (typeof window === "undefined") return DEMO_LISTING_SCANS;
   try {
     const raw = localStorage.getItem(LISTING_SCAN_LS_KEY);
-    if (!raw) return {};
+    if (!raw) return DEMO_LISTING_SCANS;
     const o = JSON.parse(raw);
-    return normalizeListingScanStorage(typeof o === "object" && o ? o : {});
+    const fromStorage = normalizeListingScanStorage(typeof o === "object" && o ? o : {});
+    return { ...DEMO_LISTING_SCANS, ...fromStorage };
   } catch {
-    return {};
+    return DEMO_LISTING_SCANS;
   }
 }
 
@@ -5493,9 +5499,10 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                             {hasAiReport&&(
                               <button
                                 type="button"
-                                onClick={(e)=>{e.stopPropagation(); onInspectPlotInSearch&&onInspectPlotInSearch(canonicalPipelineId(plot.id));}}
-                                style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"1px 8px",cursor:"pointer"}}
+                                onClick={(e)=>{e.stopPropagation(); onOpenListing(canonicalPipelineId(plot.id));}}
+                                style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"2px 9px",cursor:"pointer",display:"inline-flex",alignItems:"center",gap:4}}
                               >
+                                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4 3 6 7 1.5" stroke={GREEN} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                 AI report
                               </button>
                             )}
@@ -5525,10 +5532,19 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                           </div>
                         </td>
                         <td style={{padding:"8px 10px",borderRadius:"0 8px 8px 0"}}>
-                          <button type="button" onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)}
-                            style={{background:detailPlot?.id===plot.id?SUBTLE:INK,border:`1px solid ${detailPlot?.id===plot.id?LIGHTER:"transparent"}`,borderRadius:99,padding:"5px 12px",...TP.body,color:detailPlot?.id===plot.id?MID:WHITE,cursor:"pointer",fontWeight:600}}>
-                            {detailPlot?.id===plot.id?"Close":"Open →"}
-                          </button>
+                          <div style={{display:"flex",gap:5,alignItems:"center"}}>
+                            {hasAiReport&&(
+                              <button type="button"
+                                onClick={(e)=>{e.stopPropagation(); onInspectPlotInSearch&&onInspectPlotInSearch(canonicalPipelineId(plot.id));}}
+                                style={{background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"5px 10px",...TP.body,color:MID,cursor:"pointer",fontWeight:500,whiteSpace:"nowrap"}}>
+                                Ask →
+                              </button>
+                            )}
+                            <button type="button" onClick={()=>hasAiReport?onOpenListing(canonicalPipelineId(plot.id)):setDetailPlot(detailPlot?.id===plot.id?null:plot)}
+                              style={{background:detailPlot?.id===plot.id?SUBTLE:INK,border:`1px solid ${detailPlot?.id===plot.id?LIGHTER:"transparent"}`,borderRadius:99,padding:"5px 12px",...TP.body,color:detailPlot?.id===plot.id?MID:WHITE,cursor:"pointer",fontWeight:600,whiteSpace:"nowrap"}}>
+                              {hasAiReport?"Report →":detailPlot?.id===plot.id?"Close":"Open →"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
