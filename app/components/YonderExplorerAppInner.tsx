@@ -125,7 +125,7 @@ const PLOT_DETAILS = {
     tag:"Sea 4km · Build-ready", x:31, y:62,
     images:["coastal_land","sunset_field","access_road"],
     timeOnMarket:"18 days",
-    description:"A rare build-ready rustic plot just 4 kilometres from the Comporta coastline. Confirmed building rights for rural tourism or residential use — unusual for this proximity to the protected Comporta zone. Flat topography with full south orientation and paved access.",
+    description:"A rare build-ready rustic plot just 4 kilometres from the Comporta coastline — confirmed building rights for rural tourism or residential use, which is unusual this close to the protected Comporta zone. Flat topography with full south orientation and paved road access from the N261.\n\nThe plot sits in Comporta's hinterland, a buffer between the dune forest and the working agricultural fields that characterise this stretch of the Alentejo coast. Comporta itself has seen sustained international demand over the past decade — celebrities, architects and second-home buyers have driven land values significantly above the national average. This particular plot benefits from that premium without the headline prices of beachfront parcels.\n\nThe 2,340 m² footprint is split between a freely buildable portion (approx. 1,620 m²) and a 720 m² RAN-restricted agricultural strip along the eastern edge. The PDM permits a floor area ratio of 0.3, meaning you can build up to roughly 486 m² of gross floor area — more than enough for a generous holiday home or a four-unit eco retreat. The municipal PDM also allows tourist accommodation under the rural tourism category without requiring a special zoning amendment.\n\nUtilities: water connection is available 80 metres from the boundary; electricity is at the boundary. Sewage will require a septic or phyto-purification system, which is standard for this type of plot. The nearest wastewater main is in Comporta village, 4 km away.\n\nAccess from Lisbon is straightforward — 78 km via the A2 and the Troia–Carvalhal corridor. The Troia ferry adds a scenic alternative. Comporta airport proposals (still at planning stage as of 2025) could further reduce travel times if approved.",
     highlights:["Build rights confirmed","Clean registry chain","Paved road access","Water connection nearby","Full south exposure","Low fire risk"],
     aiSummary:"Strong buy for anyone looking to build a holiday home or eco retreat. Confirmed building rights — unusual this close to Comporta. Access road paved, water connection nearby. No legal flags found.",
     signals:[{ok:true,label:"Build rights confirmed",detail:"PDM allows 0.3 FAR for rural tourism or residential"},{ok:true,label:"No ownership disputes",detail:"Single owner since 2008, clean registry chain"},{ok:false,label:"RAN agricultural restriction",detail:"30% of plot is under RAN — cannot build on that portion"},{ok:true,label:"Access & utilities",detail:"Paved access, water 80m, electricity at boundary"}],
@@ -139,7 +139,7 @@ const PLOT_DETAILS = {
     tag:"Village edge · Water connected", x:22, y:38,
     images:["village_plot","cobblestone","hilltop"],
     timeOnMarket:"34 days",
-    description:"Urban plot on the edge of Óbidos' historic village. Zoned for residential construction up to 2 floors. All utilities available at the boundary — water, electricity and sewage. Slight slope adds character but may require a retaining wall.",
+    description:"Urban plot on the edge of Óbidos' historic village, zoned for residential construction up to 2 floors. All utilities — water, electricity and sewage — are available directly at the boundary. An 8% west-facing slope adds character to the build but will likely require a single retaining wall along the lower boundary.\n\nÓbidos is one of the most visited historic villages in Portugal, a walled medieval town that has retained its architecture and atmosphere far better than most. The medieval castle dominates the skyline; the main cobbled street (Rua Direita) runs through an arched gate and is lined with white-and-blue houses year-round. The village sees roughly 800,000 visitors annually, which creates consistent demand for holiday rentals and short-stay accommodation — making this plot equally interesting for a private residence or an investment property.\n\nThe plot borders the protected village perimeter on the east side, meaning any build will sit in visual dialogue with the castle walls. The municipality applies heritage-sensitive architectural guidelines — render finishes, tile roofs and limited window-to-wall ratios are typical requirements — but these are standard constraints for the area and do not restrict floor area or footprint in any unusual way.\n\nAt €30/m² this represents significant value by historic-village standards. Comparable urban plots inside the walls change hands at €200–400/m²; this external location offers the setting at a fraction of the cost. The last comparable transaction on the same street sold in 2019 at €38,000 — the current asking price reflects 18 months of inflation but remains well below replacement value.\n\nThe two co-owners (estate situation) must both sign on any transfer, which is standard — your lawyer will confirm that the consent of both parties is formalised in the promessa de compra e venda.",
     highlights:["Urban zoning","2-floor residential build","Utilities at boundary","Historic village setting","Clean title","Strong tourism rental potential"],
     aiSummary:"Urban plot on the edge of a historic village — water and electricity already at the boundary. Zoned for residential construction up to 2 floors. Great value, though slight slope may add foundation costs.",
     signals:[{ok:true,label:"Urban zoning",detail:"Residential construction permitted"},{ok:true,label:"Utilities at boundary",detail:"Water, electricity and sewage available"},{ok:false,label:"Topography",detail:"8% slope — may require retaining wall"},{ok:true,label:"Clean title",detail:"No mortgage or encumbrances on record"}],
@@ -153,7 +153,7 @@ const PLOT_DETAILS = {
     tag:"South-facing · PDM compliant", x:28, y:70,
     images:["rural_field","alentejo_plain","country_road"],
     timeOnMarket:"52 days",
-    description:"Large south-facing rustic plot with confirmed rural tourism eligibility. Ideal for an eco lodge, glamping site or off-grid retreat. One flag: the northern boundary touches a wildfire-risk zone, which means specific ICNF building material rules apply.",
+    description:"Large south-facing rustic plot with confirmed rural tourism eligibility — ideal for an eco lodge, glamping site or self-build retreat. The full south exposure and gentle 5% slope create excellent solar gain and natural drainage. One flag: the northern boundary touches a wildfire-risk zone, meaning ICNF building material regulations apply to any structure.\n\nAt 5,600 m², the plot clears the 4,000 m² minimum required for rural tourism licensing under the current PDM, which makes it one of the few plots in this price bracket that can genuinely support a multi-unit tourism operation. The PDM article permits structures up to 300 m² gross floor area, with a 15% site coverage limit — leaving significant open land for landscaping, pools and outdoor facilities.\n\nGrândola municipality has been actively supportive of rural tourism development since 2018, streamlining permit processes for eco retreats and agri-tourism. The nearby Comporta and Melides coast (22 km) draws high-spending visitors who are actively seeking inland alternatives to overpriced beachfront rentals — glamping sites in this corridor have reported 80–95% summer occupancy rates.\n\nThe wildfire border flag is manageable. ICNF requires non-combustible cladding materials and a 50-metre fuel-break clearance on the northern side. This adds cost (approximately €8–12k for the fuel management strip) but does not restrict floor area or use. Your architect will incorporate this into the project from the outset.\n\nNo RAN overlay applies to this parcel — confirmed by the cadastre and PDM map cross-check. REN touches the northern boundary at a narrow strip (approx. 180 m²), which cannot be built on but can be used as outdoor deck or landscaped garden.",
     highlights:["Rural tourism eligible","5,600m² above 4,000m² minimum","South orientation","No RAN restriction","Eco lodge potential","Natural landscape setting"],
     aiSummary:"Large south-facing rustic plot with confirmed rural tourism eligibility. Ideal for eco lodge or glamping. One flag: borders a wildfire-risk zone.",
     signals:[{ok:true,label:"Tourism build eligible",detail:"PDM allows rural tourism structures"},{ok:true,label:"Good size for licencing",detail:"5,600m² above 4,000m² minimum"},{ok:false,label:"Wildfire border zone",detail:"ICNF rules apply to materials"},{ok:true,label:"South orientation",detail:"Full south exposure"}],
@@ -167,7 +167,7 @@ const PLOT_DETAILS = {
     tag:"45 min Lisbon · Plot + ruin", x:18, y:50,
     images:["sintra_hills","palace_view","ruin_structure"],
     timeOnMarket:"61 days",
-    description:"Urban plot with an existing ruin within the Sintra-Cascais Natural Park. The ruin simplifies the licencing process — reconstruction is permitted up to the original footprint plus 30%. Strong location with exceptional views, 45 minutes from Lisbon.",
+    description:"Urban plot with an existing ruin inside the Sintra-Cascais Natural Park boundary, 45 minutes from Lisbon. The presence of the ruin is the key planning advantage: Portuguese law permits reconstruction of existing structures up to the original footprint plus 30%, bypassing the stricter new-build restrictions that apply across the Natural Park.\n\nSintra is a UNESCO World Heritage Site and one of the most desirable locations in all of Portugal. The town's architecture — Romantic palaces, dense forest, Atlantic microclimate — attracts buyers from across Europe and beyond. Properties here are scarce; the Natural Park designation restricts new supply almost entirely, which is the fundamental reason values have compounded consistently over the past 15 years.\n\nThe existing ruin footprint is approximately 80 m², meaning reconstruction rights allow up to around 104 m² of gross floor area. For a single residence, that is a comfortable 2-bed / 2-bath layout with open-plan living. The south-west orientation captures afternoon light and frames views across the Sintra hills toward the coast. On clear days the Atlantic is visible from the upper storey.\n\nThe plot carries a partial REN overlay (approx. 190 m² of the 980 m² total) along the lower terrace — this portion cannot be built on, but it can be terraced and landscaped. The remaining 790 m² is freely usable within the reconstruction parameters. The slope (12%) will require careful architectural design; the most successful projects here work with split-level and embedded ground-floor volumes.\n\nThe municipality (Sintra Câmara) has historically taken 9–14 months to process Natural Park reconstruction licences. Budget accordingly. The IMT transfer tax applies at the standard residential rate — approximately €4,100 on the asking price. This is a project for a patient buyer with a clear architectural vision.",
     highlights:["Existing ruin simplifies licencing","45 min from Lisbon","Protected landscape views","Reconstruction permitted","Strong capital appreciation","Tourism rental market"],
     aiSummary:"Urban plot with an existing ruin — simplifies the licencing process. Strong location 45 min from Lisbon in a protected landscape zone.",
     signals:[{ok:true,label:"Ruin simplifies licencing",detail:"Reconstruction permit easier than new build"},{ok:false,label:"Protected landscape",detail:"Sintra-Cascais NP — facade & height restricted"},{ok:true,label:"Strong location premium",detail:"Sintra consistently outperforms regional index"},{ok:false,label:"Higher price per m²",detail:"€141/m² above regional average"}],
@@ -181,7 +181,7 @@ const PLOT_DETAILS = {
     tag:"River view · Eco build eligible", x:38, y:82,
     images:["guadiana_river","alentejo_sunset","remote_land"],
     timeOnMarket:"143 days",
-    description:"Best value in this region. Expansive rustic plot with Guadiana river frontage and eco build eligibility. Trade-off is genuine remoteness — 2.5 hours from Lisbon — and no existing road access. Perfect for an off-grid project with patience.",
+    description:"The best value per square metre on this shortlist — €4.7/m² for a large rustic plot with Guadiana river frontage and confirmed eco build eligibility. The trade-off is genuine remoteness: Mértola is 2.5 hours from Lisbon and 1.5 hours from Faro, and this specific plot has no formed road access yet.\n\nThe Guadiana river forms the boundary between Portugal and Spain here. The site has approximately 120 metres of river frontage along a wide, calm bend — exceptional for swimming, kayaking, or simply the view. The eastern exposure captures the morning light across the water and the rolling Alentejo hills on the Spanish side. This is one of the quietest, most untouched landscapes in Western Europe.\n\nEco build eligibility is confirmed under the PDM (Solo Rústico — Espaço Natural). The regulations permit structures of up to 200 m² gross floor area for ecotourism or self-consumption purposes, with a maximum site coverage of 2%. The 50-metre REN river buffer cannot be built on but can be terraced and used as outdoor living space — which, given the views, is actually the most valuable part of the plot.\n\nThe main cost item is road access. The nearest track is approximately 1.2 km away. An access road of this length typically costs €8–15k depending on ground conditions and any required drainage works. Solar power and a water borehole are standard for this type of project; both have been successfully installed on adjacent properties.\n\nMértola is a small but extraordinary town — a former Moorish citadel with a castle, mosque-converted church and active archaeological museum. It has a growing community of remote workers and artists attracted by the price, the landscape and the peace. Short-term rental demand from ecotourism visitors is increasing year on year.",
     highlights:["Guadiana river frontage","Eco build eligible","8,200m² large format","Excellent value at €4.7/m²","Off-grid construction permitted","Natural reserve adjacent"],
     aiSummary:"Best value in this shortlist. River views, large size, eco build eligible. Trade-off is remoteness and no road access yet.",
     signals:[{ok:true,label:"Excellent price per m²",detail:"€4.7/m² — well below regional average"},{ok:true,label:"River view & eco eligible",detail:"Guadiana frontage, off-grid construction qualifies"},{ok:false,label:"No road access",detail:"Access track est. €8–15k"},{ok:false,label:"Remote location",detail:"2.5hr from Lisbon, limited services"}],
@@ -282,7 +282,7 @@ function isExplorerPinPlot(p) {
   return p && String(p.id || "").startsWith("pin-");
 }
 
-/** User-dropped map pin — not a listing; opens sidebar + chat context for “this spot”. */
+/** User-dropped map pin — not a listing; opens sidebar + chat context for "this spot". */
 function makeExplorerPinPlot(xPct, yPct) {
   const id = `pin-${Date.now()}`;
   return {
@@ -306,7 +306,7 @@ function makeExplorerPinPlot(xPct, yPct) {
   };
 }
 
-const LISTING_SCAN_LS_KEY = "yonder-explorer-listing-scans-v1";
+const LISTING_SCAN_LS_KEY = "yonder-explorer-listing-scans-v2";
 /** Only `runAnalysis` (land agent + regulatory pass in chat) may persist recap data. */
 const LAND_AGENT_SCAN_SOURCE = "land_agent_chat";
 
@@ -347,16 +347,80 @@ const DEMO_LISTING_SCANS = {
 };
 
 function loadListingScansFromStorage() {
-  if (typeof window === "undefined") return DEMO_LISTING_SCANS;
+  if (typeof window === "undefined") return {};
   try {
     const raw = localStorage.getItem(LISTING_SCAN_LS_KEY);
-    if (!raw) return DEMO_LISTING_SCANS;
+    if (!raw) return {};
     const o = JSON.parse(raw);
-    const fromStorage = normalizeListingScanStorage(typeof o === "object" && o ? o : {});
-    return { ...DEMO_LISTING_SCANS, ...fromStorage };
+    return normalizeListingScanStorage(typeof o === "object" && o ? o : {});
   } catch {
-    return DEMO_LISTING_SCANS;
+    return {};
   }
+}
+
+/** Per-layer research findings for the deep-dive chat shown after analysis. */
+function buildResearchFindings(plot, recap) {
+  const tech = plot?.technical || {};
+  const ran = tech.RAN ?? "Not applicable";
+  const ren = tech.REN ?? "Not applicable";
+  const pdm = tech["PDM zone"] || plot?.type || "Solo Urbano — Residencial";
+  const buildable = recap?.verdict === "buildable";
+  const fireRisk = tech["Fire risk"] || "Low";
+  const slope = tech.Slope || "< 8%";
+  const access = tech.Access || "Paved road within 200m";
+  const gridDist = tech["Grid distance"] || "Within 500m";
+  const cadastre = tech["Cadastre ref"] || "Confirmed";
+  return [
+    {
+      source: "Location",
+      label: "Location confirmed",
+      finding: `${plot?.name ?? "Plot"}, ${plot?.region ?? "Portugal"}. Coordinates resolved against registry listing. Municipality confirmed via CAOP boundaries.`,
+      status: "clear",
+    },
+    {
+      source: "Geo Layers",
+      label: "15 geographic layers loaded",
+      finding: "Ingested RAN, REN, POSIT, PDM overlay, flood zones, fire perimeter, slope gradient, coastal buffer, Natura 2000, Ramsar, ICNF, CAOP, BUPI cadastre, watershed, and conservation layers.",
+      items: ["Flood zone: clear", `Slope: ${slope}`, "Coastal buffer: n/a", "Natura 2000: no overlap"],
+      status: "clear",
+    },
+    {
+      source: "Land Use",
+      label: "Land use classification",
+      finding: `Classification: ${pdm}. RAN (Reserva Agrícola Nacional): ${ran}. REN (Reserva Ecológica Nacional): ${ren}. No dual-zoning conflict detected.`,
+      status: (ran !== "No" && ran !== "Not applicable") || (ren !== "No" && ren !== "Not applicable") ? "warn" : "clear",
+    },
+    {
+      source: "Municipality",
+      label: "PDM article identified",
+      finding: buildable
+        ? `Municipal PDM confirms permitted residential development. Permitted uses: residential, mixed use, tourism accommodation. Max height: 7m (2 floors). Floor area index: 0.6.`
+        : `Plot falls under PDM restrictions. Verify permitted uses with municipality before purchase. Consult PDM article for allowed rural or agri-tourism interventions.`,
+      items: buildable
+        ? ["Build permitted: yes", "Height: 7m max", "Index: 0.6", "Setback: 3m front"]
+        : ["Restrictions apply — consult Câmara"],
+      status: buildable ? "clear" : "warn",
+    },
+    {
+      source: "Cadastre",
+      label: "Cadastre parcel linked",
+      finding: `AT cadastre ID: ${cadastre}. Parcel area matches listing (${plot?.area ?? "—"}). Boundary shape confirmed against satellite imagery. No fragmented ownership detected.`,
+      status: "clear",
+    },
+    {
+      source: "Registry",
+      label: "Title & encumbrances checked",
+      finding: "Title search via Conservatória do Registo Predial complete. No encumbrances, mortgages, liens, or ownership disputes registered. Chain of title clear.",
+      status: "clear",
+    },
+    {
+      source: "GIS",
+      label: "GIS constraints analysed",
+      finding: `Fire risk: ${fireRisk}. Slope: ${slope}. Road access: ${access}. Grid connection: ${gridDist}. No protected species habitat overlap detected.`,
+      items: [`Fire: ${fireRisk}`, `Slope: ${slope}`, `Road: paved`, `Grid: ${gridDist}`],
+      status: fireRisk.toLowerCase().includes("high") ? "warn" : "clear",
+    },
+  ];
 }
 
 /** Demo land-report recap — same shape for sidebar + chat persistence. */
@@ -443,6 +507,254 @@ function PlotRecapCard({ data }) {
             </span>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+/** Full AI land report — rich layer-by-layer analysis shown on the listing page. */
+function PlotFullReport({ data, plot }) {
+  const [openLayer, setOpenLayer] = useState<string|null>(null);
+  const tech = plot?.technical || {};
+  const buildable = data.verdict === "buildable";
+
+  const score = buildable ? 76 : 38;
+  const scoreColor = score >= 70 ? SUCCESS : score >= 45 ? WARN : "#c53030";
+  const scoreBg   = score >= 70 ? SUCCESS_WASH : score >= 45 ? WARN_WASH : "#fef2f2";
+
+  const narrative = buildable
+    ? `${plot?.name ?? "This plot"} sits in ${plot?.region ?? "the area"} as a ${(data.zoningShort || "zoned").toLowerCase()} parcel with no major overlay restrictions. The cadastre is clean, title is unencumbered, and the municipal PDM permits standard residential development. At ${data.area}, it offers enough footprint for a well-proportioned build. The combination of clear RAN/REN status and paved-road access makes this one of the simpler plots to develop in the region — though you should confirm the exact COS and height limits with the Câmara before signing.`
+    : `${plot?.name ?? "This plot"} in ${plot?.region ?? "the area"} carries restrictions that require careful due diligence. ${data.restrictions.filter(r => r.status === "blocking").map(r => r.name).join(" and ")} overlay(s) apply, which may limit or prohibit standard construction. Rural or agri-tourism interventions may still be viable depending on the PDM article. Commission a full legal + technical report before making an offer.`;
+
+  const layers = [
+    {
+      id: "location",
+      title: "Location & context",
+      status: "clear" as const,
+      findings: [
+        `${plot?.name ?? "—"}, ${plot?.region ?? "—"}`,
+        `${data.area} · ${plot?.pricePerSqm ?? "—"}`,
+        `On market: ${plot?.timeOnMarket ?? "—"}`,
+        plot?.amenities?.[0] ? `Nearest: ${plot.amenities[0].label} ${plot.amenities[0].dist}` : null,
+      ].filter(Boolean),
+      recommendation: "Strong location signals. Verify road access rights and any neighbour agreements before final offer.",
+    },
+    {
+      id: "zoning",
+      title: "General zoning & land classification",
+      status: (buildable ? "clear" : "warn") as "clear"|"warn",
+      findings: [
+        `Classification: ${data.zoningShort}`,
+        `PDM zone: ${tech["PDM zone"] || data.zoningShort || "—"}`,
+        `RAN: ${tech.RAN || "Not applicable"}`,
+        `REN: ${tech.REN || "Not applicable"}`,
+        "No active reclassification process detected",
+      ],
+      recommendation: buildable
+        ? "Zoning supports standard residential development. Confirm exact COS and height limits with the Câmara."
+        : "Zoning carries restrictions. Consult municipality for permitted uses and possible rural tourism derogations.",
+    },
+    {
+      id: "pdm",
+      title: "Municipal PDM regulations",
+      status: (buildable ? "clear" : "warn") as "clear"|"warn",
+      findings: [
+        buildable ? "Build permitted under current PDM" : "Build may require special permit or PDM derogation",
+        "Max height: 7m (2 floors) — verify article",
+        "Floor area index: 0.6 — confirm with Câmara",
+        "Setbacks: 3m front, 2m sides (typical)",
+        "Parking: 1 space per unit required",
+      ],
+      recommendation: "Request the exact PDM article reference from the municipality before proceeding to purchase.",
+    },
+    {
+      id: "cadastre",
+      title: "Cadastre & BUPI",
+      status: "clear" as const,
+      findings: [
+        `Cadastre ref: ${tech["Cadastre ref"] || "Confirmed"}`,
+        `Parcel area: ${data.area}`,
+        `Ownership: ${tech["Ownership"] || "Single private owner"}`,
+        `Encumbrances: ${tech["Encumbrances"] || "None registered"}`,
+        `Last transaction: ${tech["Last transaction"] || "—"}`,
+      ],
+      recommendation: "BUPI status confirmed. Request a fresh certidão de registo predial before any offer.",
+    },
+    {
+      id: "registry",
+      title: "Title & property registry",
+      status: "clear" as const,
+      findings: [
+        "Title search via Conservatória do Registo Predial: clean",
+        "No liens, mortgages, or ownership disputes on record",
+        "Chain of title uninterrupted",
+        "No pending court orders or injunctions",
+      ],
+      recommendation: "Title is clean in demo data. Your lawyer should pull a fresh certidão at Conservatória before CPCV.",
+    },
+    {
+      id: "gis",
+      title: "GIS layers & environmental constraints",
+      status: ((tech["Fire risk"] || "").toLowerCase().includes("high") ? "warn" : "clear") as "clear"|"warn",
+      findings: [
+        `Fire risk: ${tech["Fire risk"] || "Low — clear buffer zone"}`,
+        `Slope: ${tech["Slope"] || "< 8%"}`,
+        `Road access: ${tech["Access"] || "Paved road"}`,
+        `Grid connection: ${tech["Grid distance"] || "Within 500m"}`,
+        "Flood zone: clear (demo — verify live layer)",
+        "Natura 2000: no overlap detected",
+      ],
+      recommendation: "GIS profile is clean. Confirm fire-risk buffer distance and flood zone with DGT before purchase.",
+    },
+  ];
+
+  const highlights = [
+    ...data.restrictions.filter(r => r.status === "clear").map(r => `${r.name} — not applicable`),
+    buildable ? "PDM permits residential development" : null,
+    tech["Ownership"] === "Single private owner" ? "Single owner — simpler title transfer" : null,
+    tech["Access"] ? `Access: ${tech["Access"]}` : "Paved road access",
+  ].filter(Boolean).slice(0, 5);
+
+  const watchOuts = [
+    ...data.restrictions.filter(r => r.status === "blocking").map(r => `${r.name} applies — ${r.note}`),
+    !buildable ? "Construction restrictions — confirm permitted uses with Câmara" : null,
+    tech["Heritage"] ? `Heritage zone: ${tech["Heritage"]} — facade restrictions apply` : null,
+    "Confirm exact PDM parameters before signing CPCV",
+    "Commission fresh cadastre + registry certificates",
+  ].filter(Boolean).slice(0, 5);
+
+  const STATUS_COLOR = { clear: SUCCESS, warn: WARN, blocking: "#c53030" };
+  const STATUS_BG    = { clear: SUCCESS_WASH, warn: WARN_WASH, blocking: "#fef2f2" };
+
+  return (
+    <div style={{fontFamily:FF,border:`1px solid ${LINE}`,borderRadius:12,overflow:"hidden"}}>
+
+      {/* Header — score + verdict */}
+      <div style={{background:INK,padding:"20px 24px"}}>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,marginBottom:14}}>
+          <div>
+            <div style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",color:"rgba(255,255,255,0.45)",marginBottom:6}}>AI Land Report</div>
+            <div style={{fontSize:"20px",fontWeight:700,color:PAPER,lineHeight:1.2,letterSpacing:"-0.01em"}}>{plot?.name ?? data.location}</div>
+            <div style={{fontSize:"13px",color:"rgba(255,255,255,0.55)",marginTop:4}}>{data.zoningShort} · {data.area}</div>
+          </div>
+          {/* Score circle */}
+          <div style={{flexShrink:0,textAlign:"center",background:scoreBg,borderRadius:12,padding:"12px 16px",minWidth:72}}>
+            <div style={{fontSize:"28px",fontWeight:700,color:scoreColor,lineHeight:1}}>{score}</div>
+            <div style={{fontSize:"10px",fontWeight:600,letterSpacing:"0.05em",textTransform:"uppercase",color:scoreColor,marginTop:2}}>Score</div>
+          </div>
+        </div>
+        {/* Verdict pill */}
+        <span style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:"12px",fontWeight:700,color:buildable?SUCCESS:"#c53030",background:buildable?`${SUCCESS}20`:"rgba(197,48,48,0.2)",border:`1px solid ${buildable?SUCCESS+"35":"rgba(197,48,48,0.35)"}`,borderRadius:99,padding:"3px 10px"}}>
+          {buildable
+            ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke={SUCCESS} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            : <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 3l4 4M7 3l-4 4" stroke="#c53030" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          }
+          {data.verdictLabel}
+        </span>
+      </div>
+
+      {/* Narrative */}
+      <div style={{padding:"16px 24px",borderBottom:`1px solid ${LINE}`,background:CANVAS}}>
+        <div style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase",color:INK3,marginBottom:6}}>Assessment</div>
+        <div style={{fontSize:"14px",lineHeight:"21px",color:INK2}}>{narrative}</div>
+      </div>
+
+      {/* Layer-by-layer analysis */}
+      <div style={{borderBottom:`1px solid ${LINE}`}}>
+        <div style={{padding:"12px 24px 8px"}}>
+          <div style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase",color:INK3}}>Layer analysis · {layers.length} checks</div>
+        </div>
+        {layers.map((layer, i) => {
+          const isOpen = openLayer === layer.id;
+          const sc = STATUS_COLOR[layer.status] ?? INK3;
+          const sb = STATUS_BG[layer.status]  ?? CANVAS;
+          return (
+            <div key={layer.id} style={{borderTop:`1px solid ${LINE2}`}}>
+              <div onClick={()=>setOpenLayer(isOpen ? null : layer.id)}
+                style={{display:"flex",alignItems:"center",gap:12,padding:"11px 24px",cursor:"pointer",transition:"background 0.09s"}}
+                onMouseEnter={e=>e.currentTarget.style.background=CANVAS}
+                onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                {/* Status dot */}
+                <div style={{width:20,height:20,borderRadius:"50%",background:sb,border:`1px solid ${sc}30`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  {layer.status==="clear"
+                    ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke={sc} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    : <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 3v3.5M5 7.5v.5" stroke={sc} strokeWidth="1.6" strokeLinecap="round"/></svg>
+                  }
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <span style={{fontSize:"14px",fontWeight:500,color:INK}}>{layer.title}</span>
+                </div>
+                <span style={{fontSize:"11px",fontWeight:600,color:sc,background:sb,borderRadius:99,padding:"2px 7px",flexShrink:0,border:`1px solid ${sc}25`}}>
+                  {layer.status === "clear" ? "Clear" : "Review"}
+                </span>
+                <span style={{fontSize:"11px",color:INK4,marginLeft:4}}>{isOpen?"▴":"▾"}</span>
+              </div>
+              {isOpen&&(
+                <div style={{padding:"0 24px 14px 56px",background:CANVAS}}>
+                  <div style={{display:"flex",flexDirection:"column",gap:5,marginBottom:10}}>
+                    {layer.findings.map((f,fi)=>(
+                      <div key={fi} style={{display:"flex",alignItems:"flex-start",gap:7}}>
+                        <div style={{width:4,height:4,borderRadius:"50%",background:INK3,flexShrink:0,marginTop:6}}/>
+                        <span style={{fontSize:"13px",color:INK2,lineHeight:"19px"}}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{fontSize:"12px",lineHeight:"18px",color:INK3,fontStyle:"italic",borderTop:`1px solid ${LINE}`,paddingTop:8}}>
+                    Recommendation: {layer.recommendation}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Highlights + Watch-outs — 2 cols */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0,borderBottom:`1px solid ${LINE}`}}>
+        <div style={{padding:"16px 20px",borderRight:`1px solid ${LINE}`}}>
+          <div style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase",color:SUCCESS,marginBottom:10}}>Key highlights</div>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {highlights.map((h,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:7}}>
+                <div style={{width:14,height:14,borderRadius:"50%",background:SUCCESS,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
+                  <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4 3 5.5 6.5 2" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+                <span style={{fontSize:"13px",color:INK2,lineHeight:"18px"}}>{h}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{padding:"16px 20px"}}>
+          <div style={{fontSize:"11px",fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase",color:WARN,marginBottom:10}}>Watch-outs</div>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {watchOuts.map((w,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:7}}>
+                <div style={{width:14,height:14,borderRadius:"50%",background:WARN,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
+                  <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M4 2v2.5M4 5.5v.5" stroke="white" strokeWidth="1.4" strokeLinecap="round"/></svg>
+                </div>
+                <span style={{fontSize:"13px",color:INK2,lineHeight:"18px"}}>{w}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer CTA strip */}
+      <div style={{padding:"14px 20px",display:"flex",gap:8}}>
+        <div style={{display:"flex",alignItems:"center",gap:6,flex:1}}>
+          <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 1L5.5 3.5H8L5.8 5.2L6.6 7.8L4.5 6.3L2.4 7.8L3.2 5.2L1 3.5H3.5Z" fill="white"/></svg>
+          </div>
+          <span style={{fontSize:"12px",color:INK3}}>Generated by Land AI · Demo data only</span>
+        </div>
+        <button type="button"
+          style={{background:PAPER,border:`1px solid ${LINE}`,borderRadius:99,padding:"7px 14px",fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",fontFamily:FF,flexShrink:0}}>
+          Legal check →
+        </button>
+        <button type="button"
+          style={{background:INK,border:"none",borderRadius:99,padding:"7px 14px",fontSize:"12px",fontWeight:600,color:PAPER,cursor:"pointer",fontFamily:FF,flexShrink:0}}>
+          Contact realtor →
+        </button>
       </div>
     </div>
   );
@@ -645,10 +957,10 @@ function ListingInsightSidebar({
 
       <div style={{flex:1,overflowY:"auto"}}>
 
-        {/* 3-photo strip */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:4,padding:"0 16px 14px"}}>
+        {/* 3-photo strip — full width, no side padding */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:3,height:170,marginBottom:14,flexShrink:0}}>
           {[0,1,2].map(i=>(
-            <div key={i} style={{aspectRatio:"4/3",borderRadius:8,overflow:"hidden",background:CANVAS}}>
+            <div key={i} style={{overflow:"hidden",background:CANVAS}}>
               <PlotImage plot={plot} type={plot.type} index={i} style={{width:"100%",height:"100%",display:"block"}}/>
             </div>
           ))}
@@ -671,24 +983,37 @@ function ListingInsightSidebar({
         </div>
 
         {activeTab==="overview"&&(
-          <div style={{padding:"14px 16px"}}>
+          <div style={{padding:"14px 16px 24px"}}>
+
+            {/* ── PLOT DATA (always visible) ── */}
             <div style={{fontFamily:FF,fontSize:"15px",fontWeight:600,color:INK,marginBottom:10}}>Details</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:20}}>
-              {detailTiles.map(({label,val})=>(
+              {[
+                {icon:<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3"/></svg>, label:"Plot size", val:plot.area||"—"},
+                {icon:<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5 L13 6.5 L13 13 L9 13 L9 9 L5 9 L5 13 L1 13 L1 6.5 Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/></svg>, label:"Type of plot", val:plot.type||"—"},
+                {icon:<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M5 5h4M5 8h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>, label:"On market", val:plot.timeOnMarket||"—"},
+                {icon:<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>, label:"Match score", val:plot.score!=null?`${plot.score}/100`:"—"},
+                {icon:<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 5.5C5 4.12 5.9 3 7 3s2 1.12 2 2.5C9 7.5 7 11 7 11S5 7.5 5 5.5Z" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="5.5" r="1" fill="currentColor"/></svg>, label:"Region", val:plot.region||"—"},
+                {icon:<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="5" width="6" height="7" rx="1" stroke="currentColor" strokeWidth="1.3"/><path d="M5 5V3.5a3 3 0 0 1 6 0V7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>, label:"Price", val:plot.price||"—"},
+              ].map(({icon,label,val})=>(
                 <div key={label} style={{border:`1px solid ${LINE}`,borderRadius:10,padding:"10px 12px",background:PAPER}}>
-                  <div style={{fontFamily:FF,fontSize:"11px",color:INK3,marginBottom:4,letterSpacing:"0.01em"}}>{label}</div>
+                  <div style={{display:"flex",alignItems:"center",gap:5,color:INK3,marginBottom:5}}>{icon}<span style={{fontFamily:FF,fontSize:"11px"}}>{label}</span></div>
                   <div style={{fontFamily:FF,fontSize:"14px",fontWeight:600,color:INK}}>{val}</div>
                 </div>
               ))}
             </div>
 
+            {/* ── UTILITIES (amenities) ── */}
             {Array.isArray(plot.amenities)&&plot.amenities.length>0&&(
               <>
                 <div style={{fontFamily:FF,fontSize:"15px",fontWeight:600,color:INK,marginBottom:10}}>Utilities</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:20}}>
                   {plot.amenities.slice(0,4).map((a,i)=>(
                     <div key={i} style={{border:`1px solid ${LINE}`,borderRadius:10,padding:"10px 12px",background:PAPER}}>
-                      <div style={{fontFamily:FF,fontSize:"11px",color:INK3,marginBottom:4}}>{a.icon} {a.label}</div>
+                      <div style={{display:"flex",alignItems:"center",gap:5,color:INK3,marginBottom:5}}>
+                        <span style={{fontSize:"12px",lineHeight:1}}>{a.icon}</span>
+                        <span style={{fontFamily:FF,fontSize:"11px"}}>{a.label}</span>
+                      </div>
                       <div style={{fontFamily:FF,fontSize:"14px",fontWeight:600,color:INK}}>{a.dist}</div>
                     </div>
                   ))}
@@ -696,38 +1021,54 @@ function ListingInsightSidebar({
               </>
             )}
 
-            {recap&&(
-              <div style={{marginBottom:16}}>
-                <div style={{fontFamily:FF,fontSize:"15px",fontWeight:600,color:INK,marginBottom:10}}>AI Report</div>
-                <div style={{position:"relative"}}>
-                  <PlotRecapCard data={recap}/>
+            {/* ── LAND DATA (locked until upgrade) ── */}
+            {!pinPlot&&(
+              <>
+                <div style={{height:1,background:LINE,marginBottom:20}}/>
+                <div style={{fontFamily:FF,fontSize:"15px",fontWeight:600,color:INK,marginBottom:10}}>Land data</div>
+                <div style={{position:"relative",marginBottom:16}}>
+                  <div style={{filter:upgraded?"none":"blur(3px)",userSelect:upgraded?"auto":"none",pointerEvents:upgraded?"auto":"none",border:`1px solid ${LINE}`,borderRadius:10,overflow:"hidden"}}>
+                    {[["Zoning",plot.technical?.["PDM zone"]||"Solo Urbano — Residencial"],["PDM","No major RAN/REN flags"],["BUPI","Registered — no conflicts"],["Fire risk","Low — clear buffer zone"],["Cadastre ref",plot.technical?.["Cadastre ref"]||"—"],["RAN / REN",`${plot.technical?.["RAN"]||"Clear"} / ${plot.technical?.["REN"]||"Clear"}`]].map(([k,val])=>(
+                      <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"8px 12px",borderBottom:`1px solid ${LINE}`,background:PAPER}}>
+                        <span style={{fontFamily:FF,fontSize:"12px",color:INK3,flexShrink:0}}>{k}</span>
+                        <span style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK,maxWidth:"58%",textAlign:"right"}}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
                   {!upgraded&&(
-                    <button type="button" onClick={onUpgrade}
-                      style={{position:"absolute",inset:0,border:"none",borderRadius:8,cursor:"pointer",background:"rgba(238,238,234,0.8)",backdropFilter:"blur(4px)",fontFamily:FF,fontSize:"14px",fontWeight:600,color:ACCENT}}>
-                      Upgrade to read full report
-                    </button>
+                    <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.6)",backdropFilter:"blur(2px)",borderRadius:10}}>
+                      <div style={{textAlign:"center",padding:"14px 18px",background:PAPER,border:`1px solid ${LINE}`,borderRadius:10}}>
+                        <div style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK,marginBottom:4}}>Unlock land data + AI report</div>
+                        <div style={{fontFamily:FF,fontSize:"12px",color:INK3,marginBottom:10,lineHeight:1.4}}>PDM, cadastre, RAN/REN + AI analysis.</div>
+                        <button type="button" onClick={onUpgrade} style={{background:INK,border:"none",borderRadius:99,padding:"8px 16px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer"}}>Unlock →</button>
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
+
+                {/* ── RUN AI ANALYSIS — always visible, sends to chat ── */}
+                <div style={{marginBottom:16}}>
+                  <button type="button" onClick={startAnalysis}
+                    style={{width:"100%",background:upgraded?ACCENT:INK,border:"none",borderRadius:99,padding:"11px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer"}}>
+                    {upgraded?"Run AI land analysis →":"Unlock + run AI land analysis →"}
+                  </button>
+                  <div style={{fontFamily:FF,fontSize:"11px",color:INK3,textAlign:"center",marginTop:6,lineHeight:1.4}}>
+                    {upgraded?"Sends to chat · AI reviews zoning, PDM, flood risk, title":"Unlocks land data · AI reviews + writes a full report"}
+                  </div>
+                </div>
+
+                {/* ── AI REPORT (only after unlock + analysis run) ── */}
+                {upgraded&&recap&&(
+                  <div style={{marginBottom:16}}>
+                    <div style={{fontFamily:FF,fontSize:"15px",fontWeight:600,color:INK,marginBottom:10}}>AI land report</div>
+                    <PlotRecapCard data={recap}/>
+                  </div>
+                )}
+              </>
             )}
 
-            {!pinPlot&&(
-              <button type="button" onClick={()=>onOpenListing(cid)}
-                style={{width:"100%",background:PAPER,border:`1px solid ${LINE}`,borderRadius:99,padding:"10px",fontFamily:FF,fontSize:"14px",fontWeight:500,color:INK,cursor:"pointer",marginBottom:8}}>
-                View full listing →
-              </button>
-            )}
-
-            <button type="button" onClick={startAnalysis}
-              style={{width:"100%",background:ACCENT,border:"none",borderRadius:99,padding:"11px",fontFamily:FF,fontSize:"14px",fontWeight:600,color:PAPER,cursor:"pointer",marginBottom:recap?8:0}}>
-              {pinPlot?"Ask about this area":"Run AI analysis"}
-            </button>
-
-            {onRequestListingLocation&&!pinPlot&&(
-              <button type="button" onClick={onRequestListingLocation}
-                style={{width:"100%",background:"none",border:`1px solid ${LINE}`,borderRadius:99,padding:"9px",fontFamily:FF,fontSize:"13px",fontWeight:500,color:INK3,cursor:"pointer",marginTop:8}}>
-                Request location · €89
-              </button>
+            {pinPlot&&(
+              <button type="button" onClick={startAnalysis} style={{width:"100%",background:ACCENT,border:"none",borderRadius:99,padding:"11px",fontFamily:FF,fontSize:"14px",fontWeight:600,color:PAPER,cursor:"pointer"}}>Ask about this area</button>
             )}
           </div>
         )}
@@ -915,7 +1256,7 @@ const CADASTRE_PARCELS = [
   {id:"CAD-020",ref:"PT-VC-020",zone:"RAN",    pdm:"Reserva Agrícola",area:"3,300 m²",owner:"Estado", listed:false,plotId:null,  score:null,verdict:null,     pts:"18,30 26,30 26,38 18,38"},
 ];
 
-/** Centroid in % of map box (matches cadastre SVG viewBox 900×760). */
+/** Centroid in % of map box. pts values are already 0-100 percentages. */
 function addParcelMapPct(p) {
   const pairs = p.pts.trim().split(/\s+/).map((s) => s.split(",").map(Number));
   let sx = 0;
@@ -925,7 +1266,7 @@ function addParcelMapPct(p) {
     sy += pair[1];
   }
   const n = pairs.length || 1;
-  return { ...p, mapX: (sx / n / 900) * 100, mapY: (sy / n / 760) * 100 };
+  return { ...p, mapX: sx / n, mapY: sy / n };
 }
 const CADASTRE_PARCELS_MAP = CADASTRE_PARCELS.map(addParcelMapPct);
 
@@ -968,56 +1309,54 @@ const ZONE_COLORS = {
 };
 
 
-/** Stub “listing photo” from demo `images[]` keys + plot type (no external assets). */
-const PLOT_IMAGE_GRADIENTS = {
-  coastal_land: ["#153d45", "#2a6b6a", "#8fb8a8"],
-  sunset_field: ["#4a3528", "#7a5538", "#c9a06c"],
-  access_road: ["#3a3d38", "#5c6258", "#9aa090"],
-  village_plot: ["#4a4438", "#6b6355", "#b8a894"],
-  cobblestone: ["#3d3a36", "#6a6258", "#a39888"],
-  hilltop: ["#2d3540", "#4a5a68", "#8a9aaa"],
-  rural_field: ["#2d4a28", "#4a6b3a", "#9bb88a"],
-  alentejo_plain: ["#5a4a2a", "#8a7040", "#d4c090"],
-  country_road: ["#353828", "#5a6248", "#9aa878"],
-  sintra_hills: ["#2a3840", "#4a5c50", "#7a9088"],
-  palace_view: ["#3a3548", "#5a4870", "#9080a8"],
-  ruin_structure: ["#404040", "#606058", "#989088"],
-  guadiana_river: ["#1a3a4a", "#2a5a6a", "#6a9aaa"],
-  alentejo_sunset: ["#5a3020", "#8a5040", "#d09060"],
-  remote_land: ["#283028", "#405038", "#788868"],
+/** Empty land / open terrain photos from Unsplash only — no buildings, interiors or peaks. */
+const U = (id: string) => `https://images.unsplash.com/photo-${id}?w=800&h=500&fit=crop`;
+const PLOT_IMAGE_URLS: Record<string, string[]> = {
+  coastal_land:    [U("1500856056032-dc4f0bd82e3a"), U("1476514525535-07fb3b4ae5f1"), U("1501785888041-af3ef285b470")],
+  sunset_field:    [U("1500382017468-9049fed747ef"), U("1464822759023-fed622ff2c3b"), U("1490750967868-88df5691cc42")],
+  access_road:     [U("1505765050516-f72dc64e0c9e"), U("1469474968028-56623f02e42e"), U("1426604966848-d7adac402bff")],
+  village_plot:    [U("1470770903676-69b98201ea1c"), U("1500382017468-9049fed747ef"), U("1464822759023-fed622ff2c3b")],
+  cobblestone:     [U("1501785888041-af3ef285b470"), U("1505765050516-f72dc64e0c9e"), U("1490750967868-88df5691cc42")],
+  hilltop:         [U("1426604966848-d7adac402bff"), U("1469474968028-56623f02e42e"), U("1459664018906-085c36f472af")],
+  rural_field:     [U("1464822759023-fed622ff2c3b"), U("1476514525535-07fb3b4ae5f1"), U("1500382017468-9049fed747ef")],
+  alentejo_plain:  [U("1490750967868-88df5691cc42"), U("1500856056032-dc4f0bd82e3a"), U("1470770903676-69b98201ea1c")],
+  country_road:    [U("1505765050516-f72dc64e0c9e"), U("1469474968028-56623f02e42e"), U("1476514525535-07fb3b4ae5f1")],
+  sintra_hills:    [U("1426604966848-d7adac402bff"), U("1464822759023-fed622ff2c3b"), U("1490750967868-88df5691cc42")],
+  palace_view:     [U("1459664018906-085c36f472af"), U("1500382017468-9049fed747ef"), U("1501785888041-af3ef285b470")],
+  ruin_structure:  [U("1505765050516-f72dc64e0c9e"), U("1476514525535-07fb3b4ae5f1"), U("1464822759023-fed622ff2c3b")],
+  guadiana_river:  [U("1469474968028-56623f02e42e"), U("1500856056032-dc4f0bd82e3a"), U("1501785888041-af3ef285b470")],
+  alentejo_sunset: [U("1500856056032-dc4f0bd82e3a"), U("1500382017468-9049fed747ef"), U("1490750967868-88df5691cc42")],
+  remote_land:     [U("1470770903676-69b98201ea1c"), U("1464822759023-fed622ff2c3b"), U("1505765050516-f72dc64e0c9e")],
 };
-const TYPE_IMAGE_FALLBACK = {
-  Rustic: ["#1e4024", "#2d5a32", "#6a9070"],
-  Urban: ["#2a3540", "#3d4d5c", "#7a8c9c"],
-  Ruin: ["#403830", "#5c5048", "#908578"],
-  Pin: ["#3d3530", "#6b5030", "#c9842d"],
+const TYPE_IMAGE_URLS: Record<string, string> = {
+  Rustic: U("1464822759023-fed622ff2c3b"),
+  Urban:  U("1470770903676-69b98201ea1c"),
+  Ruin:   U("1505765050516-f72dc64e0c9e"),
+  Pin:    U("1500382017468-9049fed747ef"),
 };
+const FALLBACK_IMG = U("1500382017468-9049fed747ef");
 
-function plotImageGradient(plot) {
-  const key = plot?.images?.[0];
-  if (key && PLOT_IMAGE_GRADIENTS[key]) return PLOT_IMAGE_GRADIENTS[key];
+function plotImageUrl(plot: any, index = 0): string {
+  // Use the key at the requested index, then fall back to key[0]
+  const key = plot?.images?.[index] ?? plot?.images?.[0];
+  if (key && PLOT_IMAGE_URLS[key]) {
+    return PLOT_IMAGE_URLS[key][0] ?? FALLBACK_IMG;
+  }
   const t = plot?.type;
-  if (t && TYPE_IMAGE_FALLBACK[t]) return TYPE_IMAGE_FALLBACK[t];
-  return ["#1a2e22", "#2C5F2D", "#5a8a62"];
+  if (t && TYPE_IMAGE_URLS[t]) return TYPE_IMAGE_URLS[t];
+  return FALLBACK_IMG;
 }
 
-function PlotImage({ plot, type, index = 0, style = {} }) {
-  const gid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
-  const g = plot ? plotImageGradient(plot) : TYPE_IMAGE_FALLBACK[type] || TYPE_IMAGE_FALLBACK.Rustic;
-  const [a, b, c] = g;
+function PlotImage({ plot, type, index = 0, style = {} }: { plot?: any; type?: string; index?: number; style?: React.CSSProperties }) {
+  const url = plot ? plotImageUrl(plot, index) : (type && TYPE_IMAGE_URLS[type]) || TYPE_IMAGE_URLS.Rustic;
+  const fallback = (type && TYPE_IMAGE_URLS[type]) || FALLBACK_IMG;
   return (
-    <svg width="100%" height="100%" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" style={style}>
-      <defs>
-        <linearGradient id={`pg-${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={a} />
-          <stop offset="55%" stopColor={b} />
-          <stop offset="100%" stopColor={c} />
-        </linearGradient>
-      </defs>
-      <rect width="400" height="250" fill={`url(#pg-${gid})`} />
-      <ellipse cx="200" cy="210" rx="280" ry="24" fill="rgba(0,0,0,0.12)" />
-      <circle cx="320" cy="68" r="36" fill="rgba(255,248,220,0.35)" />
-    </svg>
+    <img
+      src={url}
+      alt=""
+      onError={(e) => { (e.currentTarget as HTMLImageElement).src = fallback; }}
+      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", ...style }}
+    />
   );
 }
 
@@ -1139,17 +1478,12 @@ function UpgradeModal({ onClose, onUpgrade, promptReason }) {
   );
 }
 
-function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProject,savedAiRecap}){
+function PlotListingPage({plotId,upgraded,onUpgrade,onRunAnalysis,onBack,onAddToProject,inProject,savedAiRecap}){
   const plot=PLOT_DETAILS[plotId]||CHAT_PLOTS[0];
   const [descExpanded,setDescExpanded]=useState(false);
-  const [contacted,setContacted]=useState(false);
-  const [locationRequested,setLocationRequested]=useState(false);
   const [activeImg,setActiveImg]=useState(0);
   const v=VERDICT[plot.aiVerdict];
-
-  // Split technical into visible (free) and locked (pro) sections
-  const freeKeys=["PDM zone","RAN","REN","Orientation","Slope","Fire risk"];
-  const lockedKeys=["Cadastre ref","IMT estimate","Last transaction","Ownership","Encumbrances","Grid distance","Max build","Heritage","Tourism build","River frontage","Substation","Access","Max height"];
+  const isVerified=plot.aiVerdict==="great_match"||plot.aiVerdict==="good_match";
 
   return(
     <div style={{flex:1,background:WHITE,display:"flex",flexDirection:"column"}}>
@@ -1158,39 +1492,47 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
       <div style={{position:"sticky",top:0,zIndex:50,background:"rgba(255,255,255,0.96)",backdropFilter:"blur(16px)",borderBottom:`1px solid ${LIGHTER}`,padding:"0 24px",minHeight:48,display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
         <button type="button" onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"6px 12px",cursor:"pointer",...TP.body,color:MID,fontWeight:500}}>← Back</button>
         <span style={{...TP.mono,color:LIGHT}}>{plot.ref}</span>
-        <div style={{marginLeft:"auto",display:"flex",gap:8}}>
+        <div style={{display:"flex",alignItems:"center",gap:6,marginLeft:"auto"}}>
+          {isVerified?(
+            <span style={{display:"inline-flex",alignItems:"center",gap:5,padding:"3px 10px",borderRadius:99,background:"#E6F1EA",color:"#2E7D52",fontSize:12,fontWeight:600,fontFamily:FF}}>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke="#2E7D52" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Verified
+            </span>
+          ):(
+            <span style={{display:"inline-flex",alignItems:"center",gap:5,padding:"3px 10px",borderRadius:99,background:"#F1ECDB",color:"#8A6A1E",fontSize:12,fontWeight:600,fontFamily:FF}}>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="3.5" stroke="#8A6A1E" strokeWidth="1.4"/></svg>
+              Unverified
+            </span>
+          )}
+        </div>
+        <div style={{display:"flex",gap:8}}>
           <button type="button" onClick={()=>onAddToProject(plot.id)} style={{background:inProject?`${GREEN}10`:WHITE,border:`1px solid ${inProject?GREEN+"40":LIGHTER}`,borderRadius:99,padding:"6px 14px",...TP.body,color:inProject?GREEN:MID,cursor:"pointer",fontWeight:600}}>
             {inProject?"✓ Saved":"+ Save to pipeline"}
           </button>
-          <button type="button" style={{background:INK,border:"none",borderRadius:99,padding:"6px 14px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>Contact agent →</button>
+          <a href={`mailto:${plot.contact.email}`} style={{background:INK,border:"none",borderRadius:99,padding:"6px 14px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600,textDecoration:"none"}}>Contact agent →</a>
         </div>
       </div>
 
-              <div style={{maxWidth:860,margin:"0 auto",width:"100%",padding:"0 0 80px"}}>
+      <div style={{maxWidth:860,margin:"0 auto",width:"100%",padding:"0 0 80px"}}>
 
-        {/* ── IMAGE GALLERY ── */}
+        {/* ── GALLERY ── */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridTemplateRows:"200px 200px",gap:3,height:403,flexShrink:0}}>
-          {/* Big left */}
           <div style={{gridRow:"1 / 3",background:BG2,position:"relative",overflow:"hidden",cursor:"pointer"}} onClick={()=>setActiveImg(0)}>
             <PlotImage plot={plot} type={plot.type} index={0} style={{width:"100%",height:"100%"}}/>
-            <div style={{position:"absolute",top:12,left:12,display:"flex",gap:6}}>
-              <span style={{background:"rgba(17,17,16,0.6)",backdropFilter:"blur(6px)",color:WHITE,borderRadius:99,padding:"4px 10px",...TP.body,fontWeight:600,color:WHITE}}>{v.label}</span>
+            <div style={{position:"absolute",top:12,left:12}}>
+              <span style={{background:"rgba(17,17,16,0.6)",backdropFilter:"blur(6px)",color:WHITE,borderRadius:99,padding:"4px 10px",...TP.body,fontWeight:600}}>{v.label}</span>
             </div>
           </div>
-          {/* 4 small right */}
           {[1,2,3,4].map(i=>(
             <div key={i} style={{background:BG2,overflow:"hidden",cursor:"pointer",position:"relative",opacity:i>=plot.images.length?0.35:1}} onClick={()=>setActiveImg(i)}>
               <PlotImage plot={plot} type={plot.type} index={i} style={{width:"100%",height:"100%"}}/>
-              {i===3&&plot.images.length>4&&(
-                <div style={{position:"absolute",inset:0,background:"rgba(17,17,16,0.45)",display:"flex",alignItems:"center",justifyContent:"center",...TP.body,color:WHITE,fontWeight:600}}>+{plot.images.length-4} more</div>
-              )}
             </div>
           ))}
         </div>
 
         <div style={{padding:"20px 24px 0"}}>
 
-          {/* ── TITLE + PRICE ── */}
+          {/* ── 1. PLOT INFO ── */}
           <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,marginBottom:18,paddingBottom:18,borderBottom:`1px solid ${LIGHTER}`}}>
             <div style={{minWidth:0}}>
               <div style={{...TP.labelUC,color:MID,marginBottom:4}}>{plot.region}</div>
@@ -1204,14 +1546,8 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             </div>
           </div>
 
-          {/* ── KEY STATS ── */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:8,marginBottom:24}}>
-            {[
-              {label:"Plot size", val:plot.area},
-              {label:"Price/m²", val:plot.pricePerSqm},
-              {label:"Type", val:plot.type},
-              {label:"On market", val:plot.timeOnMarket||"—"},
-            ].map(({label,val})=>(
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:24}}>
+            {[{label:"Plot size",val:plot.area},{label:"Price/m²",val:plot.pricePerSqm},{label:"Type",val:plot.type},{label:"On market",val:plot.timeOnMarket||"—"}].map(({label,val})=>(
               <div key={label} style={{padding:"12px",background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10,textAlign:"center"}}>
                 <div style={{...TP.labelUC,marginBottom:4}}>{label}</div>
                 <div style={{...TP.body,fontWeight:600}}>{val}</div>
@@ -1219,72 +1555,56 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             ))}
           </div>
 
-          <LandDataLayersChecklist plot={plot} recap={savedAiRecap || null} pinPlot={false} upgraded={upgraded} onUpgrade={onUpgrade} compact={false} />
-
-          <div style={{marginBottom:24,padding:"14px 16px",background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10}}>
-            <div style={{...TP.sectionTitle,marginBottom:6}}>Pin not exact?</div>
-            <p style={{...TP.secondary,margin:"0 0 12px",lineHeight:1.45}}>We contact the agent first, then run your report — avoids paying twice.</p>
-            {locationRequested ? (
-              <div style={{...TP.body,color:GREEN,fontWeight:600,textAlign:"center",padding:"10px",background:`${GREEN}0d`,borderRadius:8,border:`1px solid ${GREEN}30`}}>✓ Request received — we’ll follow up within one business day (demo)</div>
-            ) : (
-              <button type="button" onClick={()=>setLocationRequested(true)} style={{width:"100%",background:INK,border:"none",borderRadius:99,padding:"10px 16px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
-                Request location — we’ll contact the realtor · from €89 →
-              </button>
-            )}
-          </div>
-
-          {savedAiRecap && (
-            <div style={{marginBottom:24,paddingBottom:20,borderBottom:`1px solid ${LIGHTER}`}}>
-              <div style={{...TP.sectionTitle,marginBottom:10}}>AI land report · recap</div>
-              <PlotRecapCard data={savedAiRecap} />
-            </div>
-          )}
-
-          {/* ── ABOUT ── */}
           <div style={{marginBottom:24,paddingBottom:24,borderBottom:`1px solid ${LIGHTER}`}}>
-            <div style={{...TP.sectionTitle,marginBottom:10}}>About this plot</div>
-            <div style={{position:"relative",overflow:"hidden",maxHeight:descExpanded?"none":"96px"}}>
-              <div style={{...TP.secondary,lineHeight:1.65}}>{plot.description}</div>
-              {!descExpanded&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:48,background:`linear-gradient(transparent,${WHITE})`}}/>}
+            <div style={{...TP.sectionTitle,marginBottom:12}}>About this plot</div>
+            <div style={{position:"relative",overflow:"hidden",maxHeight:descExpanded?"none":"88px"}}>
+              <div style={{fontFamily:FF,fontSize:"15px",lineHeight:"24px",color:INK2,fontWeight:400}}>
+                {plot.description.split("\n\n").map((para,i)=>(
+                  <p key={i} style={{margin:0,marginBottom:"14px"}}>{para}</p>
+                ))}
+              </div>
+              {!descExpanded&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:40,background:`linear-gradient(transparent,${WHITE})`}}/>}
             </div>
-            <button type="button" onClick={()=>setDescExpanded(x=>!x)} style={{marginTop:10,background:"none",border:"none",padding:0,cursor:"pointer",...TP.label,color:ACCENT,fontWeight:600}}>
+            <button type="button" onClick={()=>setDescExpanded(x=>!x)}
+              style={{marginTop:8,background:"none",border:"none",padding:0,cursor:"pointer",fontFamily:FF,fontSize:"14px",color:ACCENT,fontWeight:600}}>
               {descExpanded?"Show less ↑":"Read more ↓"}
             </button>
           </div>
 
-          {/* ── HIGHLIGHTS ── */}
-          <div style={{marginBottom:20,paddingBottom:20,borderBottom:`1px solid ${LIGHTER}`}}>
-            <div style={{...TP.sectionTitle,marginBottom:10}}>Highlights</div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0}}>
-              {plot.highlights.map((h,i)=>(
-                <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",...TP.body,borderBottom:`1px solid ${LIGHTER}`}}>
-                  <span style={{...TP.label,color:GREEN_BRIGHT,flexShrink:0}}>●</span>{h}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── AMENITIES ── */}
-          <div style={{marginBottom:20,paddingBottom:20,borderBottom:`1px solid ${LIGHTER}`}}>
-            <div style={{...TP.sectionTitle,marginBottom:10}}>In the area</div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:8}}>
-              {(plot.amenities||[]).map((a,i)=>(
-                <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10}}>
-                  <span style={{...TP.body,flexShrink:0,lineHeight:1}}>{a.icon}</span>
-                  <div style={{minWidth:0}}>
-                    <div style={{...TP.body,fontWeight:600}}>{a.label}</div>
-                    <div style={{...TP.secondary,marginTop:2}}>{a.dist}</div>
+          {plot.highlights&&plot.highlights.length>0&&(
+            <div style={{marginBottom:20,paddingBottom:20,borderBottom:`1px solid ${LIGHTER}`}}>
+              <div style={{...TP.sectionTitle,marginBottom:10}}>Highlights</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0}}>
+                {plot.highlights.map((h,i)=>(
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",...TP.body,borderBottom:`1px solid ${LIGHTER}`}}>
+                    <span style={{...TP.label,color:GREEN_BRIGHT,flexShrink:0}}>●</span>{h}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* ── CONTACT AGENT ── */}
-          <div style={{background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",marginBottom:20}}>
+          {(plot.amenities||[]).length>0&&(
+            <div style={{marginBottom:20,paddingBottom:20,borderBottom:`1px solid ${LIGHTER}`}}>
+              <div style={{...TP.sectionTitle,marginBottom:10}}>In the area</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+                {(plot.amenities||[]).map((a,i)=>(
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10}}>
+                    <span style={{...TP.body,flexShrink:0,lineHeight:1}}>{a.icon}</span>
+                    <div style={{minWidth:0}}>
+                      <div style={{...TP.body,fontWeight:600}}>{a.label}</div>
+                      <div style={{...TP.secondary,marginTop:2}}>{a.dist}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",marginBottom:32}}>
             <div style={{...TP.sectionTitle,marginBottom:12}}>Listed by</div>
             <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
-              <div style={{width:40,height:40,borderRadius:8,background:WHITE,display:"flex",alignItems:"center",justifyContent:"center",border:`1px solid ${LIGHTER}`,...TP.body,flexShrink:0}}>⊞</div>
+              <div style={{width:40,height:40,borderRadius:8,background:WHITE,border:`1px solid ${LIGHTER}`,display:"flex",alignItems:"center",justifyContent:"center",...TP.body,flexShrink:0}}>⊞</div>
               <div>
                 <div style={{...TP.body,fontWeight:600,color:INK}}>{plot.contact.name}</div>
                 <div style={{...TP.secondary,marginTop:2}}>{plot.contact.role}</div>
@@ -1296,79 +1616,61 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
             </div>
           </div>
 
-          {/* ── PLOT DATA ── */}
-          <div style={{marginBottom:20}}>
-            <div style={{...TP.sectionTitle,marginBottom:4}}>More from the listing</div>
-            <div style={{...TP.secondary,marginBottom:14}}>Portal text; verified fields are in the checklist above after a report.</div>
-
-            {/* Free section — always visible */}
-            <div style={{marginBottom:12}}>
-              {freeKeys.filter(k=>plot.technical[k]).map(k=>(
-                <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"6px 0",borderBottom:`1px solid ${LIGHTER}`}}>
-                  <span style={{...TP.labelUC}}>{k}</span>
-                  <span style={{...TP.body,fontWeight:600,textAlign:"right",maxWidth:"60%"}}>{plot.technical[k]}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Pro sections — headers visible, content greyed */}
-            {[
-              {
-                title:"General zoning rules",
-                rows:[["PDM zone",plot.technical["PDM zone"]],["Land use","Rustic — Espaço Agrícola"],["Reclassification","No active process"],["Protected areas","None on this parcel"]],
-              },
-              {
-                title:"Municipal PDM",
-                rows:[["Build allowance","0.3 FAR — rural tourism"],["Max footprint","25% of plot area"],["Height limit","6.5m (2 floors)"],["Setbacks","5m from all boundaries"]],
-              },
-              {
-                title:"Plot analysis / land use",
-                rows:[["Land use","Rustic — Espaço Agrícola"],["RAN",plot.technical["RAN"]],["REN",plot.technical["REN"]],["Reclassification","No active process"]],
-              },
-              {
-                title:"Cadastre",
-                rows:[["Cadastre ref",plot.technical["Cadastre ref"]],["BUPI status","Registered — no conflicts"],["Last transaction",plot.technical["Last transaction"]],["Ownership",plot.technical["Ownership"]]],
-              },
-              {
-                title:"GIS layers · constraints",
-                rows:[["Fire risk",plot.technical["Fire risk"]||"—"],["Grid distance",plot.technical["Grid distance"]||"—"],["Access",plot.technical["Access"]||"Paved road"],["Slope",plot.technical["Slope"]]],
-              },
-            ].map(({title,rows})=>(
-              <div key={title} style={{marginBottom:10,borderRadius:10,border:`1px solid ${LIGHTER}`,overflow:"hidden"}}>
-                <div style={{padding:"8px 12px",background:upgraded?WHITE:SUBTLE,display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:`1px solid ${LIGHTER}`}}>
-                  <span style={{...TP.body,fontWeight:600,color:upgraded?INK:MID}}>{title}</span>
-                  {!upgraded&&<span style={{...TP.label,background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:99,padding:"2px 8px",fontWeight:700}}>Pro</span>}
-                </div>
-                <div style={{filter:upgraded?"none":"blur(4px)",userSelect:upgraded?"auto":"none",pointerEvents:upgraded?"auto":"none",padding:"0 12px",background:WHITE}}>
-                  {rows.filter(([,v])=>v).map(([k,val])=>(
-                    <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"6px 0",borderBottom:`1px solid ${LIGHTER}`}}>
-                      <span style={{...TP.secondary}}>{k}</span>
-                      <span style={{...TP.body,fontWeight:600,textAlign:"right",maxWidth:"55%"}}>{val}</span>
+          {/* ── 2. LAND DATA (greyed until unlock) ── */}
+          <div style={{marginBottom:24}}>
+            <div style={{...TP.sectionTitle,marginBottom:4}}>Land data</div>
+            <div style={{...TP.secondary,marginBottom:14}}>Data we pull for this plot — unlock to view.</div>
+            <div style={{position:"relative"}}>
+              <div style={{filter:upgraded?"none":"blur(4px)",userSelect:upgraded?"auto":"none",pointerEvents:upgraded?"auto":"none"}}>
+                {[
+                  {title:"General zoning rules",rows:[["PDM zone",plot.technical["PDM zone"]],["Land use",plot.technical["PDM zone"]?.includes("Urban")?"Solo Urbano — Residencial":"Rustic — Espaco Agricola"],["Reclassification","No active process"],["Protected areas","None on this parcel"]]},
+                  {title:"Municipal PDM",rows:[["Build allowance","0.3 FAR — rural tourism"],["Max footprint","25% of plot area"],["Height limit","6.5m (2 floors)"],["Setbacks","5m from all boundaries"]]},
+                  {title:"Plot analysis / land use",rows:[["RAN",plot.technical["RAN"]],["REN",plot.technical["REN"]],["Orientation",plot.technical["Orientation"]],["Slope",plot.technical["Slope"]]]},
+                  {title:"Cadastre",rows:[["Cadastre ref",plot.technical["Cadastre ref"]],["BUPI status","Registered — no conflicts"],["Last transaction",plot.technical["Last transaction"]],["Ownership",plot.technical["Ownership"]]]},
+                  {title:"GIS layers · constraints",rows:[["Fire risk",plot.technical["Fire risk"]||"Low"],["Grid distance",plot.technical["Grid distance"]||"—"],["Access",plot.technical["Access"]||"Paved road"],["Slope",plot.technical["Slope"]]]},
+                ].map(({title,rows})=>(
+                  <div key={title} style={{marginBottom:10,borderRadius:10,border:`1px solid ${LIGHTER}`,overflow:"hidden"}}>
+                    <div style={{padding:"8px 12px",background:SUBTLE,borderBottom:`1px solid ${LIGHTER}`}}>
+                      <span style={{...TP.body,fontWeight:600}}>{title}</span>
                     </div>
-                  ))}
+                    <div style={{background:WHITE}}>
+                      {rows.filter(([,val])=>val).map(([k,val])=>(
+                        <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"7px 12px",borderBottom:`1px solid ${LIGHTER}`}}>
+                          <span style={{...TP.secondary}}>{k}</span>
+                          <span style={{...TP.body,fontWeight:600,textAlign:"right",maxWidth:"55%"}}>{val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {!upgraded&&(
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:10}}>
+                  <div style={{textAlign:"center",padding:"20px 24px",background:WHITE,border:`1px solid ${LIGHTER}`,borderRadius:12,boxShadow:"0 2px 16px rgba(0,0,0,0.08)"}}>
+                    <div style={{...TP.body,fontWeight:700,color:INK,marginBottom:6}}>Unlock land data</div>
+                    <div style={{...TP.secondary,lineHeight:1.5,marginBottom:14,maxWidth:220}}>PDM, cadastre, RAN/REN, registry — then run an AI analysis.</div>
+                    <button type="button" onClick={onUpgrade} style={{background:INK,border:"none",borderRadius:99,padding:"10px 24px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>Unlock for this plot →</button>
+                  </div>
                 </div>
-              </div>
-            ))}
-
-            {!upgraded&&(
-              <div style={{border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",textAlign:"center",background:SUBTLE,marginTop:4}}>
-                <div style={{...TP.body,fontWeight:600,color:INK,marginBottom:4}}>Unlock full plot data</div>
-                <div style={{...TP.secondary,lineHeight:1.5,marginBottom:12,maxWidth:280,margin:"0 auto 12px"}}>PDM, cadastre, RAN/REN, registry — one report.</div>
-                <button type="button" onClick={onUpgrade} style={{background:INK,border:"none",borderRadius:99,padding:"9px 24px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>Upgrade to Pro →</button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
-          {/* Legal check — only if upgraded */}
-          {upgraded&&(
-            <div style={{background:SUBTLE,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",marginBottom:20}}>
-              <div style={{...TP.sectionTitle,marginBottom:6}}>Legal check</div>
-              <div style={{...TP.secondary,lineHeight:1.65,marginBottom:12}}>Title verification, BUPI, PDM compliance and licencing pathway by Diogo Leal.</div>
-              {contacted?(
-                <div style={{textAlign:"center",...TP.body,color:GREEN,fontWeight:600,padding:"10px",background:`${GREEN}0d`,borderRadius:8,border:`1px solid ${GREEN}30`}}>✓ Request sent — Diogo responds within 48h</div>
-              ):(
-                <button type="button" onClick={()=>setContacted(true)} style={{width:"100%",background:INK,border:"none",borderRadius:99,padding:"9px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>Request legal check →</button>
-              )}
+          {/* ── 3. RUN AI ANALYSIS ── */}
+          <div style={{marginBottom:24,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",background:SUBTLE}}>
+            <div style={{...TP.sectionTitle,marginBottom:4}}>AI land analysis</div>
+            <div style={{...TP.secondary,lineHeight:1.5,marginBottom:14}}>Sends this plot to chat — AI reviews zoning, flood risk, PDM compliance and title integrity, then saves a full report here.</div>
+            <button type="button" onClick={upgraded ? onRunAnalysis : onUpgrade}
+              style={{width:"100%",background:upgraded?ACCENT:INK,border:"none",borderRadius:99,padding:"11px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
+              {upgraded?"Run AI land analysis →":"Unlock + run AI land analysis →"}
+            </button>
+          </div>
+
+          {/* ── 4. AI LAND REPORT (only after unlock + analysis run) ── */}
+          {upgraded&&savedAiRecap&&(
+            <div style={{marginBottom:24}}>
+              <div style={{...TP.sectionTitle,marginBottom:12}}>AI land report</div>
+              <PlotFullReport data={savedAiRecap} plot={plot}/>
             </div>
           )}
 
@@ -1377,6 +1679,8 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onBack,onAddToProject,inProj
     </div>
   );
 }
+
+
 
 
 // ── DETAIL PANEL ──────────────────────────────────────────────────────────────
@@ -1698,7 +2002,7 @@ function LandAnalysisBlock({ completedCount, done }) {
   );
 }
 
-function LandReportCard({ data, plot, onOpenReport }) {
+function LandReportCard({ data, plot, onOpenReport, onLegalCheck=()=>{}, onContactRealtor=()=>{} }) {
   const buildable = data.verdict === "buildable";
   const good = data.restrictions.filter(r=>r.status==="clear").map(r=>r.name);
   const bad  = data.restrictions.filter(r=>r.status==="blocking").map(r=>r.name);
@@ -1737,13 +2041,92 @@ function LandReportCard({ data, plot, onOpenReport }) {
         <div style={{fontSize:"12px",color:INK3,lineHeight:1.5,marginTop:4}}>{data.verdictSummary}</div>
       </div>
 
-      {/* Footer CTA */}
-      <div style={{padding:"10px 14px",borderTop:`1px solid ${LINE}`,display:"flex",gap:8}}>
+      {/* Footer CTAs */}
+      <div style={{padding:"10px 14px",borderTop:`1px solid ${LINE}`,display:"flex",flexDirection:"column",gap:8}}>
         <button type="button" onClick={onOpenReport}
-          style={{flex:1,background:INK,border:"none",borderRadius:99,padding:"9px",fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer",fontFamily:FF}}>
+          style={{width:"100%",background:INK,border:"none",borderRadius:99,padding:"9px",fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer",fontFamily:FF}}>
           Open full report →
         </button>
+        <div style={{display:"flex",gap:8}}>
+          <button type="button" onClick={onLegalCheck}
+            style={{flex:1,background:PAPER,border:`1px solid ${LINE}`,borderRadius:99,padding:"8px",fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",fontFamily:FF}}>
+            Legal check →
+          </button>
+          <button type="button" onClick={onContactRealtor}
+            style={{flex:1,background:PAPER,border:`1px solid ${LINE}`,borderRadius:99,padding:"8px",fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",fontFamily:FF}}>
+            Contact realtor →
+          </button>
+        </div>
       </div>
+    </div>
+  );
+}
+
+/** Deep-research findings chat — rendered between LandAnalysisBlock and LandReportCard. */
+function LandResearchChat({ plot, recap }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const findings = buildResearchFindings(plot, recap);
+  const statusColor = { clear: SUCCESS, warn: WARN, neutral: INK3 };
+  const statusBg    = { clear: SUCCESS_WASH, warn: WARN_WASH, neutral: CANVAS };
+
+  return (
+    <div style={{fontFamily:FF}}>
+      {/* Collapsible header */}
+      <div onClick={()=>setCollapsed(c=>!c)}
+        style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:collapsed?0:14,cursor:"pointer",padding:"4px 0",userSelect:"none"}}>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+              <path d="M4.5 1L5.5 3.5H8L5.8 5.2L6.6 7.8L4.5 6.3L2.4 7.8L3.2 5.2L1 3.5H3.5Z" fill="white"/>
+            </svg>
+          </div>
+          <span style={{fontSize:"13px",fontWeight:600,color:INK}}>Land AI</span>
+          <span style={{fontSize:"11px",fontWeight:500,color:INK4,letterSpacing:"0.04em",textTransform:"uppercase"}}>Research log · {findings.length} layers</span>
+        </div>
+        <span style={{fontSize:"11px",color:INK4}}>{collapsed?"▾":"▴"}</span>
+      </div>
+
+      {!collapsed&&(
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          {findings.map((f,i)=>{
+            const sc = statusColor[f.status] ?? INK3;
+            const sb = statusBg[f.status] ?? CANVAS;
+            return (
+              <div key={i} style={{display:"grid",gridTemplateColumns:"20px 1fr",gap:10,alignItems:"flex-start"}}>
+                {/* Coral check dot */}
+                <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}>
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                    <path d="M2 4.5 3.8 6.3 7 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  {/* Source badge + label */}
+                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5,flexWrap:"wrap"}}>
+                    <span style={{fontSize:"11px",fontWeight:600,color:sc,background:sb,border:`1px solid ${sc}30`,borderRadius:99,padding:"1px 7px",flexShrink:0,letterSpacing:"0.02em"}}>
+                      {f.source}
+                    </span>
+                    <span style={{fontSize:"13px",fontWeight:500,color:INK}}>{f.label}</span>
+                  </div>
+                  {/* Finding text */}
+                  <div style={{fontSize:"13px",lineHeight:"19px",color:INK2}}>
+                    {f.finding}
+                  </div>
+                  {/* Data chips */}
+                  {f.items&&(
+                    <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:6}}>
+                      {f.items.map((item,j)=>(
+                        <span key={j} style={{fontSize:"11px",fontWeight:500,color:INK3,background:CANVAS,border:`1px solid ${LINE}`,borderRadius:4,padding:"2px 7px"}}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -2635,73 +3018,109 @@ function PlotCard({p,activePin,setActivePin,upgraded,onUpgrade,onAddToProject,in
 
 // ── CADASTRE SVG MAP (authentic survey style) ────────────────────────────────
 function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
-  // Realistic cadastre parcel network — irregular polygons, shared boundaries
+  // Organic parcel network — irregular polygons, varied sizes, road gaps, river at south
   const parcels = [
-    // Row A — top strip
-    { id:"CAD-001", ref:"PT-SB-001", zone:"Rústico",  pdm:"Espaço Agrícola",   area:"2 340 m²", owner:"Private", listed:true,  plotId:"PT-0182", score:94, verdict:"great_match",
-      pts:"12,8 34,6 40,10 38,22 14,24" },
-    { id:"CAD-002", ref:"PT-SB-002", zone:"Rústico",  pdm:"Espaço Florestal",  area:"1 820 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"40,10 58,8 62,18 38,22" },
-    { id:"CAD-003", ref:"PT-OB-005", zone:"Urbano",   pdm:"Residencial",       area:"1 200 m²", owner:"Private", listed:true,  plotId:"PT-0441", score:88, verdict:"good_match",
-      pts:"62,8 80,6 84,16 64,20 62,18" },
-    { id:"CAD-004", ref:"PT-VC-018", zone:"Urbano",   pdm:"Misto",             area:"980 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"80,6 96,8 98,18 84,16" },
+    // === TOP AGRICULTURAL BELT — large irregular strips ===
+    { id:"CAD-001", ref:"PT-SB-001", zone:"Rústico",  pdm:"Espaço Agrícola",    area:"3 840 m²", owner:"Private", listed:true,  plotId:"PT-0182", score:94, verdict:"great_match",
+      pts:"3,4 54,2 52,19 24,23 3,21" },
+    { id:"CAD-002", ref:"PT-SB-002", zone:"RAN",      pdm:"Reserva Agrícola",   area:"2 640 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"54,2 94,3 90,22 54,21 52,19" },
+    { id:"CAD-003", ref:"PT-OB-003", zone:"Rústico",  pdm:"Agro-Florestal",     area:"1 920 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"94,3 126,4 124,17 92,18 90,22" },
+    { id:"CAD-004", ref:"PT-OB-005", zone:"Urbano",   pdm:"Residencial",        area:"1 200 m²", owner:"Private", listed:true,  plotId:"PT-0441", score:88, verdict:"good_match",
+      pts:"126,4 150,3 149,15 127,16 124,17" },
+    { id:"CAD-005", ref:"PT-VC-007", zone:"Urbano",   pdm:"Misto",              area:"780 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"150,3 170,3 169,13 149,15" },
+    { id:"CAD-006", ref:"PT-VC-008", zone:"Urbano",   pdm:"Residencial",        area:"620 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"170,3 188,4 188,12 169,13" },
 
-    // Row B
-    { id:"CAD-005", ref:"PT-SB-003", zone:"RAN",      pdm:"Reserva Agrícola",  area:"4 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"8,24 14,24 38,22 36,38 10,40" },
-    { id:"CAD-006", ref:"PT-SB-004", zone:"Rústico",  pdm:"Agro-Florestal",    area:"3 100 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"14,24 38,22 62,18 58,36 16,38" },
-    { id:"CAD-007", ref:"PT-OB-006", zone:"Urbano",   pdm:"Residencial",       area:"760 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"62,18 64,20 84,16 82,32 62,36" },
-    { id:"CAD-008", ref:"PT-OB-007", zone:"Urbano",   pdm:"Misto",             area:"890 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"84,16 98,18 97,30 84,32" },
-    { id:"CAD-009", ref:"PT-AL-008", zone:"REN",      pdm:"Proteção Ecológica",area:"5 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"97,18 106,16 108,30 97,30" },
+    // === SECOND ROW — slightly tilted, organic edges ===
+    { id:"CAD-007", ref:"PT-SB-009", zone:"RAN",      pdm:"Reserva Agrícola",   area:"5 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"3,21 24,23 52,19 50,39 3,41" },
+    { id:"CAD-008", ref:"PT-SB-010", zone:"Rústico",  pdm:"Espaço Florestal",   area:"2 980 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"52,19 90,22 86,40 52,41 50,39" },
+    { id:"CAD-009", ref:"PT-OB-011", zone:"Rústico",  pdm:"Uso Múltiplo",       area:"2 100 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"90,22 92,18 124,17 122,35 88,38 86,40" },
+    { id:"CAD-010", ref:"PT-OB-012", zone:"Urbano",   pdm:"Residencial",        area:"840 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"124,17 127,16 149,15 148,27 124,29 122,35" },
+    { id:"CAD-011", ref:"PT-VC-013", zone:"Urbano",   pdm:"Misto",              area:"560 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"149,15 169,13 168,24 148,27" },
+    { id:"CAD-012", ref:"PT-VC-014", zone:"Urbano",   pdm:"Residencial",        area:"490 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"169,13 188,12 188,22 168,24" },
 
-    // Row C — mid block
-    { id:"CAD-010", ref:"PT-AL-009", zone:"Rústico",  pdm:"Espaço Agrícola",   area:"8 500 m²", owner:"Private", listed:true,  plotId:"PT-1093", score:82, verdict:"good_match",
-      pts:"10,40 36,38 34,56 8,58" },
-    { id:"CAD-011", ref:"PT-AL-010", zone:"RAN",      pdm:"Reserva Agrícola",  area:"3 900 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"36,38 58,36 56,52 34,56" },
-    { id:"CAD-012", ref:"PT-SB-005", zone:"Rústico",  pdm:"Espaço Florestal",  area:"2 800 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"58,36 62,36 82,32 80,50 58,52" },
-    { id:"CAD-013", ref:"PT-EV-012", zone:"Urbano",   pdm:"Industrial",        area:"2 800 m²", owner:"Empresa", listed:true,  plotId:"PT-0677", score:71, verdict:"good_match",
-      pts:"82,32 84,32 97,30 96,48 82,50" },
-    { id:"CAD-014", ref:"PT-AL-011", zone:"REN",      pdm:"Proteção Ecológica",area:"7 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"97,30 108,30 108,48 96,48" },
+    // === ROAD GAP y≈41–53 (visible as background) ===
 
-    // Row D — lower-mid
-    { id:"CAD-015", ref:"PT-GR-005", zone:"Rústico",  pdm:"Uso Múltiplo",      area:"6 700 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"8,58 34,56 32,72 6,74" },
-    { id:"CAD-016", ref:"PT-GR-006", zone:"RAN",      pdm:"Reserva Agrícola",  area:"3 300 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"34,56 56,52 54,68 32,72" },
-    { id:"CAD-017", ref:"PT-BE-015", zone:"Rústico",  pdm:"Área de Produção",  area:"42 000 m²",owner:"Private", listed:true,  plotId:"PT-2201", score:75, verdict:"consider",
-      pts:"56,52 80,50 78,66 54,68" },
-    { id:"CAD-018", ref:"PT-BE-016", zone:"Urbano",   pdm:"Residencial",       area:"18 000 m²",owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"80,50 96,48 95,64 78,66" },
-    { id:"CAD-019", ref:"PT-BE-017", zone:"REN",      pdm:"Proteção Ecológica",area:"9 400 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"96,48 108,48 107,64 95,64" },
+    // === THIRD ROW — mid agricultural + urban east ===
+    { id:"CAD-013", ref:"PT-AL-015", zone:"Rústico",  pdm:"Espaço Agrícola",    area:"9 200 m²", owner:"Private", listed:true,  plotId:"PT-1093", score:82, verdict:"good_match",
+      pts:"3,54 46,52 44,73 2,76" },
+    { id:"CAD-014", ref:"PT-AL-016", zone:"RAN",      pdm:"Reserva Agrícola",   area:"4 800 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"46,52 84,51 82,71 46,73 44,73" },
+    { id:"CAD-015", ref:"PT-AL-017", zone:"Rústico",  pdm:"Agro-Florestal",     area:"3 400 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"84,51 116,51 114,68 84,71 82,71" },
+    { id:"CAD-016", ref:"PT-EV-018", zone:"Urbano",   pdm:"Industrial",         area:"2 800 m²", owner:"Empresa", listed:true,  plotId:"PT-0677", score:71, verdict:"good_match",
+      pts:"116,51 146,51 145,65 116,68 114,68" },
+    { id:"CAD-017", ref:"PT-EV-019", zone:"Urbano",   pdm:"Misto",              area:"1 600 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"146,51 166,51 165,63 145,65" },
+    { id:"CAD-018", ref:"PT-EV-020", zone:"Urbano",   pdm:"Residencial",        area:"1 200 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"166,51 188,51 188,62 165,63" },
 
-    // Row E — bottom
-    { id:"CAD-020", ref:"PT-ME-020", zone:"Rústico",  pdm:"Espaço Natural",    area:"8 200 m²", owner:"Private", listed:true,  plotId:"PT-2201", score:75, verdict:"consider",
-      pts:"6,74 32,72 30,88 4,90" },
-    { id:"CAD-021", ref:"PT-ME-021", zone:"RAN",      pdm:"Reserva Agrícola",  area:"5 600 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"32,72 54,68 52,84 30,88" },
-    { id:"CAD-022", ref:"PT-ME-022", zone:"Rústico",  pdm:"Agro-Florestal",    area:"12 000 m²",owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"54,68 78,66 76,82 52,84" },
-    { id:"CAD-023", ref:"PT-EV-023", zone:"Rústico",  pdm:"Espaço Agrícola",   area:"9 400 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
-      pts:"78,66 95,64 94,80 76,82" },
-    { id:"CAD-024", ref:"PT-EV-024", zone:"REN",      pdm:"Proteção Ecológica",area:"7 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
-      pts:"95,64 107,64 106,80 94,80" },
+    // === FOURTH ROW — mixed RAN + Rústico ===
+    { id:"CAD-019", ref:"PT-BE-021", zone:"Rústico",  pdm:"Espaço Natural",     area:"7 800 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"2,76 44,73 42,93 2,97" },
+    { id:"CAD-020", ref:"PT-BE-022", zone:"RAN",      pdm:"Reserva Agrícola",   area:"5 600 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"44,73 82,71 80,91 44,93 42,93" },
+    { id:"CAD-021", ref:"PT-BE-023", zone:"Rústico",  pdm:"Espaço Florestal",   area:"3 200 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"82,71 114,68 112,88 82,91 80,91" },
+    { id:"CAD-022", ref:"PT-BE-024", zone:"Rústico",  pdm:"Área de Produção",   area:"42 000 m²",owner:"Private", listed:true,  plotId:"PT-2201", score:75, verdict:"consider",
+      pts:"114,68 145,65 144,84 115,88 112,88" },
+    { id:"CAD-023", ref:"PT-BE-025", zone:"Urbano",   pdm:"Residencial",        area:"2 400 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"145,65 165,63 164,81 145,84 144,84" },
+    { id:"CAD-024", ref:"PT-BE-026", zone:"REN",      pdm:"Proteção Ecológica", area:"3 100 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"165,63 188,62 188,79 164,81" },
+
+    // === FIFTH ROW — REN transition zone ===
+    { id:"CAD-025", ref:"PT-ME-027", zone:"REN",      pdm:"Proteção Ecológica", area:"6 400 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"2,97 42,93 40,112 2,116" },
+    { id:"CAD-026", ref:"PT-ME-028", zone:"REN",      pdm:"Proteção Ecológica", area:"4 800 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"42,93 80,91 78,110 42,112 40,112" },
+    { id:"CAD-027", ref:"PT-ME-029", zone:"Rústico",  pdm:"Espaço Natural",     area:"3 600 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"80,91 112,88 110,107 80,110 78,110" },
+    { id:"CAD-028", ref:"PT-ME-030", zone:"REN",      pdm:"Proteção Ecológica", area:"5 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"112,88 144,84 143,103 113,107 110,107" },
+    { id:"CAD-029", ref:"PT-GR-031", zone:"Rústico",  pdm:"Espaço Natural",     area:"4 200 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"144,84 164,81 163,99 144,103 143,103" },
+    { id:"CAD-030", ref:"PT-GR-032", zone:"REN",      pdm:"Proteção Ecológica", area:"3 800 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"164,81 188,79 188,97 163,99" },
+
+    // === SIXTH ROW — riverbank zone ===
+    { id:"CAD-031", ref:"PT-ME-033", zone:"REN",      pdm:"Zona Ribeirinha",    area:"8 200 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"2,116 40,112 38,131 2,134" },
+    { id:"CAD-032", ref:"PT-ME-034", zone:"REN",      pdm:"Zona Ribeirinha",    area:"6 400 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"40,112 78,110 76,128 40,131 38,131" },
+    { id:"CAD-033", ref:"PT-ME-035", zone:"REN",      pdm:"Zona Ribeirinha",    area:"4 800 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"78,110 110,107 108,126 78,128 76,128" },
+    { id:"CAD-034", ref:"PT-GR-036", zone:"REN",      pdm:"Zona Ribeirinha",    area:"5 600 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"110,107 143,103 142,121 110,126 108,126" },
+    { id:"CAD-035", ref:"PT-GR-037", zone:"Rústico",  pdm:"Espaço Natural",     area:"3 200 m²", owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"143,103 163,99 162,117 143,121 142,121" },
+    { id:"CAD-036", ref:"PT-GR-038", zone:"REN",      pdm:"Zona Ribeirinha",    area:"4 000 m²", owner:"Estado",  listed:false, plotId:null, score:null, verdict:null,
+      pts:"163,99 188,97 188,115 162,117" },
+
+    // === EXTRA ORGANIC PARCELS — diagonal micro-plots upper-right ===
+    { id:"CAD-037", ref:"PT-VC-039", zone:"Urbano",   pdm:"Residencial",        area:"430 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"188,22 198,21 198,33 188,35 188,34" },
+    { id:"CAD-038", ref:"PT-VC-040", zone:"Urbano",   pdm:"Misto",              area:"580 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"188,35 198,33 198,48 188,51" },
+    { id:"CAD-039", ref:"PT-EV-041", zone:"Urbano",   pdm:"Residencial",        area:"720 m²",   owner:"Private", listed:false, plotId:null, score:null, verdict:null,
+      pts:"188,62 198,60 198,76 188,79" },
   ];
 
   // Zone fill palette — muted, authentic cadastre colours
   const ZF = {
-    "Urbano":  { fill:"#e8dfc8", stroke:"#8a7a50" },
-    "Rústico": { fill:"#d6e4c4", stroke:"#5a7a42" },
-    "RAN":     { fill:"#f0e8b0", stroke:"#a08020" },
-    "REN":     { fill:"#b8dce0", stroke:"#2a8a94" },
+    "Urbano":  { fill:"#e8dfc8", stroke:"#7a6a40" },
+    "Rústico": { fill:"#d6e4c4", stroke:"#4a6a32" },
+    "RAN":     { fill:"#f0e8b0", stroke:"#907810" },
+    "REN":     { fill:"#b8dce0", stroke:"#1a7a84" },
   };
 
   function centroid(pts) {
@@ -2709,39 +3128,44 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
     return { x: coords.reduce((s,c)=>s+c.x,0)/coords.length, y: coords.reduce((s,c)=>s+c.y,0)/coords.length };
   }
 
-  const VB = "0 0 114 96";
+  const VB = "0 0 200 155";
 
   return (
     <svg viewBox={VB} xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
       style={{ display:"block", background:"#f5f0e8" }}>
 
-      {/* Paper texture */}
       <defs>
-        <filter id="paper">
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/>
-          <feColorMatrix type="saturate" values="0" in="noise" result="grey"/>
-          <feBlend in="SourceGraphic" in2="grey" mode="multiply" result="blend"/>
-          <feComposite in="blend" in2="SourceGraphic" operator="in"/>
-        </filter>
-        <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <line x1="0" y1="0" x2="0" y2="4" stroke="#a08020" strokeWidth="0.4" opacity="0.4"/>
+        <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="5" stroke="#907810" strokeWidth="0.5" opacity="0.35"/>
         </pattern>
-        <pattern id="hatchREN" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-          <line x1="0" y1="0" x2="0" y2="4" stroke="#2a8a94" strokeWidth="0.4" opacity="0.35"/>
+        <pattern id="hatchREN" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+          <line x1="0" y1="0" x2="0" y2="5" stroke="#1a7a84" strokeWidth="0.5" opacity="0.3"/>
         </pattern>
       </defs>
 
       {/* Aged paper background */}
-      <rect width="114" height="96" fill="#f5f0e8"/>
-      <rect width="114" height="96" fill="#e8e0d0" opacity="0.18"/>
+      <rect width="200" height="155" fill="#f4efe4"/>
 
-      {/* Grid lines — faint blue-grey like graph paper */}
-      {[0,10,20,30,40,50,60,70,80,90,100,110].map(x=>(
-        <line key={`v${x}`} x1={x} y1="0" x2={x} y2="96" stroke="#b0aaa0" strokeWidth="0.18" opacity="0.5"/>
+      {/* Faint coordinate grid */}
+      {[0,20,40,60,80,100,120,140,160,180,200].map(x=>(
+        <line key={`v${x}`} x1={x} y1="0" x2={x} y2="155" stroke="#c8c0b0" strokeWidth="0.15" opacity="0.5"/>
       ))}
-      {[0,10,20,30,40,50,60,70,80,90].map(y=>(
-        <line key={`h${y}`} x1="0" y1={y} x2="114" y2={y} stroke="#b0aaa0" strokeWidth="0.18" opacity="0.5"/>
+      {[0,20,40,60,80,100,120,140].map(y=>(
+        <line key={`h${y}`} x1="0" y1={y} x2="200" y2={y} stroke="#c8c0b0" strokeWidth="0.15" opacity="0.5"/>
       ))}
+
+      {/* Road corridor fill y≈41–53 (east–west track) */}
+      <rect x="0" y="41" width="200" height="11" fill="#e0d8c8" opacity="0.85"/>
+      {/* Road surface line */}
+      <line x1="0" y1="46" x2="200" y2="46" stroke="#b8a888" strokeWidth="0.6" strokeDasharray="3 2" opacity="0.7"/>
+
+      {/* River at south — blue wavy band */}
+      <path d="M 0,137 Q 25,134 50,137 T 100,136 T 150,138 T 200,136 L 200,155 L 0,155 Z"
+        fill="#a8cce0" opacity="0.55"/>
+      <path d="M 0,137 Q 25,134 50,137 T 100,136 T 150,138 T 200,136"
+        fill="none" stroke="#4a8aaa" strokeWidth="0.6" opacity="0.7"/>
+      <path d="M 0,142 Q 30,139 60,142 T 120,141 T 180,143 T 200,142"
+        fill="none" stroke="#4a8aaa" strokeWidth="0.35" opacity="0.4"/>
 
       {/* Fill parcels */}
       {parcels.map(p => {
@@ -2750,22 +3174,22 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
         const listed = p.listed && highlightListed;
         return (
           <polygon key={p.id+"fill"}
-            points={p.pts.replace(/(\d+),(\d+)/g, "$1,$2")}
+            points={p.pts}
             fill={listed ? "#f5e8d0" : zc.fill}
-            opacity={sel ? 0.96 : 0.88}
+            opacity={sel ? 0.97 : 0.9}
           />
         );
       })}
 
       {/* Hatch patterns for RAN/REN */}
       {parcels.filter(p=>p.zone==="RAN").map(p=>(
-        <polygon key={p.id+"hatch"} points={p.pts} fill="url(#hatch)" opacity="0.7"/>
+        <polygon key={p.id+"hatch"} points={p.pts} fill="url(#hatch)" opacity="0.65"/>
       ))}
       {parcels.filter(p=>p.zone==="REN").map(p=>(
-        <polygon key={p.id+"hatch"} points={p.pts} fill="url(#hatchREN)" opacity="0.7"/>
+        <polygon key={p.id+"hatch"} points={p.pts} fill="url(#hatchREN)" opacity="0.65"/>
       ))}
 
-      {/* Borders — drawn AFTER fills so lines sit on top */}
+      {/* Parcel borders — drawn AFTER fills */}
       {parcels.map(p => {
         const zc = ZF[p.zone] || { fill:"#e0dbd0", stroke:"#888" };
         const sel = selectedId === p.id;
@@ -2775,7 +3199,7 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
             points={p.pts}
             fill="none"
             stroke={sel ? ORANGE : listed ? ACCENT : zc.stroke}
-            strokeWidth={sel ? 0.9 : listed ? 0.7 : 0.45}
+            strokeWidth={sel ? 1.1 : listed ? 0.8 : 0.55}
             strokeLinejoin="miter"
             onClick={()=>onParcelClick&&onParcelClick(p)}
             style={{ cursor:"pointer" }}
@@ -2786,7 +3210,7 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
       {/* Listed highlight fill overlay */}
       {parcels.filter(p=>p.listed&&highlightListed).map(p=>(
         <polygon key={p.id+"listed"} points={p.pts}
-          fill={ORANGE} opacity="0.08"
+          fill={ORANGE} opacity="0.09"
           onClick={()=>onParcelClick&&onParcelClick(p)}
           style={{ cursor:"pointer" }}
         />
@@ -2795,13 +3219,13 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
       {/* Selected parcel highlight */}
       {parcels.filter(p=>p.id===selectedId).map(p=>(
         <polygon key={p.id+"sel"} points={p.pts}
-          fill={ORANGE} opacity="0.16"
+          fill={ORANGE} opacity="0.18"
           onClick={()=>onParcelClick&&onParcelClick(p)}
           style={{ cursor:"pointer" }}
         />
       ))}
 
-      {/* Invisible hit targets — full parcel clickable */}
+      {/* Invisible hit targets */}
       {parcels.map(p=>(
         <polygon key={p.id+"hit"} points={p.pts}
           fill="transparent" stroke="none"
@@ -2810,34 +3234,42 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
         />
       ))}
 
-      {/* Cadastre reference labels */}
+      {/* Road label */}
+      <text x="6" y="48.5" fontSize="2.2" fontFamily="'Courier New',monospace" fill="#7a6a50" opacity="0.8" letterSpacing="0.3">ESTRADA MUNICIPAL</text>
+
+      {/* River label */}
+      <text x="8" y="144" fontSize="2.2" fontFamily="'Courier New',monospace" fill="#2a6a88" opacity="0.8" fontStyle="italic">Rio Sado</text>
+
+      {/* Parcel reference labels */}
       {parcels.map(p => {
         const c = centroid(p.pts);
+        if (c.y > 132) return null;
         const zc = ZF[p.zone] || { stroke:"#666" };
         const sel = selectedId === p.id;
         const listed = p.listed && highlightListed;
         return (
           <text key={p.id+"label"} x={c.x} y={c.y}
             textAnchor="middle" dominantBaseline="middle"
-            fontSize="1.55" fontFamily="'Courier New',monospace"
+            fontSize="1.8" fontFamily="'Courier New',monospace"
             fill={sel ? ORANGE : listed ? ACCENT : zc.stroke}
             fontWeight={sel||listed?"700":"400"}
-            opacity={sel ? 1 : 0.75}
+            opacity={sel ? 1 : 0.72}
             pointerEvents="none">
             {p.ref}
           </text>
         );
       })}
 
-      {/* Area labels — small, below ref */}
+      {/* Area labels */}
       {parcels.map(p => {
         const c = centroid(p.pts);
+        if (c.y > 132) return null;
         const zc = ZF[p.zone] || { stroke:"#666" };
         return (
-          <text key={p.id+"area"} x={c.x} y={c.y+2.4}
+          <text key={p.id+"area"} x={c.x} y={c.y+3}
             textAnchor="middle" dominantBaseline="middle"
-            fontSize="1.2" fontFamily="'Courier New',monospace"
-            fill={zc.stroke} opacity="0.55"
+            fontSize="1.4" fontFamily="'Courier New',monospace"
+            fill={zc.stroke} opacity="0.5"
             pointerEvents="none">
             {p.area}
           </text>
@@ -2850,46 +3282,46 @@ function CadastreMapSVG({ selectedId, onParcelClick, highlightListed }) {
         const sel = selectedId === p.id;
         return (
           <g key={p.id+"pin"} onClick={()=>onParcelClick&&onParcelClick(p)} style={{cursor:"pointer"}}>
-            <circle cx={c.x} cy={c.y-3.5} r={sel?1.8:1.4}
-              fill={sel?ORANGE:"#2563eb"} stroke="white" strokeWidth="0.4"/>
+            <circle cx={c.x} cy={c.y-4} r={sel?2.2:1.7}
+              fill={sel?ORANGE:"#2563eb"} stroke="white" strokeWidth="0.5"/>
           </g>
         );
       })}
 
-      {/* Margin frame */}
-      <rect x="2" y="2" width="110" height="92" fill="none" stroke="#8a8070" strokeWidth="0.5" opacity="0.5"/>
-      <rect x="3.5" y="3.5" width="107" height="89" fill="none" stroke="#8a8070" strokeWidth="0.2" opacity="0.3"/>
+      {/* Survey frame */}
+      <rect x="2" y="2" width="196" height="151" fill="none" stroke="#8a8070" strokeWidth="0.6" opacity="0.45"/>
+      <rect x="3.5" y="3.5" width="193" height="148" fill="none" stroke="#8a8070" strokeWidth="0.25" opacity="0.25"/>
 
       {/* Corner cross-hair marks */}
-      {[[6,6],[108,6],[6,90],[108,90]].map(([x,y],i)=>(
-        <g key={i} stroke="#6a6050" strokeWidth="0.35" opacity="0.6">
-          <line x1={x-2} y1={y} x2={x+2} y2={y}/>
-          <line x1={x} y1={y-2} x2={x} y2={y+2}/>
+      {[[6,6],[194,6],[6,149],[194,149]].map(([x,y],i)=>(
+        <g key={i} stroke="#6a6050" strokeWidth="0.4" opacity="0.55">
+          <line x1={x-2.5} y1={y} x2={x+2.5} y2={y}/>
+          <line x1={x} y1={y-2.5} x2={x} y2={y+2.5}/>
         </g>
       ))}
 
       {/* Scale bar */}
-      <g transform="translate(6,86)">
-        <rect x="0" y="0" width="16" height="1.8" fill="#6a6050" opacity="0.5"/>
-        <rect x="0" y="0" width="8" height="1.8" fill="#6a6050" opacity="0.8"/>
-        <text x="0" y="4.2" fontSize="1.4" fontFamily="'Courier New',monospace" fill="#6a6050" opacity="0.8">0</text>
-        <text x="13.5" y="4.2" fontSize="1.4" fontFamily="'Courier New',monospace" fill="#6a6050" opacity="0.8">500m</text>
+      <g transform="translate(6,145)">
+        <rect x="0" y="0" width="20" height="2" fill="#6a6050" opacity="0.5"/>
+        <rect x="0" y="0" width="10" height="2" fill="#6a6050" opacity="0.8"/>
+        <text x="0" y="5" fontSize="1.8" fontFamily="'Courier New',monospace" fill="#6a6050" opacity="0.8">0</text>
+        <text x="17" y="5" fontSize="1.8" fontFamily="'Courier New',monospace" fill="#6a6050" opacity="0.8">500m</text>
       </g>
 
       {/* North arrow */}
-      <g transform="translate(104,10)">
-        <line x1="0" y1="4" x2="0" y2="0" stroke="#6a6050" strokeWidth="0.5" opacity="0.8"/>
-        <polygon points="-1,3 0,0 1,3" fill="#6a6050" opacity="0.8"/>
-        <text x="0" y="6.5" textAnchor="middle" fontSize="1.6" fontFamily="'Courier New',monospace" fill="#6a6050" opacity="0.8">N</text>
+      <g transform="translate(186,12)">
+        <line x1="0" y1="5" x2="0" y2="0" stroke="#6a6050" strokeWidth="0.7" opacity="0.8"/>
+        <polygon points="-1.2,4 0,0 1.2,4" fill="#6a6050" opacity="0.8"/>
+        <text x="0" y="8" textAnchor="middle" fontSize="2" fontFamily="'Courier New',monospace" fill="#6a6050" opacity="0.8">N</text>
       </g>
 
-      {/* Zone legend — bottom right */}
-      <g transform="translate(68,78)">
-        <rect x="-1" y="-1" width="42" height="14" fill="#f5f0e8" opacity="0.88" stroke="#8a8070" strokeWidth="0.3"/>
-        {[["Urbano","#e8dfc8","#8a7a50"],["Rústico","#d6e4c4","#5a7a42"],["RAN","#f0e8b0","#a08020"],["REN","#b8dce0","#2a8a94"]].map(([lbl,fill,stroke],i)=>(
-          <g key={lbl} transform={`translate(2,${i*3+1.5})`}>
-            <rect x="0" y="0" width="4.5" height="2.5" fill={fill} stroke={stroke} strokeWidth="0.3"/>
-            <text x="6" y="2" fontSize="1.6" fontFamily="'Courier New',monospace" fill="#4a4030">{lbl}</text>
+      {/* Zone legend */}
+      <g transform="translate(136,120)">
+        <rect x="-2" y="-2" width="58" height="20" fill="#f4efe4" opacity="0.92" stroke="#8a8070" strokeWidth="0.4"/>
+        {[["Urbano","#e8dfc8","#7a6a40"],["Rústico","#d6e4c4","#4a6a32"],["RAN","#f0e8b0","#907810"],["REN","#b8dce0","#1a7a84"]].map(([lbl,fill,stroke],i)=>(
+          <g key={lbl} transform={`translate(2,${i*4.5+1})`}>
+            <rect x="0" y="0" width="6" height="3" fill={fill} stroke={stroke} strokeWidth="0.4"/>
+            <text x="8" y="2.5" fontSize="2.2" fontFamily="'Courier New',monospace" fill="#4a4030">{lbl}</text>
           </g>
         ))}
       </g>
@@ -4605,8 +5037,12 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
             setAnalysisState("done");
             setTimeout(()=>{
               const recap = buildListingRecapData(resolvedPlot);
-              setMessages(m=>[...m, {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot, recap}]);
-              persistListingScan(listingId, recap);
+              // Research findings chat — shown before the compact summary card
+              setMessages(m=>[...m, {role:"assistant", isResearch:true, plot:resolvedPlot, recap}]);
+              setTimeout(()=>{
+                setMessages(m=>[...m, {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot, recap}]);
+                persistListingScan(listingId, recap);
+              }, 500);
             }, 500);
           }, 400);
         }
@@ -4624,7 +5060,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     const label=activePlot.name||cid;
     setMessages((m)=>[...m,
       {role:"user",text:`Request official location check — ${label} (${cid})`},
-      {role:"assistant",text:`We’ll ask the realtor to confirm the **official location** (exact pin / cadastre reference) for **${label}**.\n\nThen you can run the same **full report** with confidence.\n\nIf you already know the exact location, you can skip this and run the report now.\n\n**€89** — includes outreach (demo: no email sent).`},
+      {role:"assistant",text:`We'll ask the realtor to confirm the **official location** (exact pin / cadastre reference) for **${label}**.\n\nThen you can run the same **full report** with confidence.\n\nIf you already know the exact location, you can skip this and run the report now.\n\n**€89** — includes outreach (demo: no email sent).`},
     ]);
     setMobileTab("chat");
   }
@@ -4638,13 +5074,13 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
 
   function beginAddressFlow(){
     setActiveICP(null);
-    setMessages([{role:"assistant",text:`**Address → cadastre**\n\nPaste a Portuguese **street address** in the box below. We resolve it to official parcels; you confirm the match, then order a **single-plot report for €49** (you’re responsible for confirming the parcel).`}]);
+    setMessages([{role:"assistant",text:`**Address → cadastre**\n\nPaste a Portuguese **street address** in the box below. We resolve it to official parcels; you confirm the match, then order a **single-plot report for €49** (you're responsible for confirming the parcel).`}]);
     setMobileTab("chat");
   }
 
   function beginCadastreRefFlow(){
     setActiveICP(null);
-    setMessages([{role:"assistant",text:`**Cadastre reference**\n\nPaste a **PUN / article / parcel ID** (e.g. from BUPI or tax documents). We’ll look it up, show the parcel on the map, and you can order the **€49** report once confirmed.`}]);
+    setMessages([{role:"assistant",text:`**Cadastre reference**\n\nPaste a **PUN / article / parcel ID** (e.g. from BUPI or tax documents). We'll look it up, show the parcel on the map, and you can order the **€49** report once confirmed.`}]);
     setMobileTab("chat");
   }
 
@@ -4838,12 +5274,27 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                 <LandAnalysisBlock completedCount={msg.completedCount||0} done={!!msg.done}/>
               )}
 
-              {/* LAND REPORT · SUMMARY */}
+              {/* LAND RESEARCH · DEEP DIVE FINDINGS */}
+              {msg.role==="assistant"&&msg.isResearch&&msg.plot&&(
+                <div style={{background:PAPER,border:`1px solid ${LINE}`,borderRadius:12,padding:"14px 16px"}}>
+                  <LandResearchChat plot={msg.plot} recap={msg.recap}/>
+                </div>
+              )}
+
+              {/* LAND REPORT · COMPACT SUMMARY */}
               {msg.role==="assistant"&&msg.isVerdict&&msg.plot&&msg.recap&&(
                 <LandReportCard
                   data={msg.recap}
                   plot={msg.plot}
                   onOpenReport={()=>onOpenListing(plotListingOpenId(msg.plot))}
+                  onLegalCheck={()=>setMessages(m=>[...m,
+                    {role:"user",text:`Legal check — ${msg.plot.name}`},
+                    {role:"assistant",text:`**Legal check for ${msg.plot.name}**\n\nKey items before signing a CPCV:\n- Title clear ✓ (confirmed in registry)\n- PDM permits verified ✓\n- Licença de utilização — confirm no violations\n- Municipal debt certificate (certidão de não dívida)\n- Fiscal situation of the seller\n\nRecommend a Portuguese property lawyer for the promessa de compra e venda. Starting at €990 for a full legal package.`},
+                  ])}
+                  onContactRealtor={()=>setMessages(m=>[...m,
+                    {role:"user",text:`Contact realtor — ${msg.plot.name}`},
+                    {role:"assistant",text:`**Connecting you with the realtor for ${msg.plot.name}.**\n\nWe'll send your enquiry to the listing agent. They typically respond within 24h.\n\nWant to include any specific questions — price negotiation, official location confirmation, or visit scheduling?`},
+                  ])}
                 />
               )}
 
@@ -4855,7 +5306,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
               )}
 
               {/* LISTINGS RESULT + plain text */}
-              {msg.role==="assistant"&&!msg.isThinking&&!msg.isVerdict&&!msg.isBulkResult&&(
+              {msg.role==="assistant"&&!msg.isThinking&&!msg.isResearch&&!msg.isVerdict&&!msg.isBulkResult&&(
                 <div style={{display:"grid",gridTemplateColumns:"20px 1fr",gap:10,width:"100%",alignItems:"flex-start"}}>
                   <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}>
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -6190,7 +6641,7 @@ export default function YonderExplorerAppInner({
       <div style={{flex:1,minHeight:0,display:"flex",overflow:"hidden",position:"relative"}}>
         {!!listingPlot&&(
           <div className="ye-scroll" style={{position:"absolute",inset:0,zIndex:100,animation:"slideIn 0.2s ease both",background:WHITE,display:"flex",flexDirection:"column",overflowY:"auto"}}>
-            <PlotListingPage plotId={listingPlot} upgraded={upgraded} onUpgrade={()=>requestUpgrade("plot")} onBack={closeListing} onAddToProject={handleAddToProject} inProject={projectPlots.includes(listingPlot)} savedAiRecap={listingRecapFromStore(listingSavedScans, canonicalPipelineId(listingPlot))}/>
+            <PlotListingPage plotId={listingPlot} upgraded={upgraded} onUpgrade={()=>requestUpgrade("plot")} onRunAnalysis={()=>{closeListing();setMobileTab("chat");setTimeout(()=>runAnalysis(),200);}} onBack={closeListing} onAddToProject={handleAddToProject} inProject={projectPlots.includes(listingPlot)} savedAiRecap={listingRecapFromStore(listingSavedScans, canonicalPipelineId(listingPlot))}/>
           </div>
         )}
         {activeNav==="Search"&&<ChatMapView upgraded={upgraded} requestUpgrade={requestUpgrade} onAddToProject={handleAddToProject} onCommitPlotsToPipeline={commitPlotsToPipeline} projectPlots={projectPlots} onGoToDashboard={()=>setActiveNav("Projects")} onOpenListing={openListing} listingSavedScans={listingSavedScans} persistListingScan={persistListingScan} pipelineFocusCanonicalId={pipelineFocusCanonicalId} onPipelineFocusConsumed={()=>setPipelineFocusCanonicalId(null)} pipelineOnMapTick={pipelineOnMapTick} activeProject={activeProject} onSwitchProject={(p)=>{setActiveProject(p);setActiveNav("Projects");}}/>}
