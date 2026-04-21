@@ -347,14 +347,16 @@ const DEMO_LISTING_SCANS = {
 };
 
 function loadListingScansFromStorage() {
-  if (typeof window === "undefined") return {};
+  // Always start with demo scans so the Projects table shows some "Done" rows
+  const base = { ...DEMO_LISTING_SCANS };
+  if (typeof window === "undefined") return base;
   try {
     const raw = localStorage.getItem(LISTING_SCAN_LS_KEY);
-    if (!raw) return {};
+    if (!raw) return base;
     const o = JSON.parse(raw);
-    return normalizeListingScanStorage(typeof o === "object" && o ? o : {});
+    return { ...base, ...normalizeListingScanStorage(typeof o === "object" && o ? o : {}) };
   } catch {
-    return {};
+    return base;
   }
 }
 
@@ -5974,10 +5976,10 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                               onClick={(e)=>{e.stopPropagation(); onOpenListing(canonicalPipelineId(plot.id));}}
                               style={{display:"inline-flex",alignItems:"center",gap:5,...TP.label,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}30`,borderRadius:99,padding:"4px 10px",cursor:"pointer",whiteSpace:"nowrap",fontWeight:600}}>
                               <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2" stroke={GREEN} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                              Done
+                              Done · view →
                             </button>
                           ) : (
-                            <span style={{...TP.label,color:LIGHT}}>—</span>
+                            <span style={{...TP.label,color:LIGHT,fontWeight:500}}>No</span>
                           )}
                         </td>
                         <td style={{padding:"8px 10px"}}>
