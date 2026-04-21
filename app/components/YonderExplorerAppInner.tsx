@@ -4946,7 +4946,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
         {/* Toolbar — v4 titlebar chrome */}
         <div style={{height:44,borderBottom:`1px solid rgba(0,0,0,0.06)`,background:CHROME,display:"flex",alignItems:"center",padding:"0 8px",gap:8,flexShrink:0}}>
           <div style={{display:"flex",background:SUBTLE,borderRadius:99,padding:3,border:`1px solid ${LIGHTER}`}}>
-            {[["map","Map"],["list","List"]].map(([m,lbl])=>(
+            {(cadastreMode?[["map","Map"]]:([["map","Map"],["list","List"]] as [string,string][])).map(([m,lbl])=>(
               <button key={m} onClick={()=>setMapMode(m)}
                 style={{
                   background:mapMode===m?ACCENT:"transparent",
@@ -4975,7 +4975,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                 cursor:"pointer",
                 transition:"all 0.1s",
               }}>Listings</button>
-            <button type="button" onClick={switchToParcelsLens}
+            <button type="button" onClick={()=>{switchToParcelsLens();setMapMode("map");}}
               style={{
                 background:cadastreMode?ORANGE:"transparent",
                 border:"1px solid transparent",
@@ -4986,7 +4986,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                 color:cadastreMode?WHITE:MID,
                 cursor:"pointer",
                 transition:"all 0.1s",
-              }}>Parcels            </button>
+              }}>Cadastre</button>
           </div>
           {hasDrawArea&&(
             <button type="button" onClick={()=>setMapMode("list")}
@@ -5026,6 +5026,18 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
 
         {/* Map or List */}
         <div style={{flex:1,position:"relative",minHeight:0,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          {/* Cadastre mode — draw/pin prompt */}
+          {mapMode==="map"&&cadastreMode&&!hasDrawArea&&!selectedParcel&&(
+            <div style={{position:"absolute",bottom:24,left:"50%",transform:"translateX(-50%)",zIndex:60,background:INK,borderRadius:12,padding:"12px 18px",boxShadow:"0 8px 24px rgba(0,0,0,0.18)",display:"flex",alignItems:"center",gap:12,pointerEvents:"none",animation:"slideUp 0.25s ease both"}}>
+              <div style={{width:28,height:28,borderRadius:"50%",background:"rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="white" strokeWidth="1.4" strokeDasharray="3 2"/></svg>
+              </div>
+              <div>
+                <div style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,marginBottom:2}}>Cadastre / BUPI parcel view</div>
+                <div style={{fontFamily:FF,fontSize:"12px",color:"rgba(255,255,255,0.55)"}}>Draw an area or drop a pin to identify parcels</div>
+              </div>
+            </div>
+          )}
           {mapMode==="map"
             ?<PortugalMap plots={mapResults.kind==="listings"?listingPlotsFiltered:[]} activePin={activePin}
                 setActivePin={(id)=>{if(id){const p=listingPlotsFiltered.find(pl=>pl.id===id)||(mapResults.kind==="listings"?mapResults.plots.find(pl=>pl.id===id):null);if(p)selectPlot(p);}else setActivePin(null);}}
