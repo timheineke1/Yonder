@@ -5941,8 +5941,8 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
             {view==="list"&&filtered.length>0&&(
               <table style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 4px"}}>
                 <thead>
-                  <tr>{["","Name","Region","Size","Price","Score","Stage","Projects",""].map((h,i)=>(
-                    <th key={i} style={{textAlign:"left",...TP.tableHead,padding:"0 10px 6px",fontWeight:600}}>{h}</th>
+                  <tr>{["","Name","Region","Size","Price","Score","Land AI","Stage","Projects",""].map((h,i)=>(
+                    <th key={i} style={{textAlign:"left",...TP.tableHead,padding:"0 10px 6px",fontWeight:600,color:h==="Land AI"?ACCENT:undefined}}>{h}</th>
                   ))}</tr>
                 </thead>
                 <tbody>
@@ -5959,19 +5959,7 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                           </div>
                         </td>
                         <td style={{padding:"8px 10px",minWidth:140}} onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)}>
-                          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:2}}>
-                            <div style={{...TP.body,fontWeight:600,color:INK}}>{plot.name}</div>
-                            {hasAiReport&&(
-                              <button
-                                type="button"
-                                onClick={(e)=>{e.stopPropagation(); onOpenListing(canonicalPipelineId(plot.id));}}
-                                style={{...TP.labelUC,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}35`,borderRadius:99,padding:"2px 9px",cursor:"pointer",display:"inline-flex",alignItems:"center",gap:4}}
-                              >
-                                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4 3 6 7 1.5" stroke={GREEN} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                AI report
-                              </button>
-                            )}
-                          </div>
+                          <div style={{...TP.body,fontWeight:600,color:INK,marginBottom:2}}>{plot.name}</div>
                           <div style={{...TP.mono,color:LIGHT}}>{plot.ref}</div>
                         </td>
                         <td style={{padding:"8px 10px",...TP.secondary}}>{plot.region}</td>
@@ -5979,6 +5967,18 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                         <td style={{padding:"8px 10px",...TP.body,fontWeight:600,color:INK}}>{plot.price}</td>
                         <td style={{padding:"8px 10px"}}>
                           <span style={{...TP.body,fontWeight:700,color:plot.suitability>=85?GREEN:plot.suitability>=70?ACCENT:MID}}>{plot.suitability}</span>
+                        </td>
+                        <td style={{padding:"8px 10px"}}>
+                          {hasAiReport ? (
+                            <button type="button"
+                              onClick={(e)=>{e.stopPropagation(); onOpenListing(canonicalPipelineId(plot.id));}}
+                              style={{display:"inline-flex",alignItems:"center",gap:5,...TP.label,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}30`,borderRadius:99,padding:"4px 10px",cursor:"pointer",whiteSpace:"nowrap",fontWeight:600}}>
+                              <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2" stroke={GREEN} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              Done
+                            </button>
+                          ) : (
+                            <span style={{...TP.label,color:LIGHT}}>—</span>
+                          )}
                         </td>
                         <td style={{padding:"8px 10px"}}>
                           <select
@@ -6005,9 +6005,9 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                                 Ask →
                               </button>
                             )}
-                            <button type="button" onClick={()=>hasAiReport?onOpenListing(canonicalPipelineId(plot.id)):setDetailPlot(detailPlot?.id===plot.id?null:plot)}
+                            <button type="button" onClick={()=>setDetailPlot(detailPlot?.id===plot.id?null:plot)}
                               style={{background:detailPlot?.id===plot.id?SUBTLE:INK,border:`1px solid ${detailPlot?.id===plot.id?LIGHTER:"transparent"}`,borderRadius:99,padding:"5px 12px",...TP.body,color:detailPlot?.id===plot.id?MID:WHITE,cursor:"pointer",fontWeight:600,whiteSpace:"nowrap"}}>
-                              {hasAiReport?"Report →":detailPlot?.id===plot.id?"Close":"Open →"}
+                              {detailPlot?.id===plot.id?"Close":"Open →"}
                             </button>
                           </div>
                         </td>
