@@ -5951,7 +5951,8 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                   {filtered.map(plot=>{
                     const isSel = selected.includes(plot.id);
                     const plotProjects = INIT_PROJECTS.filter(pr=>pr.plotIds.includes(plot.id));
-                    const hasAiReport = !!listingRecapFromStore(listingSavedScans, canonicalPipelineId(plot.id));
+                    const plotCanon = plot.ref ?? canonicalPipelineId(plot.id);
+                    const hasAiReport = !!listingRecapFromStore(listingSavedScans, plotCanon);
                     return(
                       <tr key={plot.id} style={{background:isSel?`${ORANGE}08`:detailPlot?.id===plot.id?`${ACCENT}08`:WHITE,transition:"background 0.1s",boxShadow:`0 0 0 1px ${LIGHTER}`,borderRadius:8}}>
                         <td style={{padding:"8px 10px",borderRadius:"8px 0 0 8px",width:28}}>
@@ -5973,7 +5974,7 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                         <td style={{padding:"8px 10px"}}>
                           {hasAiReport ? (
                             <button type="button"
-                              onClick={(e)=>{e.stopPropagation(); onOpenListing(canonicalPipelineId(plot.id));}}
+                              onClick={(e)=>{e.stopPropagation(); onOpenListing(plotCanon);}}
                               style={{display:"inline-flex",alignItems:"center",gap:5,...TP.label,color:GREEN,background:`${GREEN}12`,border:`1px solid ${GREEN}30`,borderRadius:99,padding:"4px 10px",cursor:"pointer",whiteSpace:"nowrap",fontWeight:600}}>
                               <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2" stroke={GREEN} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                               Done · view →
@@ -6034,7 +6035,8 @@ function ProjectsView({onOpenListing, upgraded, onUpgrade, projectPlots, onAddTo
                       </div>
                       {sp.map(plot=>{
                         const isSel=selected.includes(plot.id);
-                        const hasAiReport = !!listingRecapFromStore(listingSavedScans, canonicalPipelineId(plot.id));
+                        const plotCanon2 = plot.ref ?? canonicalPipelineId(plot.id);
+                        const hasAiReport = !!listingRecapFromStore(listingSavedScans, plotCanon2);
                         return(
                           <div key={plot.id}
                             style={{background:WHITE,border:`1px solid ${isSel?ORANGE:LIGHTER}`,borderRadius:8,padding:"10px",marginBottom:6,cursor:"pointer",transition:"border-color 0.1s"}}>
