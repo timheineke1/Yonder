@@ -209,6 +209,17 @@ const CHAT_ICPS = [
 
 const CHAT_PLOTS = Object.values(PLOT_DETAILS);
 
+// Location confidence per listing — "exact" = known address/pin, "approximate" = realtor has obscured it
+const PLOT_LOCATION_CONFIDENCE: Record<string,"exact"|"approximate"> = {
+  "PT-0182": "exact",       // Comporta — cadastre ref confirmed
+  "PT-0441": "approximate", // Óbidos — pin hidden by agent
+  "PT-1093": "approximate", // Alentejo — approximate area only
+  "PT-0677": "exact",       // Évora — address on file
+  "PT-2201": "approximate", // Beja — large plot, boundary unconfirmed
+};
+type LocVerifState = "idle"|"requested"|"awaiting"|"confirmed"|"running"|"ready";
+const LOC_VERIF_ORDER: LocVerifState[] = ["idle","requested","awaiting","confirmed","running","ready"];
+
 /** Demo headline for nationwide browse (toolbar + list); map/list rows stay `CHAT_PLOTS` samples. */
 const NATIONWIDE_HEADLINE_TOTAL = 4203;
 
@@ -907,6 +918,13 @@ function ListingInsightSidebar({
   onStartLandAgentInChat,
   onSendToChat,
   onRequestListingLocation,
+  verifState,
+  isApproximate,
+}: {
+  plot: any; onClose: ()=>void; onOpenListing: (id:string)=>void; onAddToProject: (id:string)=>void;
+  inProject: boolean; upgraded: boolean; onUpgrade: ()=>void; savedRecap: any;
+  onStartLandAgentInChat: ()=>void; onSendToChat: (p:any,o:any)=>void; onRequestListingLocation: ()=>void;
+  verifState?: LocVerifState; isApproximate?: boolean;
 }) {
   const [activeTab, setActiveTab] = useState("overview");
   const cid = plotListingOpenId(plot);
@@ -1028,34 +1046,65 @@ function ListingInsightSidebar({
               <>
                 <div style={{height:1,background:LINE,marginBottom:20}}/>
                 <div style={{fontFamily:FF,fontSize:"15px",fontWeight:600,color:INK,marginBottom:10}}>Land data</div>
-                <div style={{position:"relative",marginBottom:16}}>
-                  <div style={{filter:upgraded?"none":"blur(3px)",userSelect:upgraded?"auto":"none",pointerEvents:upgraded?"auto":"none",border:`1px solid ${LINE}`,borderRadius:10,overflow:"hidden"}}>
-                    {[["Zoning",plot.technical?.["PDM zone"]||"Solo Urbano — Residencial"],["PDM","No major RAN/REN flags"],["BUPI","Registered — no conflicts"],["Fire risk","Low — clear buffer zone"],["Cadastre ref",plot.technical?.["Cadastre ref"]||"—"],["RAN / REN",`${plot.technical?.["RAN"]||"Clear"} / ${plot.technical?.["REN"]||"Clear"}`]].map(([k,val])=>(
-                      <div key={k} style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"8px 12px",borderBottom:`1px solid ${LINE}`,background:PAPER}}>
-                        <span style={{fontFamily:FF,fontSize:"12px",color:INK3,flexShrink:0}}>{k}</span>
-                        <span style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK,maxWidth:"58%",textAlign:"right"}}>{val}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {!upgraded&&(
-                    <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.6)",backdropFilter:"blur(2px)",borderRadius:10}}>
-                      <div style={{textAlign:"center",padding:"14px 18px",background:PAPER,border:`1px solid ${LINE}`,borderRadius:10}}>
-                        <div style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK,marginBottom:4}}>Unlock land data + AI report</div>
-                        <div style={{fontFamily:FF,fontSize:"12px",color:INK3,marginBottom:10,lineHeight:1.4}}>PDM, cadastre, RAN/REN + AI analysis.</div>
-                        <button type="button" onClick={onUpgrade} style={{background:INK,border:"none",borderRadius:99,padding:"8px 16px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer"}}>Unlock →</button>
-                      </div>
+
+                {/* Sources — always visible, greyed when locked */}
+                <div style={{border:`1px solid ${LINE}`,borderRadius:10,overflow:"hidden",marginBottom:12}}>
+                  {[
+                    {key:"Zoning / PDM",    val: upgraded?(plot.technical?.["PDM zone"]||"Solo Urbano — Residencial"):null},
+                    {key:"RAN / REN",       val: upgraded?`${plot.technical?.["RAN"]||"Clear"} / ${plot.technical?.["REN"]||"Clear"}`:null},
+                    {key:"BUPI registry",   val: upgraded?"Registered — no conflicts":null},
+                    {key:"Cadastre ref",    val: upgraded?(plot.technical?.["Cadastre ref"]||"—"):null},
+                    {key:"Fire risk",       val: upgraded?"Low — clear buffer zone":null},
+                    {key:"Flood zone",      val: upgraded?"Not designated":null},
+                  ].map(({key,val},i)=>(
+                    <div key={key} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",borderBottom:i<5?`1px solid ${LINE}`:"none",background:PAPER}}>
+                      <span style={{fontFamily:FF,fontSize:"12px",fontWeight:500,color:INK,flexShrink:0}}>{key}</span>
+                      {val
+                        ? <span style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK,maxWidth:"58%",textAlign:"right"}}>{val}</span>
+                        : <span style={{display:"flex",alignItems:"center",gap:4}}>
+                            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                              <rect x="1.5" y="4.5" width="8" height="6" rx="1.2" stroke={INK4} strokeWidth="1.2"/>
+                              <path d="M3.5 4.5V3a2 2 0 0 1 4 0v1.5" stroke={INK4} strokeWidth="1.2" strokeLinecap="round"/>
+                            </svg>
+                            <span style={{display:"inline-block",height:8,width:64,borderRadius:3,background:LINE}}/>
+                          </span>
+                      }
                     </div>
-                  )}
+                  ))}
                 </div>
 
-                {/* ── RUN AI ANALYSIS — always visible, sends to chat ── */}
+                {/* Unlock CTA */}
+                {!upgraded&&(
+                  <div style={{marginBottom:12}}>
+                    <button type="button" onClick={onUpgrade}
+                      style={{width:"100%",background:INK,border:"none",borderRadius:99,padding:"10px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer",marginBottom:6}}>
+                      Unlock land data →
+                    </button>
+                    <div style={{fontFamily:FF,fontSize:"11px",color:INK4,textAlign:"center",lineHeight:1.4}}>
+                      PDM · Cadastre · RAN/REN · Flood risk · Registry
+                    </div>
+                  </div>
+                )}
+
+                {/* ── RUN AI ANALYSIS ── */}
                 <div style={{marginBottom:16}}>
-                  <button type="button" onClick={startAnalysis}
-                    style={{width:"100%",background:upgraded?ACCENT:INK,border:"none",borderRadius:99,padding:"11px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer"}}>
-                    {upgraded?"Run AI land analysis →":"Unlock + run AI land analysis →"}
-                  </button>
-                  <div style={{fontFamily:FF,fontSize:"11px",color:INK3,textAlign:"center",marginTop:6,lineHeight:1.4}}>
-                    {upgraded?"Sends to chat · AI reviews zoning, PDM, flood risk, title":"Unlocks land data · AI reviews + writes a full report"}
+                  {isApproximate&&verifState&&verifState!=="idle"&&verifState!=="ready"?(
+                    <div style={{border:`1px solid ${LINE}`,borderRadius:10,padding:"10px 12px",background:CANVAS,display:"flex",alignItems:"center",gap:8}}>
+                      <div style={{width:8,height:8,borderRadius:"50%",background:verifState==="confirmed"?GREEN:ACCENT,flexShrink:0}}/>
+                      <span style={{fontFamily:FF,fontSize:"13px",color:INK2}}>
+                        {verifState==="awaiting"?"Awaiting realtor response…":verifState==="confirmed"?"Location confirmed — pay to run report":verifState==="running"?"Analysis running…":"Verification in progress"}
+                      </span>
+                    </div>
+                  ):(
+                    <button type="button" onClick={startAnalysis}
+                      style={{width:"100%",background:upgraded?ACCENT:LINE2,border:`1px solid ${upgraded?ACCENT:LINE}`,borderRadius:99,padding:"10px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:upgraded?PAPER:INK3,cursor:upgraded?"pointer":"default"}}>
+                      {upgraded?(isApproximate?"Run analysis →":"Run AI land analysis →"):"Run AI analysis"}
+                    </button>
+                  )}
+                  <div style={{fontFamily:FF,fontSize:"11px",color:INK4,textAlign:"center",marginTop:6,lineHeight:1.4}}>
+                    {upgraded
+                      ?(isApproximate&&(!verifState||verifState==="idle")?"Location approximate — choose how to proceed in chat":"Reviews zoning, PDM, flood risk · writes a full report")
+                      :"Unlock land data first to run AI analysis"}
                   </div>
                 </div>
 
@@ -1077,13 +1126,13 @@ function ListingInsightSidebar({
 
         {activeTab==="replies"&&(
           <div style={{padding:"20px 16px"}}>
-            <div style={{fontFamily:FF,fontSize:"13px",color:INK3,lineHeight:1.6}}>No realtor replies yet. Request official location to start a thread.</div>
+            <div style={{fontFamily:FF,fontSize:"13px",color:INK3,lineHeight:1.6}}>No realtor replies yet. Request a location check from the Overview tab to start a thread.</div>
           </div>
         )}
 
         {activeTab==="guide"&&(
           <div style={{padding:"20px 16px"}}>
-            <div style={{fontFamily:FF,fontSize:"13px",color:INK3,lineHeight:1.6}}>Step guide: Browse → Analyse → Legal check → Offer.</div>
+            <StepGuideBlock verifState={verifState} isApproximate={isApproximate}/>
           </div>
         )}
       </div>
@@ -1430,51 +1479,74 @@ function StepTracker({steps}){
 
 // ── UPGRADE MODAL ─────────────────────────────────────────────────────────────
 /** `plot` = AI land analysis on a listing; `area` = multi-plot / drawn zone scan; null = generic unlock. */
-function UpgradeModal({ onClose, onUpgrade, promptReason }) {
-  const showPayPerUse =
-    promptReason === "plot" || promptReason === "area"
-      ? (
-          <div style={{ background: SUBTLE, borderRadius: 10, padding: "12px 14px", marginBottom: 18, border: `1px solid ${LIGHTER}` }}>
-            <div style={{ ...TP.labelUC, color: MID, marginBottom: 8 }}>Pay-per-use (shown because you started this action)</div>
-            {promptReason === "plot" ? (
-              <div style={{ ...TP.secondary, lineHeight: 1.55, margin: 0 }}>
-                <strong style={{ color: INK }}>Single-plot report</strong> — from <strong style={{ color: INK }}>€49</strong> when you identify the parcel (address, cadastre ref, or map).{" "}
-                <strong style={{ color: INK }}>Listing + we get the pin</strong> — from <strong style={{ color: INK }}>€89</strong>. Full tier list lives on the{" "}
-                <Link href="/" style={{ color: ACCENT, fontWeight: 600 }}>homepage</Link>.
-              </div>
-            ) : (
-              <div style={{ ...TP.secondary, lineHeight: 1.55, margin: 0 }}>
-                <strong style={{ color: INK }}>Area / multi-plot search</strong> — packs from <strong style={{ color: INK }}>€499</strong> (typically 10+ listings or cadastre parcels). Larger / municipality scope from <strong style={{ color: INK }}>€999</strong>. Details on the{" "}
-                <Link href="/" style={{ color: ACCENT, fontWeight: 600 }}>homepage</Link>.
-              </div>
-            )}
-          </div>
-        )
-      : (
-          <div style={{ ...TP.secondary, lineHeight: 1.55, marginBottom: 18 }}>
-            Pay-per-use reports from <strong style={{ color: INK }}>€49</strong> — see <Link href="/" style={{ color: ACCENT, fontWeight: 600 }}>liveyonder.co</Link> for packs and enterprise.
-          </div>
-        );
-  return(
-    <div style={{position:"fixed",inset:0,background:"rgba(17,17,16,0.5)",backdropFilter:"blur(6px)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
-      <div style={{background:WHITE,borderRadius:12,padding:"32px 28px",maxWidth:400,width:"90%",boxShadow:"0 24px 80px rgba(0,0,0,0.2)",position:"relative",border:`1px solid ${LIGHTER}`}} onClick={e=>e.stopPropagation()}>
-        <button onClick={onClose} style={{position:"absolute",top:14,right:16,background:"none",border:"none",...TC.body,color:LIGHT,cursor:"pointer"}}>✕</button>
-        <div style={{display:"inline-flex",alignItems:"center",gap:6,background:`${ORANGE}0f`,border:`1px solid ${ORANGE}30`,borderRadius:99,padding:"3px 10px",marginBottom:16}}>
-          <span style={{...TP.labelUC,color:ORANGE,letterSpacing:"0.1em"}}>Upgrade required</span>
+function UpgradeModal({ onClose, onUpgrade, promptReason, plotCount=1 }) {
+  // Suggest tier based on how many plots / context
+  const suggestedId = plotCount >= 20 ? "hunter" : plotCount >= 5 ? "scout" : "explorer";
+
+  const TIERS = [
+    { id:"explorer", name:"Explorer", reports:1,  alacarte:"€49",  sub:"€39/mo",  tagline:"1 plot" },
+    { id:"scout",    name:"Scout",    reports:5,  alacarte:"€199", sub:"€159/mo", tagline:"up to 5 plots" },
+    { id:"hunter",   name:"Hunter",  reports:20, alacarte:"€449", sub:"€359/mo", tagline:"up to 20 plots" },
+  ];
+
+  const contextNote = promptReason === "area"
+    ? `${plotCount} plot${plotCount!==1?"s":""} selected — needs the ${suggestedId==="hunter"?"Hunter":"Scout"} pack or higher.`
+    : promptReason === "plot"
+    ? "Full AI report — cadastre, PDM, RAN/REN, flood risk, buildability."
+    : "Run searches, reports and analysis.";
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(17,17,17,0.45)",backdropFilter:"blur(4px)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={onClose}>
+      <div style={{background:PAPER,borderRadius:12,padding:"24px",maxWidth:420,width:"100%",border:`1px solid ${LINE}`,position:"relative"}} onClick={e=>e.stopPropagation()}>
+
+        {/* Close */}
+        <button type="button" onClick={onClose} style={{position:"absolute",top:14,right:14,width:28,height:28,borderRadius:"50%",border:`1px solid ${LINE}`,background:CANVAS,color:INK3,cursor:"pointer",fontFamily:FF,fontSize:"16px",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>×</button>
+
+        {/* Eyebrow */}
+        <div style={{fontFamily:FF,fontSize:"11px",fontWeight:500,letterSpacing:"0.04em",textTransform:"uppercase",color:ACCENT,marginBottom:8}}>
+          {promptReason === "area" ? "Area analysis" : promptReason === "plot" ? "Plot report" : "Upgrade"}
         </div>
-        <div style={{...TP.pageTitle,lineHeight:1.25,marginBottom:8}}>Unlock the full<br/>land intelligence suite</div>
-        {showPayPerUse}
-        <div style={{...TP.secondary,lineHeight:1.65,marginBottom:20}}>Upgrade to Pro for unlimited searches, full cadastre reports and expert legal checks.</div>
-        <div style={{background:SUBTLE,borderRadius:8,padding:"14px",marginBottom:20,border:`1px solid ${LIGHTER}`}}>
-          {["Unlimited AI land searches","Full cadastre + registry data","Expert manual check on any plot","BUPI, PDM, RAN/REN unlocked","Priority support from land advisors"].map(t=>(
-            <div key={t} style={{display:"flex",gap:8,alignItems:"center",marginBottom:8,...TP.body}}>
-              <span style={{color:ORANGE,flexShrink:0}}>—</span>{t}
-            </div>
-          ))}
+
+        {/* Title + context */}
+        <div style={{fontFamily:FF,fontSize:"20px",fontWeight:600,color:INK,letterSpacing:"-0.01em",lineHeight:"26px",marginBottom:6}}>
+          {promptReason === "area" ? "Choose a report pack" : "Unlock land reports"}
         </div>
-        <button type="button" onClick={onUpgrade} style={{width:"100%",background:INK,border:"none",borderRadius:99,padding:"11px 0",...TP.body,fontWeight:600,color:WHITE,cursor:"pointer",marginBottom:8}}>Upgrade to Pro — €99 / month</button>
-        <button type="button" onClick={onClose} style={{width:"100%",background:"none",border:"none",...TP.secondary,color:MID,cursor:"pointer",padding:"4px 0"}}>Maybe later</button>
-        <div style={{textAlign:"center",marginTop:8,...TP.labelUC,letterSpacing:"0.12em",color:LIGHT}}>Cancel anytime · No commitment</div>
+        <div style={{fontFamily:FF,fontSize:"13px",lineHeight:"18px",color:INK3,marginBottom:20}}>{contextNote}</div>
+
+        {/* Tier rows */}
+        <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:16}}>
+          {TIERS.map(tier => {
+            const suggested = tier.id === suggestedId;
+            return (
+              <div key={tier.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:10,border:`1px solid ${suggested?ACCENT:LINE}`,background:suggested?ACCENT_WASH:PAPER}}>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK,marginBottom:2}}>
+                    {tier.name}
+                    <span style={{fontWeight:400,color:INK3}}> · {tier.tagline}</span>
+                  </div>
+                  <div style={{fontFamily:FF,fontSize:"11px",color:INK4}}>{tier.alacarte} à la carte · {tier.sub} subscription</div>
+                </div>
+                <button type="button" onClick={onUpgrade} style={{background:suggested?ACCENT:INK,border:"none",borderRadius:999,padding:"7px 14px",fontFamily:FF,fontSize:"12px",fontWeight:600,color:PAPER,cursor:"pointer",flexShrink:0}}>
+                  Select
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Info line */}
+        <div style={{fontFamily:FF,fontSize:"12px",color:INK3,lineHeight:1.5,marginBottom:14,padding:"10px 12px",background:CANVAS,borderRadius:8}}>
+          Already have reports? Top up at your tier rate. Subscribe to re-prompt past reports and save to projects.
+        </div>
+
+        {/* Pricing page link */}
+        <Link href="/pricing" target="_blank" style={{display:"block",textAlign:"center",fontFamily:FF,fontSize:"13px",fontWeight:500,color:ACCENT,textDecoration:"none",marginBottom:12}}>
+          Full pricing & subscription plans →
+        </Link>
+
+        <button type="button" onClick={onClose} style={{display:"block",width:"100%",background:"none",border:"none",fontFamily:FF,fontSize:"13px",color:INK4,cursor:"pointer",padding:"4px 0"}}>
+          Maybe later
+        </button>
       </div>
     </div>
   );
@@ -1658,18 +1730,20 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onRunAnalysis,onBack,onAddTo
             </div>
           </div>
 
-          {/* ── 3. RUN AI ANALYSIS ── */}
-          <div style={{marginBottom:24,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",background:SUBTLE}}>
-            <div style={{...TP.sectionTitle,marginBottom:4}}>AI land analysis</div>
-            <div style={{...TP.secondary,lineHeight:1.5,marginBottom:14}}>Sends this plot to chat — AI reviews zoning, flood risk, PDM compliance and title integrity, then saves a full report here.</div>
-            <button type="button" onClick={upgraded ? onRunAnalysis : onUpgrade}
-              style={{width:"100%",background:upgraded?ACCENT:INK,border:"none",borderRadius:99,padding:"11px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
-              {upgraded?"Run AI land analysis →":"Unlock + run AI land analysis →"}
-            </button>
-          </div>
+          {/* ── 3. RUN AI ANALYSIS — hidden once a report exists for this plot ── */}
+          {!savedAiRecap&&(
+            <div style={{marginBottom:24,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",background:SUBTLE}}>
+              <div style={{...TP.sectionTitle,marginBottom:4}}>AI land analysis</div>
+              <div style={{...TP.secondary,lineHeight:1.5,marginBottom:14}}>Sends this plot to chat — AI reviews zoning, flood risk, PDM compliance and title integrity, then saves a full report here.</div>
+              <button type="button" onClick={upgraded ? onRunAnalysis : onUpgrade}
+                style={{width:"100%",background:upgraded?ACCENT:INK,border:"none",borderRadius:99,padding:"11px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
+                {upgraded?"Run AI land analysis →":"Unlock + run AI land analysis →"}
+              </button>
+            </div>
+          )}
 
-          {/* ── 4. AI LAND REPORT (only after unlock + analysis run) ── */}
-          {upgraded&&savedAiRecap&&(
+          {/* ── 4. AI LAND REPORT — visible whenever a saved recap exists ── */}
+          {savedAiRecap&&(
             <div style={{marginBottom:24}}>
               <div style={{...TP.sectionTitle,marginBottom:12}}>AI land report</div>
               <PlotFullReport data={savedAiRecap} plot={plot}/>
@@ -2060,6 +2134,142 @@ function LandReportCard({ data, plot, onOpenReport, onLegalCheck=()=>{}, onConta
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── LOCATION VERIFICATION CARD ───────────────────────────────────────────────
+function LocVerifCard({ plot, verifState, onRequest, onPayAndRun, onDevAdvance }: {
+  plot: any; verifState: LocVerifState;
+  onRequest: ()=>void; onPayAndRun: ()=>void; onDevAdvance: ()=>void;
+}) {
+  const pill = (bg:string, color:string, txt:string) => (
+    <span style={{fontFamily:FF,fontSize:"11px",fontWeight:600,letterSpacing:"0.05em",textTransform:"uppercase",background:bg,color,borderRadius:99,padding:"2px 8px"}}>{txt}</span>
+  );
+  return (
+    <div style={{background:PAPER,border:`1px solid ${LINE}`,borderRadius:12,padding:"16px",position:"relative"}}>
+      {/* Header */}
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+        <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+        <span style={{fontFamily:FF,fontSize:"13px",fontWeight:600,color:INK}}>Land AI</span>
+        {verifState==="awaiting"&&pill(`${ACCENT}12`,ACCENT,"Awaiting realtor")}
+        {verifState==="confirmed"&&pill(`${GREEN}12`,GREEN,"Location confirmed")}
+        {verifState==="running"&&pill(`${ACCENT}12`,ACCENT,"Running")}
+      </div>
+
+      {/* State content */}
+      {verifState==="idle"&&(
+        <>
+          <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:"0 0 14px"}}>
+            This listing's exact location is held by the realtor. To produce an accurate report, we need to verify the plot boundary with them first.
+          </p>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            <button type="button" onClick={onRequest}
+              style={{background:INK,border:"none",borderRadius:99,padding:"10px 16px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer",textAlign:"left"}}>
+              Request verification from realtor
+            </button>
+            <div style={{fontFamily:FF,fontSize:"11px",color:INK3,paddingLeft:2,lineHeight:1.5}}>
+              No charge until location is confirmed · usually 1–3 days
+            </div>
+          </div>
+        </>
+      )}
+
+      {verifState==="awaiting"&&(
+        <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:0}}>
+          Email sent to the listing agent. You'll be notified when they respond — usually 1–3 days. No charge until location is confirmed.
+        </p>
+      )}
+
+      {verifState==="confirmed"&&(
+        <>
+          <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:"0 0 14px"}}>
+            Good news — the realtor confirmed the exact location for <strong>{plot?.name}</strong>. Ready to run your analysis.
+          </p>
+          <button type="button" onClick={onPayAndRun}
+            style={{background:ACCENT,border:"none",borderRadius:99,padding:"10px 16px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer"}}>
+            Pay €89 and generate report
+          </button>
+        </>
+      )}
+
+      {(verifState==="running"||verifState==="ready")&&(
+        <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:0}}>
+          {verifState==="running"?"Running analysis… This takes about 30 seconds.":"Analysis complete — report below."}
+        </p>
+      )}
+
+      {/* Dev advance — tiny, low-contrast */}
+      <button type="button" onClick={onDevAdvance}
+        style={{position:"absolute",top:8,right:8,background:"none",border:"none",cursor:"pointer",fontFamily:FF,fontSize:"10px",color:LINE,padding:"2px 6px",opacity:0.4}}
+        title="Dev: advance state">
+        ↑
+      </button>
+    </div>
+  );
+}
+
+// ── STEP GUIDE ────────────────────────────────────────────────────────────────
+const OUTER_STEPS = ["Browse","Analyse","Legal check","Offer"];
+const VERIF_SUBSTEPS: {id:LocVerifState|"found"|"saved"; label:string}[] = [
+  {id:"found",     label:"Plot found"},
+  {id:"saved",     label:"Saved to project"},
+  {id:"requested", label:"Analysis requested"},
+  {id:"awaiting",  label:"Awaiting realtor"},
+  {id:"confirmed", label:"Location confirmed"},
+  {id:"running",   label:"Analysis running"},
+  {id:"ready",     label:"Report ready"},
+];
+
+function StepGuideBlock({ verifState, isApproximate }: { verifState?: LocVerifState; isApproximate?: boolean }) {
+  const analysisDone = verifState === "ready";
+  const activeSubIdx = verifState ? Math.max(0, ["found","saved","requested","awaiting","confirmed","running","ready"].indexOf(verifState as string)) : 0;
+  const showSubs = isApproximate && verifState && verifState !== "idle";
+
+  return (
+    <div style={{fontFamily:FF,fontSize:"13px",color:INK3,lineHeight:1.6}}>
+      {OUTER_STEPS.map((step, i) => {
+        const isAnalyse = step === "Analyse";
+        const done = i === 0 || (i === 1 && analysisDone) || (i < 1);
+        const active = (i === 1 && !analysisDone && showSubs) || (i === 1 && !analysisDone && !showSubs);
+        return (
+          <div key={step} style={{marginBottom: isAnalyse&&showSubs ? 4 : 0}}>
+            <div style={{display:"flex",alignItems:"center",gap:6,paddingTop: i>0 ? 6 : 0}}>
+              <div style={{width:16,height:16,borderRadius:"50%",border:`1.5px solid ${done?GREEN:active?ACCENT:LINE}`,background:done?GREEN:active?`${ACCENT}15`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                {done&&<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4 3 5.5 6.5 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>}
+              </div>
+              <span style={{color:done?GREEN:active?INK:INK4,fontWeight:active?600:400}}>{step}</span>
+            </div>
+
+            {/* Vertical connector + sub-states */}
+            {isAnalyse&&showSubs&&(
+              <div style={{marginLeft:7,borderLeft:`1.5px solid ${LINE}`,paddingLeft:16,paddingTop:4,paddingBottom:4}}>
+                {VERIF_SUBSTEPS.map((sub,si)=>{
+                  const subDone = si < activeSubIdx;
+                  const subActive = si === activeSubIdx;
+                  return (
+                    <div key={sub.id} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4,opacity:si>activeSubIdx?0.38:1}}>
+                      <div style={{width:12,height:12,borderRadius:"50%",border:`1.5px solid ${subDone?GREEN:subActive?ACCENT:LINE}`,background:subDone?GREEN:subActive?`${ACCENT}15`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                        {subDone&&<svg width="7" height="7" viewBox="0 0 7 7"><path d="M1 3.5 2.5 5 6 1.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>}
+                      </div>
+                      <span style={{fontFamily:FF,fontSize:"12px",color:subDone?GREEN:subActive?INK:INK3,fontWeight:subActive?600:400}}>
+                        {sub.label}
+                        {sub.id==="awaiting"&&subActive&&<span style={{color:INK4,marginLeft:4,fontWeight:400}}>· sent just now</span>}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {i < OUTER_STEPS.length-1 && !showSubs && (
+              <div style={{marginLeft:7,width:1.5,height:12,background:LINE}}/>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -4421,9 +4631,10 @@ function InputBar({input,setInput,send,activePlot,activeICP,analysisState,runAna
 
         {/* Text input — top */}
         <input value={input} onChange={e=>setInput(e.target.value)}
+          autoFocus={isChatEmpty}
           onKeyDown={e=>e.key==="Enter"&&input.trim()&&send(input.trim())}
-          placeholder={activePlot?`Ask anything about ${activeListingId}…`:activeICP?"Ask or pick a suggestion above…":isChatEmpty?"Ask anything…":"e.g. rustic land near Porto, 25km from coast…"}
-          style={{background:"none",border:"none",outline:"none",...TC.body,width:"100%",marginBottom:10}}/>
+          placeholder={activePlot?`Ask anything about ${activeListingId}…`:activeICP?"Ask or pick a suggestion above…":isChatEmpty?"Ask anything — e.g. 5ha near Évora with water rights":"e.g. rustic land near Porto, 25km from coast…"}
+          style={{background:"none",border:"none",outline:"none",...TC.body,width:"100%",marginBottom:10,caretColor:ACCENT}}/>
 
         {/* Bottom row */}
         <div style={{display:"flex",alignItems:"center",gap:5}}>
@@ -4757,6 +4968,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
   },[mapResults.kind,listingPlotsFiltered,activePlot]);
   const [analysisState,setAnalysisState]=useState("idle"); // idle | thinking | done
   const [expandedData,setExpandedData]=useState(false);
+  const [locVerifStates,setLocVerifStates]=useState<Record<string,LocVerifState>>({});
   const [isTyping,setIsTyping]=useState(false);
   const [searchCount,setSearchCount]=useState(0);
   const [mapMode,setMapMode]=useState("map");
@@ -4860,7 +5072,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
   function runDrawAreaBulkAnalysis(){
     if(!drawAreaEntities.length||!drawAreaSelection)return;
     if(!upgraded){
-      requestUpgrade?.("area");
+      requestUpgrade?.("area", drawAreaEntities.length);
       return;
     }
     const bulkPlots=drawAreaSelection.lens==="parcels"?drawAreaEntities.map(parcelToBulkPlot):drawAreaEntities;
@@ -4999,6 +5211,107 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     setMobileTab("chat");
   }
 
+  function getVerifState(plotId: string): LocVerifState {
+    return locVerifStates[plotId] || "idle";
+  }
+
+  function advanceVerifState(plotId: string) {
+    setLocVerifStates(prev => {
+      const cur = prev[plotId] || "idle";
+      const idx = LOC_VERIF_ORDER.indexOf(cur);
+      const next = LOC_VERIF_ORDER[Math.min(idx+1, LOC_VERIF_ORDER.length-1)];
+      return { ...prev, [plotId]: next };
+    });
+  }
+
+  function handleLocChoice(plot: any, choiceId: string) {
+    const listingId = plotListingOpenId(plot);
+    // Dismiss the choice message
+    setMessages(m => m.map(msg =>
+      msg.isLocChoice && msg.plot && plotListingOpenId(msg.plot) === listingId
+        ? { ...msg, locChoiceMade: choiceId }
+        : msg
+    ));
+    if (choiceId === "request") {
+      requestVerification(plot);
+    } else if (choiceId === "exact") {
+      setMessages(m => [...m,
+        { role: "user", text: "I have the exact location" },
+        {
+          role: "assistant",
+          text: `Got it. Drop a pin on the map at the exact location, or paste the cadastre reference / address in the chat — then I'll run the full report.`,
+        },
+      ]);
+    } else if (choiceId === "approx") {
+      setMessages(m => [...m,
+        { role: "user", text: "Approximate location is good enough" },
+      ]);
+      // Run analysis directly
+      setTimeout(() => confirmAndRunAnalysis(plot), 200);
+    }
+  }
+
+  function requestVerification(plot: any) {
+    const listingId = plotListingOpenId(plot);
+    setLocVerifStates(prev => ({ ...prev, [listingId]: "awaiting" }));
+    setMessages(m => [
+      ...m.map(msg =>
+        msg.isLocVerif && msg.plot && plotListingOpenId(msg.plot) === listingId
+          ? { ...msg, verifStateSnapshot: "awaiting" }
+          : msg
+      ),
+      {
+        role: "assistant",
+        text: `Email sent to the listing agent for **${plot.name}**.\n\nWe've asked them to confirm the exact plot boundary and cadastre reference. You'll be notified here when they respond — usually 1–3 business days. No charge until confirmed.`,
+        isLocVerif: true, plot, verifStateSnapshot: "awaiting",
+      },
+    ]);
+  }
+
+  function confirmAndRunAnalysis(plot: any) {
+    const listingId = plotListingOpenId(plot);
+    setLocVerifStates(prev => ({ ...prev, [listingId]: "running" }));
+    setMessages(m => [
+      ...m.map(msg =>
+        msg.isLocVerif && msg.plot && plotListingOpenId(msg.plot) === listingId
+          ? { ...msg, verifStateSnapshot: "running" }
+          : msg
+      ),
+      {
+        role: "assistant",
+        text: `Payment confirmed. Starting full land analysis for **${plot.name}** using the verified location.\n\nThis covers zoning (PDM), RAN/REN restrictions, BUPI registry, flood risk, and a buildability assessment.`,
+      },
+    ]);
+    // Run analysis proper
+    const resolvedPlot = CHAT_PLOTS.find((pl) => pl.id === listingId) || plot;
+    setAnalysisState("thinking");
+    const label = resolvedPlot.name || listingId;
+    setMessages(m => [...m, { role: "user", text: `Land report — ${label} (${listingId})` }]);
+    const thinkId = Date.now();
+    setMessages(m => [...m, { role: "assistant", isThinking: true, id: thinkId, completedCount: 0, done: false }]);
+    const stepMs = 480;
+    ANALYSIS_STEPS.forEach((_step, i) => {
+      setTimeout(() => {
+        setMessages(m => m.map(msg => msg.id === thinkId ? { ...msg, completedCount: i+1 } : msg));
+        if (i === ANALYSIS_STEPS.length - 1) {
+          setTimeout(() => {
+            setMessages(m => m.map(msg => msg.id === thinkId ? { ...msg, done: true } : msg));
+            setAnalysisState("done");
+            setTimeout(() => {
+              const recap = buildListingRecapData(resolvedPlot);
+              setMessages(m => [...m, { role: "assistant", isResearch: true, plot: resolvedPlot, recap }]);
+              setTimeout(() => {
+                setMessages(m => [...m, { role: "assistant", isVerdict: true, plotId: resolvedPlot.id, plot: resolvedPlot, recap }]);
+                persistListingScan(listingId, recap);
+                setLocVerifStates(prev => ({ ...prev, [listingId]: "ready" }));
+              }, 500);
+            }, 500);
+          }, 400);
+        }
+      }, (i+1)*stepMs);
+    });
+  }
+
   function runLandIntelligence(){
     if(!activePlot) return;
     if(isExplorerPinPlot(activePlot)){
@@ -5020,6 +5333,44 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     const plot = activePlot;
     const listingId = plotListingOpenId(plot);
     const resolvedPlot = CHAT_PLOTS.find((pl) => pl.id === listingId) || plot;
+    const confidence = PLOT_LOCATION_CONFIDENCE[listingId] || PLOT_LOCATION_CONFIDENCE[plot.ref] || "exact";
+    const vs = getVerifState(listingId);
+
+    // Approximate location — ask user how to proceed
+    if (confidence === "approximate" && vs === "idle") {
+      setMobileTab("chat");
+      const label = resolvedPlot.name || listingId;
+      setMessages(m => [...m,
+        { role: "user", text: `Run AI analysis — ${label}` },
+        {
+          role: "assistant",
+          text: `**${label}** has an approximate location — the realtor hasn't pinned the exact boundary yet.\n\nThree options:`,
+          isLocChoice: true,
+          plot: resolvedPlot,
+          locChoices: [
+            {
+              id: "request",
+              label: "Request location from realtor",
+              note: "We email them on your behalf — no charge until confirmed",
+            },
+            {
+              id: "exact",
+              label: "I know the exact location",
+              note: "Drop a pin or paste an address — run the report now",
+            },
+            {
+              id: "approx",
+              label: "Approximate is good enough",
+              note: "Run the report now — slightly less precise on boundaries",
+            },
+          ],
+        },
+      ]);
+      setLocVerifStates(prev => ({ ...prev, [listingId]: "requested" }));
+      return;
+    }
+
+    // Already confirmed or exact — run analysis directly
     setAnalysisState("thinking");
     setMobileTab("chat");
 
@@ -5039,7 +5390,6 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
             setAnalysisState("done");
             setTimeout(()=>{
               const recap = buildListingRecapData(resolvedPlot);
-              // Research findings chat — shown before the compact summary card
               setMessages(m=>[...m, {role:"assistant", isResearch:true, plot:resolvedPlot, recap}]);
               setTimeout(()=>{
                 setMessages(m=>[...m, {role:"assistant", isVerdict:true, plotId:resolvedPlot.id, plot:resolvedPlot, recap}]);
@@ -5059,12 +5409,23 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
   function requestListingLocationService(){
     if(!activePlot||isExplorerPinPlot(activePlot)) return;
     const cid=plotListingOpenId(activePlot);
+    const resolvedPlot = CHAT_PLOTS.find(p=>p.id===cid)||activePlot;
     const label=activePlot.name||cid;
-    setMessages((m)=>[...m,
-      {role:"user",text:`Request official location check — ${label} (${cid})`},
-      {role:"assistant",text:`We'll ask the realtor to confirm the **official location** (exact pin / cadastre reference) for **${label}**.\n\nThen you can run the same **full report** with confidence.\n\nIf you already know the exact location, you can skip this and run the report now.\n\n**€89** — includes outreach (demo: no email sent).`},
-    ]);
     setMobileTab("chat");
+    setMessages((m)=>[...m,
+      {role:"user", text:`Run AI analysis — ${label}`},
+      {
+        role:"assistant",
+        text:`**${label}** has an approximate location — the realtor hasn't pinned the exact boundary yet.\n\nThree options:`,
+        isLocChoice: true,
+        plot: resolvedPlot,
+        locChoices: [
+          { id:"request", label:"Request location from realtor",  note:"We email them on your behalf — no charge until confirmed" },
+          { id:"exact",   label:"I know the exact location",      note:"Drop a pin or paste an address — run the report now" },
+          { id:"approx",  label:"Approximate is good enough",     note:"Run the report now — slightly less precise on boundaries" },
+        ],
+      },
+    ]);
   }
 
   function resetToGeneralStart(){
@@ -5118,6 +5479,107 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     send("Prefab or modular self-build land in Portugal");
   }
 
+  function chattyFollowupReply(text){
+    const t = (text || "").toLowerCase();
+    const baseCount = mapResults.kind==="listings" ? (mapResults.headlineCount||mapResults.plots?.length||0) : 0;
+
+    // Refine — narrows the result set with a believable count
+    if (/under\s*€?\s*\d+k?|below\s*€/.test(t)) {
+      const cut = Math.max(3, Math.round(baseCount * 0.42));
+      return {text:`Tightening on price. About ${cut} plots remain in that band — the top match is the 7.2ha quinta near Reguengos at €185k, then an olive grove in Arraiolos. Want me to focus on the top 5, or pull the rest off the map?`, followups:[
+        {label:"Refine", chips:["Show top 5 only","Just the cheapest 3","Add water rights filter"]},
+        {label:"Go deeper", chips:["Compare them on €/m²","Which has the cleanest title?"]},
+      ]};
+    }
+    if (/min\s*\d+ha|over\s*\d+ha|\d+ha\+/.test(t)) {
+      const cut = Math.max(3, Math.round(baseCount * 0.35));
+      return {text:`Filtered to that size band — ${cut} plots match. Smallest is 5.2ha, largest sits at 14ha. Most of these are in inner Alentejo where land is cheaper per hectare. Want me to rank them by €/ha or by match score?`, followups:[
+        {label:"Refine", chips:["Rank by €/ha","Rank by match score","Add road access filter"]},
+      ]};
+    }
+    if (/flood|risk\s*zone|ren/.test(t)) {
+      return {text:`Pulled the flood-prone parcels out — 4 plots removed, mostly along the lower Sado and Tejo. The remaining set has clean REN and no overlap with the 100-year flood boundary.`, followups:[
+        {label:"Refine", chips:["Also exclude RAN","Show only with full title"]},
+        {label:"Go deeper", chips:["Which had the worst risk?"]},
+      ]};
+    }
+    if (/within\s*\d+\s*min|near\s*(évora|lisbon|porto)/.test(t)) {
+      return {text:`Filtered by drive time. 14 plots within 30 min of a real town — Évora and Reguengos are the main anchors. Three of them are within walking distance of a village centre, which usually helps with utilities and tourism licensing.`, followups:[
+        {label:"Refine", chips:["Only walking distance to village","Within 15 min of Évora"]},
+      ]};
+    }
+
+    // Go deeper
+    if (/compare.*€\/m|€\/m²|price per/.test(t)) {
+      return {text:`Quick comparison of the top 3 on €/m²:\n\n• **Quinta near Reguengos** — €25.7/m² (€185k / 7.2ha). Best per-m² rate, has borehole + ribeira.\n• **Olive grove, Arraiolos** — €20.0/m² (€220k / 11ha). Cheapest per-m², but larger commitment.\n• **Cork land, Montemor** — €24.1/m² (€140k / 5.8ha). Smallest cheque, seasonal stream only.\n\nThe Arraiolos plot wins on raw €/m², but the Reguengos one is more buildable for tourism.`, followups:[
+        {label:"Go deeper", chips:["Run a full report on Reguengos","What would tourism build cost?","Show me water rights detail"]},
+      ]};
+    }
+    if (/solar|panel|grid/.test(t) && /potential|these|on/.test(t)) {
+      return {text:`Solar-wise: two of the three top plots are workable. The Beja plain plot is the strongest — 2km from a 60kV substation, southern exposure, no protected zoning. The Reguengos quinta has good orientation but the substation is 11km off, so grid connection cost would dominate the project. The Montemor cork land is restricted under REN for energy infra.`, followups:[
+        {label:"Go deeper", chips:["Run a solar feasibility on Beja","Cost to connect Reguengos?"]},
+      ]};
+    }
+    if (/tourism\s*pdm|pdm\s*zon/.test(t)) {
+      return {text:`Two of them are explicitly cleared for rural tourism under PDM Article 34b — Reguengos and Arraiolos. Montemor sits in a stricter agricultural zone, so a tourism build would need a PDM amendment, which usually means 12-18 months of municipal review. I'd start with the first two.`, followups:[
+        {label:"Process", chips:["What's the licensing path for Article 34b?","Who handles the municipal review?"]},
+      ]};
+    }
+    if (/which.*tourism\s*rebuild|allow.*rebuild/.test(t)) {
+      return {text:`Three of the ruins on this list are explicitly reconstructible under PDM rules — they keep the original footprint and allow up to +30% extension. The other ruins are either pre-1951 with no construction record (harder path) or sit in REN zones where rebuild isn't permitted at all.`, followups:[
+        {label:"Go deeper", chips:["Show the 3 reconstructible ruins","What proves a pre-1951 footprint?"]},
+      ]};
+    }
+
+    // Process
+    if (/permit|licen[sc]/.test(t)) {
+      return {text:`For a rural tourism build in Alentejo you'll typically need: (1) a PIP — pedido de informação prévia — to confirm the municipality is open to the use, (2) the licença de construção once the project is drawn up, and (3) a turismo rural licence from Turismo de Portugal once the build is signed off. The first two run in parallel with the architect; the tourism licence is post-construction. Total timeline: roughly 14-20 months from CPCV to opening.`, followups:[
+        {label:"Process", chips:["How much does a PIP cost?","Do I need a Portuguese architect?","Find a tourism-licensing lawyer"]},
+      ]};
+    }
+    if (/cadastre|verify.*title|title\s*chain/.test(t)) {
+      return {text:`Cadastre verification is two steps: pull the certidão predial from the Conservatória do Registo Predial (proves who owns it and what's registered), then cross-check against the matriz from the Finanças (proves what's taxed). Mismatches are common — sometimes the registered area differs from the tax area by 10-20%. I can run a full BUPI check for €89 if you want this on a specific plot.`, followups:[
+        {label:"Process", chips:["Run BUPI on top match","What if the areas don't match?"]},
+      ]};
+    }
+
+    // Generic chatty fallback for anything else
+    return {text:`Got it — looking into that. Give me a moment to pull the relevant signal across the current shortlist.`, followups:[]};
+  }
+
+  function sendFollowup(text){
+    setMessages(m=>[...m,{role:"user",text}]);
+    setIsTyping(true);
+    setTimeout(()=>{
+      setIsTyping(false);
+      const r = chattyFollowupReply(text);
+      setMessages(m=>[...m,{role:"assistant",text:r.text,followups:r.followups&&r.followups.length?r.followups:undefined}]);
+    },650);
+  }
+
+  function buildFollowups(query){
+    const q = (query || "").toLowerCase();
+    const refine = [];
+    if (!/€|eur|under|below/.test(q)) refine.push("Under €150k only");
+    if (!/ha\b|hectar|m²/.test(q)) refine.push("Min 5ha");
+    refine.push("Exclude flood zones");
+    if (!/évora|lisbon|porto|alentejo|douro|algarve|óbidos/.test(q)) refine.push("Within 30min of a town");
+    const deeper = [];
+    if (/ruin|reconstruct/.test(q)) deeper.push("Which allow tourism rebuild?");
+    else deeper.push("Compare top 3 on €/m²");
+    deeper.push("Solar potential on these?");
+    deeper.push("Which have tourism PDM zoning?");
+    const process = [
+      "What permits will I need?",
+      "How do I verify the cadastre?",
+    ];
+    return [
+      {label:"Refine", chips:refine.slice(0,4)},
+      {label:"Go deeper", chips:deeper.slice(0,3)},
+      {label:"Process", chips:process},
+    ];
+  }
+
   function send(text){
     const isSearch=!!text.match(/find|show|search|plot|land|ha\b|€|eur|ruin|solar|eco|cabin/i);
     if(!upgraded&&searchCount>=FREE_LIMIT){
@@ -5143,6 +5605,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
         text:`Found ${plots.length} plots matching your criteria.`,
         showResults:true,
         resultCount:plots.length,
+        followups:buildFollowups(text),
       }]);
       setMapResults({
         kind:"listings",
@@ -5227,49 +5690,133 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
         {/* Messages */}
         <div className="ye-scroll" style={{flex:1,overflowY:"auto",padding:"20px",background:PAPER}}>
 
-          {/* Empty state — ask first, then optional Location/Use branches */}
+          {/* Empty state — header, location actions at top, then vibey starter prompts */}
           {messages.length===0&&(
             <div style={{animation:"fadeIn 0.3s ease both"}}>
-              <div style={{fontFamily:FF,fontSize:"11px",fontWeight:500,color:INK3,letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:6}}>Find land, understand anything about it.</div>
-              <p style={{fontFamily:FF,fontSize:"13px",color:INK3,margin:"0 0 16px",lineHeight:1.5}}>
-                Type a prompt, or start from an example:
-              </p>
-
-              <div style={{display:"flex",gap:8,marginBottom:12}}>
-                <button type="button" onClick={()=>setChatEmptyBranch("location")}
-                  style={{flex:1,padding:"8px 12px",borderRadius:10,border:`1px solid ${chatEmptyBranch==="location"?ACCENT:LINE}`,background:chatEmptyBranch==="location"?ACCENT_WASH:PAPER,fontFamily:FF,fontSize:"13px",fontWeight:500,color:chatEmptyBranch==="location"?ACCENT:INK2,cursor:"pointer",transition:"all 0.09s"}}
-                >Location</button>
-                <button type="button" onClick={()=>setChatEmptyBranch("use")}
-                  style={{flex:1,padding:"8px 12px",borderRadius:10,border:`1px solid ${chatEmptyBranch==="use"?ACCENT:LINE}`,background:chatEmptyBranch==="use"?ACCENT_WASH:PAPER,fontFamily:FF,fontSize:"13px",fontWeight:500,color:chatEmptyBranch==="use"?ACCENT:INK2,cursor:"pointer",transition:"all 0.09s"}}
-                >Use</button>
+              <div style={{fontFamily:FF,fontSize:"11px",fontWeight:500,color:INK3,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:8}}>
+                {activeProject?.name || "Yonder"}
+              </div>
+              <div style={{fontFamily:FF,fontSize:"22px",fontWeight:600,color:INK,lineHeight:1.25,marginBottom:6}}>
+                What should we look at next?
+              </div>
+              <div style={{fontFamily:FF,fontSize:"14px",color:INK3,marginBottom:18,lineHeight:1.45}}>
+                Search, analyze, or ask about any plot in Iberia.
               </div>
 
-              {chatEmptyBranch==="location"&&(
-                <div style={{background:CANVAS,borderRadius:10,padding:"10px 12px",marginBottom:8}}>
-                  <div style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2}}>
-                    Search by location: type an address, cadastre ref, drop a pin, or draw an area on listings/cadastre. Open a plot and run AI analysis.
-                  </div>
-                </div>
-              )}
+              {/* Location entry options — top */}
+              <div style={{fontFamily:FF,fontSize:"10px",fontWeight:500,color:INK4,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:8}}>
+                Start from a location
+              </div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:22}}>
+                {[
+                  {label:"Drop pin", emoji:"📍", fn:enterMapPinMode},
+                  {label:"Address", emoji:"🏠", fn:()=>{const el=document.querySelector<HTMLInputElement>('input[placeholder^="Ask anything"]');el?.focus();setInput("Address: ");}},
+                  {label:"Coordinates", emoji:"🧭", fn:()=>{const el=document.querySelector<HTMLInputElement>('input[placeholder^="Ask anything"]');el?.focus();setInput("Coordinates: ");}},
+                  {label:"Cadastre ref", emoji:"📐", fn:browseCadastreFromMenu},
+                  {label:"Draw on map", emoji:"✏️", fn:beginDrawAreaListings},
+                ].map((b,i)=>(
+                  <button key={i} type="button" onClick={b.fn}
+                    style={{display:"inline-flex",alignItems:"center",gap:6,padding:"7px 11px",borderRadius:999,border:`1px solid ${LINE}`,background:PAPER,fontFamily:FF,fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",transition:"all 0.12s"}}
+                    onMouseEnter={e=>{e.currentTarget.style.borderColor=ACCENT;e.currentTarget.style.background=ACCENT_WASH;e.currentTarget.style.color=ACCENT;}}
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor=LINE;e.currentTarget.style.background=PAPER;e.currentTarget.style.color=INK2;}}>
+                    <span style={{fontSize:"13px"}}>{b.emoji}</span>
+                    {b.label}
+                  </button>
+                ))}
+              </div>
 
-              {chatEmptyBranch==="use"&&(
-                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                  {CHAT_ICPS.map((icp2)=>(
-                    <button key={icp2.id} type="button" title={`${icp2.label}: ${icp2.desc}`} onClick={()=>startICP(icp2.id)}
-                      style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${LINE}`,background:PAPER,fontFamily:FF,fontSize:"13px",fontWeight:500,color:INK2,cursor:"pointer",transition:"all 0.09s"}}
-                    >{icp2.short}</button>
-                  ))}
-                  <button type="button" onClick={startPrefabIntent} title="Prefab & modular self-build land"
-                    style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${LINE}`,background:PAPER,fontFamily:FF,fontSize:"13px",fontWeight:500,color:INK2,cursor:"pointer"}}
-                  >Prefab</button>
-                </div>
-              )}
+              <div style={{fontFamily:FF,fontSize:"11px",fontWeight:500,color:INK3,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:10}}>
+                Try asking
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {[
+                  {icon:"🏚️", text:"Find ruins under €100k near Alentejo", meta:"price · location · type"},
+                  {icon:"🌿", text:"5ha+ rural near Évora with water rights", meta:"project-relevant · eco tourism"},
+                  {icon:"🏘️", text:"Plots under €120k near Lisbon", meta:"buyer · budget"},
+                  {icon:"🏗️", text:"Urban plots near Porto for residential", meta:"developer"},
+                  {icon:"☀️", text:"Plots over 5ha near grid in Alentejo", meta:"solar · scale"},
+                  {icon:"📋", text:"What permits do I need for a rural tourism build?", meta:"process · ask Yonder anything"},
+                ].map((s,i)=>(
+                  <button key={i} type="button" onClick={()=>send(s.text)}
+                    style={{display:"flex",alignItems:"center",gap:11,background:PAPER,border:`1px solid ${LINE}`,borderRadius:10,padding:"10px 12px",cursor:"pointer",fontFamily:FF,textAlign:"left",transition:"all 0.12s"}}
+                    onMouseEnter={e=>{e.currentTarget.style.borderColor=ACCENT;e.currentTarget.style.background=ACCENT_WASH;}}
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor=LINE;e.currentTarget.style.background=PAPER;}}>
+                    <div style={{width:30,height:30,borderRadius:8,background:CANVAS,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:"16px"}}>{s.icon}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:"13px",fontWeight:500,color:INK,lineHeight:1.35}}>{s.text}</div>
+                      <div style={{fontSize:"11px",color:INK4,marginTop:1}}>{s.meta}</div>
+                    </div>
+                    <div style={{color:INK4,fontSize:"13px",flexShrink:0}}>→</div>
+                  </button>
+                ))}
+              </div>
+
+              <div style={{marginTop:16,fontFamily:FF,fontSize:"12px",color:INK3,textAlign:"center",lineHeight:1.5}}>
+                or type your own question below ↓
+              </div>
             </div>
           )}
 
           {/* Chat messages */}
           {messages.map((msg,i)=>(
             <div key={i} style={{marginBottom:12,animation:"fadeIn 0.2s ease both"}}>
+
+              {/* LOCATION CHOICE — three quick-reply options */}
+              {msg.role==="assistant"&&msg.isLocChoice&&msg.plot&&(
+                <div style={{display:"grid",gridTemplateColumns:"20px 1fr",gap:10,width:"100%",alignItems:"flex-start"}}>
+                  <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}>
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontFamily:FF,fontSize:"13px",fontWeight:500,color:INK,marginBottom:6}}>Land AI</div>
+                    {msg.text&&<div style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,marginBottom:12}}>{msg.text.replace(/\*\*/g,"")}</div>}
+                    {!msg.locChoiceMade&&(
+                      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                        {(msg.locChoices||[]).map((c:any)=>(
+                          <button key={c.id} type="button"
+                            onClick={()=>handleLocChoice(msg.plot, c.id)}
+                            style={{textAlign:"left",background:PAPER,border:`1px solid ${LINE}`,borderRadius:8,padding:"10px 12px",cursor:"pointer",fontFamily:FF}}>
+                            <div style={{fontSize:"13px",fontWeight:500,color:INK,marginBottom:2}}>{c.label}</div>
+                            <div style={{fontSize:"12px",color:INK4,lineHeight:1.4}}>{c.note}</div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {msg.locChoiceMade&&(
+                      <div style={{fontFamily:FF,fontSize:"12px",color:INK4,fontStyle:"italic"}}>
+                        {msg.locChoices?.find((c:any)=>c.id===msg.locChoiceMade)?.label}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* LOCATION VERIFICATION CARD */}
+              {msg.role==="assistant"&&msg.isLocVerif&&msg.plot&&(()=>{
+                const lid = plotListingOpenId(msg.plot);
+                const vs: LocVerifState = locVerifStates[lid] || msg.verifStateSnapshot || "idle";
+                return (
+                  <LocVerifCard
+                    plot={msg.plot}
+                    verifState={vs}
+                    onRequest={()=>requestVerification(msg.plot)}
+                    onPayAndRun={()=>confirmAndRunAnalysis(msg.plot)}
+                    onDevAdvance={()=>{
+                      const cur = locVerifStates[lid] || "idle";
+                      const idx = LOC_VERIF_ORDER.indexOf(cur);
+                      const next = LOC_VERIF_ORDER[Math.min(idx+1, LOC_VERIF_ORDER.length-1)];
+                      if (next === "confirmed") {
+                        setLocVerifStates(prev=>({...prev,[lid]:"confirmed"}));
+                        setMessages(m=>[...m,{role:"assistant",text:`The realtor confirmed the exact location for **${msg.plot.name}**. You can now run the full land report.`}]);
+                      } else if (next === "running") {
+                        confirmAndRunAnalysis(msg.plot);
+                      } else {
+                        setLocVerifStates(prev=>({...prev,[lid]:next}));
+                      }
+                    }}
+                  />
+                );
+              })()}
 
               {/* LAND ANALYSIS · RUNNING */}
               {msg.role==="assistant"&&msg.isThinking&&(
@@ -5308,7 +5855,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
               )}
 
               {/* LISTINGS RESULT + plain text */}
-              {msg.role==="assistant"&&!msg.isThinking&&!msg.isResearch&&!msg.isVerdict&&!msg.isBulkResult&&(
+              {msg.role==="assistant"&&!msg.isThinking&&!msg.isResearch&&!msg.isVerdict&&!msg.isBulkResult&&!msg.isLocVerif&&!msg.isLocChoice&&(
                 <div style={{display:"grid",gridTemplateColumns:"20px 1fr",gap:10,width:"100%",alignItems:"flex-start"}}>
                   <div style={{width:16,height:16,borderRadius:999,background:ACCENT,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}>
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.2 4 7l4-4.2" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -5328,6 +5875,25 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                     )}
                     {msg.showUpgrade&&(
                       <button onClick={()=>requestUpgrade?.(null)} style={{marginTop:6,background:"none",border:`1px solid ${LINE}`,borderRadius:99,padding:"5px 12px",...TC.label,color:ACCENT,cursor:"pointer",fontFamily:FF,display:"block",fontWeight:500}}>View plans →</button>
+                    )}
+                    {msg.followups&&Array.isArray(msg.followups)&&(
+                      <div style={{marginTop:14,display:"flex",flexDirection:"column",gap:10}}>
+                        {msg.followups.map((g:any,gi:number)=>(
+                          <div key={gi}>
+                            <div style={{fontFamily:FF,fontSize:"10px",fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:INK4,marginBottom:6}}>{g.label}</div>
+                            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                              {g.chips.map((c:string,ci:number)=>(
+                                <button key={ci} type="button" onClick={()=>sendFollowup(c)}
+                                  style={{padding:"6px 11px",borderRadius:999,border:`1px solid ${LINE}`,background:PAPER,fontFamily:FF,fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",transition:"all 0.12s"}}
+                                  onMouseEnter={e=>{e.currentTarget.style.borderColor=ACCENT;e.currentTarget.style.background=ACCENT_WASH;e.currentTarget.style.color=ACCENT;}}
+                                  onMouseLeave={e=>{e.currentTarget.style.borderColor=LINE;e.currentTarget.style.background=PAPER;e.currentTarget.style.color=INK2;}}>
+                                  {c}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                     {msg.showChips&&msg.icpId&&(()=>{
                       const ic=CHAT_ICPS.find(x=>x.id===msg.icpId);
@@ -5546,21 +6112,28 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
               projectPlots={projectPlots}
             />
           )}
-          {!cadastreMode&&mapResults.kind==="listings"&&activePlot&&!hasDrawArea&&(
-            <ListingInsightSidebar
-              plot={activePlot}
-              onClose={()=>{ clearPlotFocus(); setMessages((m)=>m.filter((x)=>!x.isPlotCtx)); }}
-              onOpenListing={onOpenListing}
-              onAddToProject={handleExplorerAdd}
-              inProject={projectPlots.includes(plotListingOpenId(activePlot))}
-              upgraded={upgraded}
-              onUpgrade={()=>requestUpgrade?.("plot")}
-              savedRecap={listingRecapFromStore(listingSavedScans, plotListingOpenId(activePlot))}
-              onStartLandAgentInChat={()=>{setMobileTab("chat");setTimeout(()=>runAnalysis(),120);}}
-              onSendToChat={sendPlotToChat}
-              onRequestListingLocation={requestListingLocationService}
-            />
-          )}
+          {!cadastreMode&&mapResults.kind==="listings"&&activePlot&&!hasDrawArea&&(()=>{
+            const _lid = plotListingOpenId(activePlot);
+            const _conf = PLOT_LOCATION_CONFIDENCE[_lid] || PLOT_LOCATION_CONFIDENCE[activePlot.ref] || "exact";
+            const _vs = getVerifState(_lid);
+            return (
+              <ListingInsightSidebar
+                plot={activePlot}
+                onClose={()=>{ clearPlotFocus(); setMessages((m)=>m.filter((x)=>!x.isPlotCtx)); }}
+                onOpenListing={onOpenListing}
+                onAddToProject={handleExplorerAdd}
+                inProject={projectPlots.includes(plotListingOpenId(activePlot))}
+                upgraded={upgraded}
+                onUpgrade={()=>requestUpgrade?.("plot")}
+                savedRecap={listingRecapFromStore(listingSavedScans, plotListingOpenId(activePlot))}
+                onStartLandAgentInChat={()=>{setMobileTab("chat");setTimeout(()=>runAnalysis(),120);}}
+                onSendToChat={sendPlotToChat}
+                onRequestListingLocation={requestListingLocationService}
+                verifState={_vs}
+                isApproximate={_conf==="approximate"}
+              />
+            );
+          })()}
           {/* Cadastre side panel — floats over map or list */}
           {cadastreMode&&selectedParcel&&(
             <CadastreSidePanel
@@ -6160,14 +6733,22 @@ function GlobalNav({ activeNav, setActiveNav, upgraded, onBackToLanding }:{
         );
       })}
 
-      <div style={{marginTop:"auto"}}>
-        <NavTooltip label={upgraded?"Pro plan":"Free plan"}>
-          <div style={{width:28,height:28,borderRadius:999,background:upgraded?SUCCESS_WASH:LINE2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"default"}}>
+      <div style={{marginTop:"auto",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+        <NavTooltip label="Pricing">
+          <Link href="/pricing" style={{width:28,height:28,borderRadius:8,background:"transparent",display:"flex",alignItems:"center",justifyContent:"center",textDecoration:"none"}}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="1.5" y="3.5" width="13" height="9" rx="2" stroke={INK3} strokeWidth="1.4"/>
+              <path d="M5 8h2M9 8h2M5 10.5h1.5" stroke={INK3} strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </Link>
+        </NavTooltip>
+        <NavTooltip label={upgraded?"Pro plan":"Free — view plans"}>
+          <Link href="/pricing" style={{width:28,height:28,borderRadius:999,background:upgraded?SUCCESS_WASH:LINE2,display:"flex",alignItems:"center",justifyContent:"center",textDecoration:"none"}}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <circle cx="7" cy="5.5" r="2.5" stroke={upgraded?SUCCESS:INK3} strokeWidth="1.4"/>
               <path d="M2 12c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke={upgraded?SUCCESS:INK3} strokeWidth="1.4" strokeLinecap="round"/>
             </svg>
-          </div>
+          </Link>
         </NavTooltip>
       </div>
     </div>
@@ -6536,8 +7117,10 @@ export default function YonderExplorerAppInner({
   const [upgraded,setUpgraded]=useState(false);
   const [showUpgradeModal,setShowUpgradeModal]=useState(false);
   const [upgradeModalReason,setUpgradeModalReason]=useState(null);
-  function requestUpgrade(reason){
+  const [upgradeModalCount,setUpgradeModalCount]=useState(1);
+  function requestUpgrade(reason, count?:number){
     setUpgradeModalReason(reason ?? null);
+    setUpgradeModalCount(count ?? 1);
     setShowUpgradeModal(true);
   }
   function closeUpgradeModal(){
@@ -6635,6 +7218,7 @@ export default function YonderExplorerAppInner({
       {showUpgradeModal&&(
         <UpgradeModal
           promptReason={upgradeModalReason}
+          plotCount={upgradeModalCount}
           onClose={closeUpgradeModal}
           onUpgrade={()=>{setUpgraded(true);closeUpgradeModal();}}
         />
