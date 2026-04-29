@@ -766,7 +766,7 @@ function PlotFullReport({ data, plot }) {
         </button>
         <button type="button"
           style={{background:INK,border:"none",borderRadius:99,padding:"7px 14px",fontSize:"12px",fontWeight:600,color:PAPER,cursor:"pointer",fontFamily:FF,flexShrink:0}}>
-          Contact realtor →
+          Mail the agent →
         </button>
       </div>
     </div>
@@ -1552,12 +1552,18 @@ function UpgradeModal({ onClose, onUpgrade, promptReason, plotCount=1 }) {
   );
 }
 
-function PlotListingPage({plotId,upgraded,onUpgrade,onRunAnalysis,onBack,onAddToProject,inProject,savedAiRecap}){
+function PlotListingPage({plotId,upgraded,onUpgrade,onRunAnalysis,onBack,onAddToProject,inProject,savedAiRecap,onMailAgent}){
   const plot=PLOT_DETAILS[plotId]||CHAT_PLOTS[0];
   const [descExpanded,setDescExpanded]=useState(false);
   const [activeImg,setActiveImg]=useState(0);
+  const [agentMailed,setAgentMailed]=useState(false);
   const v=VERDICT[plot.aiVerdict];
   const isVerified=plot.aiVerdict==="great_match"||plot.aiVerdict==="good_match";
+
+  function handleMailAgent(){
+    setAgentMailed(true);
+    onMailAgent&&onMailAgent(plot);
+  }
 
   return(
     <div style={{flex:1,background:WHITE,display:"flex",flexDirection:"column"}}>
@@ -1583,9 +1589,23 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onRunAnalysis,onBack,onAddTo
           <button type="button" onClick={()=>onAddToProject(plot.id)} style={{background:inProject?`${GREEN}10`:WHITE,border:`1px solid ${inProject?GREEN+"40":LIGHTER}`,borderRadius:99,padding:"6px 14px",...TP.body,color:inProject?GREEN:MID,cursor:"pointer",fontWeight:600}}>
             {inProject?"✓ Saved":"+ Save to pipeline"}
           </button>
-          <a href={`mailto:${plot.contact.email}`} style={{background:INK,border:"none",borderRadius:99,padding:"6px 14px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600,textDecoration:"none"}}>Contact agent →</a>
+          <button type="button" onClick={handleMailAgent} disabled={agentMailed} style={{background:agentMailed?GREEN:INK,border:"none",borderRadius:99,padding:"6px 14px",...TP.body,color:WHITE,cursor:agentMailed?"default":"pointer",fontWeight:600,opacity:agentMailed?0.95:1}}>
+            {agentMailed?"✓ Sent via Yonder":"Mail the agent →"}
+          </button>
         </div>
       </div>
+
+      {agentMailed&&(
+        <div style={{padding:"10px 24px",background:`${GREEN}10`,borderBottom:`1px solid ${GREEN}30`,display:"flex",alignItems:"center",gap:10,animation:"fadeIn 0.2s ease both"}}>
+          <span style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:18,height:18,borderRadius:99,background:GREEN,flexShrink:0}}>
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5 3.5 6.5 7.5 2" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </span>
+          <div style={{...TP.body,color:INK,lineHeight:1.4}}>
+            <strong style={{fontWeight:600}}>Yonder is mailing the agent on your behalf.</strong>
+            <span style={{color:MID}}> We'll request the exact plot location at the same time so we can run an accurate report. Replies usually arrive in 24-48h.</span>
+          </div>
+        </div>
+      )}
 
       <div style={{maxWidth:860,margin:"0 auto",width:"100%",padding:"0 0 80px"}}>
 
@@ -2078,7 +2098,7 @@ function LandAnalysisBlock({ completedCount, done }) {
   );
 }
 
-function LandReportCard({ data, plot, onOpenReport, onLegalCheck=()=>{}, onContactRealtor=()=>{} }) {
+function LandReportCard({ data, plot, onOpenReport, onLegalCheck=()=>{}, onMailAgent=()=>{} }) {
   const buildable = data.verdict === "buildable";
   const good = data.restrictions.filter(r=>r.status==="clear").map(r=>r.name);
   const bad  = data.restrictions.filter(r=>r.status==="blocking").map(r=>r.name);
@@ -2128,9 +2148,9 @@ function LandReportCard({ data, plot, onOpenReport, onLegalCheck=()=>{}, onConta
             style={{flex:1,background:PAPER,border:`1px solid ${LINE}`,borderRadius:99,padding:"8px",fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",fontFamily:FF}}>
             Legal check →
           </button>
-          <button type="button" onClick={onContactRealtor}
+          <button type="button" onClick={onMailAgent}
             style={{flex:1,background:PAPER,border:`1px solid ${LINE}`,borderRadius:99,padding:"8px",fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",fontFamily:FF}}>
-            Contact realtor →
+            Mail the agent →
           </button>
         </div>
       </div>
@@ -5840,9 +5860,9 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                     {role:"user",text:`Legal check — ${msg.plot.name}`},
                     {role:"assistant",text:`**Legal check for ${msg.plot.name}**\n\nKey items before signing a CPCV:\n- Title clear ✓ (confirmed in registry)\n- PDM permits verified ✓\n- Licença de utilização — confirm no violations\n- Municipal debt certificate (certidão de não dívida)\n- Fiscal situation of the seller\n\nRecommend a Portuguese property lawyer for the promessa de compra e venda. Starting at €990 for a full legal package.`},
                   ])}
-                  onContactRealtor={()=>setMessages(m=>[...m,
-                    {role:"user",text:`Contact realtor — ${msg.plot.name}`},
-                    {role:"assistant",text:`**Connecting you with the realtor for ${msg.plot.name}.**\n\nWe'll send your enquiry to the listing agent. They typically respond within 24h.\n\nWant to include any specific questions — price negotiation, official location confirmation, or visit scheduling?`},
+                  onMailAgent={()=>setMessages(m=>[...m,
+                    {role:"user",text:`Mail the agent — ${msg.plot.name}`},
+                    {role:"assistant",text:`**Yonder will mail the agent on your behalf for ${msg.plot.name}.**\n\nWe send the enquiry from our team — never your personal email — and we ask the listing agent to confirm the exact plot boundary at the same time, so we can run an accurate Land AI report. They typically reply in 24-48h, and we'll relay everything back here.\n\nWant us to include any specific questions — price flexibility, visit scheduling, or anything else?`},
                   ])}
                 />
               )}
