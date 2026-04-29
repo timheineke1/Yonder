@@ -1754,10 +1754,10 @@ function PlotListingPage({plotId,upgraded,onUpgrade,onRunAnalysis,onBack,onAddTo
           {!savedAiRecap&&(
             <div style={{marginBottom:24,border:`1px solid ${LIGHTER}`,borderRadius:10,padding:"16px",background:SUBTLE}}>
               <div style={{...TP.sectionTitle,marginBottom:4}}>AI land analysis</div>
-              <div style={{...TP.secondary,lineHeight:1.5,marginBottom:14}}>Sends this plot to chat — AI reviews zoning, flood risk, PDM compliance and title integrity, then saves a full report here.</div>
-              <button type="button" onClick={upgraded ? onRunAnalysis : onUpgrade}
-                style={{width:"100%",background:upgraded?ACCENT:INK,border:"none",borderRadius:99,padding:"11px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
-                {upgraded?"Run AI land analysis →":"Unlock + run AI land analysis →"}
+              <div style={{...TP.secondary,lineHeight:1.5,marginBottom:14}}>Sends this plot to chat — we'll first check whether the location needs to be verified with the agent (free), then run the full report on zoning, RAN/REN, PDM compliance and title integrity.</div>
+              <button type="button" onClick={onRunAnalysis}
+                style={{width:"100%",background:ACCENT,border:"none",borderRadius:99,padding:"11px",...TP.body,color:WHITE,cursor:"pointer",fontWeight:600}}>
+                Run AI land analysis →
               </button>
             </div>
           )}
@@ -2183,15 +2183,15 @@ function LocVerifCard({ plot, verifState, onRequest, onPayAndRun, onDevAdvance }
       {verifState==="idle"&&(
         <>
           <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:"0 0 14px"}}>
-            This listing's exact location is held by the realtor. To produce an accurate report, we need to verify the plot boundary with them first.
+            The listing agent is holding back the exact plot location — common for rural land here. We can mail them on your behalf and ask for the boundary so the AI report runs on real coordinates.
           </p>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             <button type="button" onClick={onRequest}
               style={{background:INK,border:"none",borderRadius:99,padding:"10px 16px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer",textAlign:"left"}}>
-              Request verification from realtor
+              Mail the agent (via Yonder)
             </button>
             <div style={{fontFamily:FF,fontSize:"11px",color:INK3,paddingLeft:2,lineHeight:1.5}}>
-              No charge until location is confirmed · usually 1–3 days
+              We'll mention you're running an AI report · no charge until confirmed · usually 1–3 days
             </div>
           </div>
         </>
@@ -2199,14 +2199,14 @@ function LocVerifCard({ plot, verifState, onRequest, onPayAndRun, onDevAdvance }
 
       {verifState==="awaiting"&&(
         <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:0}}>
-          Email sent to the listing agent. You'll be notified when they respond — usually 1–3 days. No charge until location is confirmed.
+          Yonder mailed the listing agent and let them know you're after an AI report. We'll ping you here as soon as they reply — usually 1–3 business days. No charge until the location is confirmed.
         </p>
       )}
 
       {verifState==="confirmed"&&(
         <>
           <p style={{fontFamily:FF,fontSize:"14px",lineHeight:"20px",color:INK2,margin:"0 0 14px"}}>
-            Good news — the realtor confirmed the exact location for <strong>{plot?.name}</strong>. Ready to run your analysis.
+            The agent confirmed the exact location for <strong>{plot?.name}</strong>. We're good to run the report on the verified boundary.
           </p>
           <button type="button" onClick={onPayAndRun}
             style={{background:ACCENT,border:"none",borderRadius:99,padding:"10px 16px",fontFamily:FF,fontSize:"13px",fontWeight:600,color:PAPER,cursor:"pointer"}}>
@@ -5346,17 +5346,14 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
       ]);
       return;
     }
-    if(!upgraded){
-      requestUpgrade?.("plot");
-      return;
-    }
     const plot = activePlot;
     const listingId = plotListingOpenId(plot);
     const resolvedPlot = CHAT_PLOTS.find((pl) => pl.id === listingId) || plot;
     const confidence = PLOT_LOCATION_CONFIDENCE[listingId] || PLOT_LOCATION_CONFIDENCE[plot.ref] || "exact";
     const vs = getVerifState(listingId);
 
-    // Approximate location — ask user how to proceed
+    // Approximate location — show the location-check card BEFORE the paywall.
+    // The location check itself is free; only the report run after is paid.
     if (confidence === "approximate" && vs === "idle") {
       setMobileTab("chat");
       const label = resolvedPlot.name || listingId;
@@ -5387,6 +5384,12 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
         },
       ]);
       setLocVerifStates(prev => ({ ...prev, [listingId]: "requested" }));
+      return;
+    }
+
+    // Confirmed location or exact-from-the-start — paid report, so gate now
+    if(!upgraded){
+      requestUpgrade?.("plot");
       return;
     }
 
@@ -5433,16 +5436,16 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     const label=activePlot.name||cid;
     setMobileTab("chat");
     setMessages((m)=>[...m,
-      {role:"user", text:`Run AI analysis — ${label}`},
+      {role:"user", text:`Run AI report — ${label}`},
       {
         role:"assistant",
-        text:`**${label}** has an approximate location — the realtor hasn't pinned the exact boundary yet.\n\nThree options:`,
+        text:`Heads-up before we charge for the report on **${label}** — realtors here often hide the exact plot location on the listing, and an AI report is only as good as the boundary it runs on.\n\nWe'd recommend doing a quick location check with the agent first. How do you want to handle it?`,
         isLocChoice: true,
         plot: resolvedPlot,
         locChoices: [
-          { id:"request", label:"Request location from realtor",  note:"We email them on your behalf — no charge until confirmed" },
-          { id:"exact",   label:"I know the exact location",      note:"Drop a pin or paste an address — run the report now" },
-          { id:"approx",  label:"Approximate is good enough",     note:"Run the report now — slightly less precise on boundaries" },
+          { id:"request", label:"Yes, mail the agent (recommended)",  note:"Yonder writes them on your behalf — we mention you want to run an AI report, which usually gets a fast reply. No charge until the location is confirmed." },
+          { id:"exact",   label:"I already know the exact location",  note:"Drop a pin on the map or paste a cadastre ref / address — we'll run the report now." },
+          { id:"approx",  label:"Approximate is fine — run it now",   note:"Report runs on the rough area; boundary-specific findings (RAN/REN edges, exact frontage) will be less precise." },
         ],
       },
     ]);
