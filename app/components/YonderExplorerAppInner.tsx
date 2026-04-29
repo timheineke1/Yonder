@@ -5282,7 +5282,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
       ),
       {
         role: "assistant",
-        text: `Email sent to the listing agent for **${plot.name}**.\n\nWe've asked them to confirm the exact plot boundary and cadastre reference. You'll be notified here when they respond — usually 1–3 business days. No charge until confirmed.`,
+        text: `On it — Yonder is mailing the listing agent for **${plot.name}** now. We've told them you're interested in running an AI report and asked them to confirm the exact plot boundary + cadastre reference. They usually reply within 1–3 business days; you'll get a ping here as soon as they do. No charge until the location is confirmed.`,
         isLocVerif: true, plot, verifStateSnapshot: "awaiting",
       },
     ]);
@@ -5361,27 +5361,27 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
       setMobileTab("chat");
       const label = resolvedPlot.name || listingId;
       setMessages(m => [...m,
-        { role: "user", text: `Run AI analysis — ${label}` },
+        { role: "user", text: `Run AI report — ${label}` },
         {
           role: "assistant",
-          text: `**${label}** has an approximate location — the realtor hasn't pinned the exact boundary yet.\n\nThree options:`,
+          text: `Heads-up before we charge for the report on **${label}** — realtors here often hide the exact plot location on the listing, and an AI report is only as good as the boundary it runs on.\n\nWe'd recommend doing a quick location check with the agent first. How do you want to handle it?`,
           isLocChoice: true,
           plot: resolvedPlot,
           locChoices: [
             {
               id: "request",
-              label: "Request location from realtor",
-              note: "We email them on your behalf — no charge until confirmed",
+              label: "Yes, mail the agent (recommended)",
+              note: "Yonder writes them on your behalf — we mention you want to run an AI report, which usually gets a fast reply. No charge until the location is confirmed.",
             },
             {
               id: "exact",
-              label: "I know the exact location",
-              note: "Drop a pin or paste an address — run the report now",
+              label: "I already know the exact location",
+              note: "Drop a pin on the map or paste a cadastre ref / address — we'll run the report now.",
             },
             {
               id: "approx",
-              label: "Approximate is good enough",
-              note: "Run the report now — slightly less precise on boundaries",
+              label: "Approximate is fine — run it now",
+              note: "Report runs on the rough area; boundary-specific findings (RAN/REN edges, exact frontage) will be less precise.",
             },
           ],
         },
@@ -5572,8 +5572,15 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     setIsTyping(true);
     setTimeout(()=>{
       setIsTyping(false);
-      const r = chattyFollowupReply(text);
-      setMessages(m=>[...m,{role:"assistant",text:r.text,followups:r.followups&&r.followups.length?r.followups:undefined}]);
+      setMessages(m=>{
+        // Never two chip-replies in a row — if the previous assistant turn had chips, this one ends in plain text
+        const prevAssistant = [...m].reverse().find((x:any)=>x.role==="assistant");
+        const prevHadChips = !!(prevAssistant && prevAssistant.followups && prevAssistant.followups.length);
+        const r = chattyFollowupReply(text);
+        const showChips = !prevHadChips && r.followups && r.followups.length > 0;
+        const closing = showChips ? r.text : `${r.text}\n\nRefine in chat below or start a new search.`;
+        return [...m,{role:"assistant",text:closing,followups: showChips ? r.followups : undefined}];
+      });
     },650);
   }
 
