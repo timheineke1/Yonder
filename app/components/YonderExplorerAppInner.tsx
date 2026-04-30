@@ -2853,357 +2853,845 @@ function Segmented({ options, value, onChange, compact }) {
   );
 }
 
-/** Horizontal filter bar — PDM / use row + province; expand for restrictions, type, ruin, price, more. */
+/** Local input pair used inside the Price / Size dropdowns. */
+function RangeInputs({ minVal, maxVal, onApply, onClear, presets, applyLabel = "Apply" }) {
+  const [min, setMin] = useState(String(minVal ?? ""));
+  const [max, setMax] = useState(String(maxVal ?? ""));
+  const inputStyle = {
+    flex: 1,
+    background: BG2,
+    border: `1px solid ${LINE}`,
+    borderRadius: 8,
+    padding: "8px 10px",
+    fontSize: 13,
+    fontFamily: FF,
+    color: INK,
+    width: "100%",
+    boxSizing: "border-box",
+    outline: "none",
+    minWidth: 0,
+  };
+  return (
+    <>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <input
+          type="number"
+          inputMode="numeric"
+          placeholder="Min"
+          value={min}
+          onChange={(e) => setMin(e.target.value)}
+          style={inputStyle}
+        />
+        <span style={{ color: MID, fontSize: 12 }}>—</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          placeholder="Max"
+          value={max}
+          onChange={(e) => setMax(e.target.value)}
+          style={inputStyle}
+        />
+      </div>
+      {presets?.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 12 }}>
+          {presets.map(([label, lo, hi]) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => { setMin(String(lo)); setMax(String(hi)); }}
+              style={{
+                padding: "6px 12px",
+                borderRadius: 999,
+                border: "none",
+                background: CANVAS,
+                color: INK,
+                fontFamily: FF,
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: "pointer",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12, paddingTop: 10, borderTop: `1px solid ${LINE}` }}>
+        <button
+          type="button"
+          onClick={onClear}
+          style={{ background: "transparent", border: "none", color: MID, fontFamily: FF, fontSize: 12, cursor: "pointer", padding: "4px 6px" }}
+        >
+          Clear
+        </button>
+        <button
+          type="button"
+          onClick={() => onApply(min, max)}
+          style={{ background: INK, color: WHITE, border: "none", borderRadius: 999, padding: "7px 16px", fontFamily: FF, fontSize: 13, fontWeight: 500, cursor: "pointer" }}
+        >
+          {applyLabel}
+        </button>
+      </div>
+    </>
+  );
+}
+
+/** Horizontal filter bar — pills (Region · Price · Size · Type · Buildable) + dark More-filters. */
 function MapFilters({ filters, setFilters, resultCount, totalCount }) {
   const [moreOpen, setMoreOpen] = useState(false);
-  const [pdmOpen, setPdmOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null); // 'region' | 'price' | 'size' | 'type' | null
+  const barRef = useRef(null);
   const f = { ...EMPTY_LISTING_MAP_FILTERS, ...filters };
 
   function patch(p) {
     setFilters((prev) => ({ ...EMPTY_LISTING_MAP_FILTERS, ...prev, ...p }));
   }
-
   function togglePdmTag(id) {
     const cur = f.pdmTags || [];
     const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
     patch({ pdmTags: next });
-    if (next.length > cur.length) setPdmOpen(true);
   }
-
-  function toggleUseCategory(id) {
-    const cur = f.useCategories || [];
-    const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
-    patch({ useCategories: next, useIntent: "all" });
-  }
-
-  function clearUseCategories() {
-    patch({ useCategories: [], useIntent: "all" });
-  }
-
   function clearAll() {
     setFilters({ ...EMPTY_LISTING_MAP_FILTERS });
     setMoreOpen(false);
-    setPdmOpen(false);
+    setOpenMenu(null);
   }
 
-  /** Same box model as native <select> so Area + More filters line up on one toolbar row. */
-  const filterText = { ...TC.label, fontSize: "var(--type-caption)", fontWeight: 500 };
-  const filterInput = {
-    border: `1px solid ${LIGHTER}`,
-    borderRadius: 8,
-    padding: "6px 10px",
-    ...filterText,
-    color: INK,
+  useEffect(() => {
+    function onDocClick(e) {
+      if (!barRef.current || barRef.current.contains(e.target)) return;
+      setOpenMenu(null);
+    }
+    function onEsc(e) {
+      if (e.key === "Escape") setOpenMenu(null);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, []);
+
+  const REGIONS = [
+    { id: "all", label: "All Portugal" },
+    { id: "norte", label: "Norte" },
+    { id: "centro", label: "Centro" },
+    { id: "lisboa", label: "Lisboa & Tagus" },
+    { id: "alentejo", label: "Alentejo" },
+    { id: "algarve", label: "Algarve" },
+    { id: "madeira_acores", label: "Madeira & Azores" },
+  ];
+
+  const TYPES = [
+    { id: "all", label: "All types", desc: "Show every plot" },
+    { id: "urban", label: "Urban plot", desc: "Buildable, in zoned areas" },
+    { id: "rustic", label: "Rustic plot", desc: "Agricultural or forest land" },
+    { id: "mixed", label: "Mixed plot", desc: "Combined classifications" },
+  ];
+
+  const hasRegion = f.province && f.province !== "all";
+  const hasPrice  = !!String(f.priceMin || "").trim() || !!String(f.priceMax || "").trim();
+  const hasSize   = !!String(f.areaMin || "").trim() || !!String(f.areaMax || "").trim();
+  const hasType   = f.landType && f.landType !== "all";
+  const anyActive = listingFiltersActive(f);
+
+  const moreCount =
+    (Array.isArray(f.pdmTags) ? f.pdmTags.length : 0) +
+    (f.excludeRAN ? 1 : 0) +
+    (f.excludeREN ? 1 : 0) +
+    (f.excludeProtected ? 1 : 0) +
+    (f.ruin && f.ruin !== "all" ? 1 : 0) +
+    (f.fire && f.fire !== "Any" ? 1 : 0) +
+    (f.ren && f.ren !== "Any" ? 1 : 0) +
+    (f.ran && f.ran !== "Any" ? 1 : 0) +
+    (f.score && f.score !== "Any" ? 1 : 0);
+
+  const regionLabel = hasRegion
+    ? (REGIONS.find(r => r.id === f.province)?.label || "All Portugal")
+    : "All Portugal";
+  const fmtPrice = (v) => v ? `€${Number(v).toLocaleString()}` : "";
+  const priceLabel = hasPrice
+    ? `${f.priceMin ? fmtPrice(f.priceMin) : "€0"} – ${f.priceMax ? fmtPrice(f.priceMax) : "Any"}`
+    : "Any";
+  const sizeLabel = hasSize
+    ? `${f.areaMin ? Number(f.areaMin).toLocaleString() : "0"} – ${f.areaMax ? Number(f.areaMax).toLocaleString() : "Any"} m²`
+    : "Any m²";
+  const typeLabel = hasType
+    ? (TYPES.find(t => t.id === f.landType)?.label || "All")
+    : "All";
+
+  // Pill base
+  const pillBase = {
     background: WHITE,
-    minHeight: 36,
-    boxSizing: "border-box",
-  };
-  const filterBarControl = {
-    border: `1px solid ${LIGHTER}`,
-    borderRadius: 8,
-    padding: "6px 12px",
-    ...filterText,
-    color: MID,
-    background: BG2,
+    border: `1px solid ${LINE}`,
+    borderRadius: 999,
+    padding: "8px 14px",
+    fontFamily: FF,
+    fontSize: 13,
+    lineHeight: 1.2,
+    fontWeight: 500,
+    color: INK,
     cursor: "pointer",
-    outline: "none",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
     minHeight: 36,
+    whiteSpace: "nowrap",
     boxSizing: "border-box",
-    lineHeight: 1.25,
+    transition: "border-color 0.15s, background 0.15s, color 0.15s",
   };
 
-  return (
-    <div style={{ flexShrink: 0, background: WHITE, borderBottom: `1px solid ${LIGHTER}` }}>
-      {/* One toolbar row: Area · Zoning/PDM · Filters */}
-      <div
+  function chev(open, color) {
+    return (
+      <svg
+        width="10" height="10" viewBox="0 0 24 24" fill="none"
+        stroke={color || "currentColor"} strokeWidth="2.5"
+        style={{ transition: "transform 0.15s", transform: open ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }}
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    );
+  }
+
+  function PillButton({ id, label, value, hasValue }) {
+    const isOpen = openMenu === id;
+    const fg = isOpen ? WHITE : INK;
+    const valueColor = isOpen ? "rgba(255,255,255,0.72)" : (hasValue ? ACCENT : MID);
+    const valueWeight = hasValue && !isOpen ? 500 : 400;
+    return (
+      <button
+        type="button"
+        onClick={() => setOpenMenu(isOpen ? null : id)}
         style={{
-          padding: "8px 12px",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          gap: 8,
-          rowGap: 8,
+          ...pillBase,
+          background: isOpen ? INK : WHITE,
+          color: fg,
+          borderColor: isOpen ? INK : LINE,
         }}
       >
-        <select
-          aria-label="Filter by region"
-          value={f.province || "all"}
-          onChange={(e) => patch({ province: e.target.value })}
-          style={{ ...filterBarControl, minWidth: 148, maxWidth: 220, flexShrink: 0 }}
-        >
-          <option value="all">All areas</option>
-          <option value="norte">Norte</option>
-          <option value="centro">Centro</option>
-          <option value="lisboa">Lisboa & Tagus</option>
-          <option value="alentejo">Alentejo</option>
-          <option value="algarve">Algarve</option>
-          <option value="madeira_acores">Madeira & Azores</option>
-        </select>
+        <span>{label}</span>
+        <span style={{ color: valueColor, fontWeight: valueWeight }}>{value}</span>
+        {chev(isOpen, fg)}
+      </button>
+    );
+  }
 
-        <button
-          type="button"
-          onClick={() => setPdmOpen((v) => !v)}
+  function Dropdown({ children, width = 260 }) {
+    return (
+      <div
+        onMouseDown={(e) => e.stopPropagation()}
+        style={{
+          position: "absolute",
+          top: "calc(100% + 8px)",
+          left: 0,
+          background: WHITE,
+          border: `1px solid ${LINE}`,
+          borderRadius: 12,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
+          padding: 14,
+          minWidth: width,
+          zIndex: 30,
+          animation: "fadeIn 0.12s ease both",
+        }}
+      >
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <div ref={barRef} style={{ flexShrink: 0, background: WHITE, borderBottom: `1px solid ${LINE}`, position: "relative", zIndex: 60 }}>
+      <div style={{ padding: "12px 16px 10px" }}>
+        {/* Pill bar */}
+        <div
           style={{
-            ...filterBarControl,
-            minWidth: 170,
-            justifyContent: "space-between",
+            background: CANVAS,
+            borderRadius: 14,
+            padding: 8,
             display: "flex",
+            gap: 6,
             alignItems: "center",
-            gap: 8,
-            background: pdmOpen ? SUBTLE : WHITE,
-            color: INK,
-            fontWeight: 500,
-            flexShrink: 0,
+            flexWrap: "wrap",
           }}
         >
-          <span style={{ ...filterText, color: INK }}>Zoning / PDM</span>
-          <span style={{ ...filterText, color: MID, flexShrink: 0 }}>
-            {(f.pdmTags || []).length > 0 ? `${(f.pdmTags || []).length}` : "Optional"} {pdmOpen ? "▴" : "▾"}
-          </span>
-        </button>
+          {/* Region */}
+          <div style={{ position: "relative" }}>
+            <PillButton id="region" label="Region" value={regionLabel} hasValue={hasRegion} />
+            {openMenu === "region" && (
+              <Dropdown width={240}>
+                <p style={{ ...TC.labelUC, margin: "0 0 10px" }}>Choose a region</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {REGIONS.map((r) => {
+                    const sel = (f.province || "all") === r.id;
+                    return (
+                      <button
+                        key={r.id}
+                        type="button"
+                        onClick={() => { patch({ province: r.id }); setOpenMenu(null); }}
+                        style={{
+                          background: sel ? CANVAS : "transparent",
+                          color: sel ? ACCENT : INK,
+                          border: "none",
+                          textAlign: "left",
+                          padding: "8px 10px",
+                          fontFamily: FF,
+                          fontSize: 13,
+                          fontWeight: sel ? 500 : 400,
+                          borderRadius: 6,
+                          cursor: "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>{r.label}</span>
+                        {sel && <span style={{ color: ACCENT }}>✓</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </Dropdown>
+            )}
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setMoreOpen((v) => !v)}
-          style={{
-            ...filterBarControl,
-            background: moreOpen ? SUBTLE : WHITE,
-            color: MID,
-            fontWeight: 500,
-            flexShrink: 0,
-          }}
-        >
-          {moreOpen ? "▲ Fewer filters" : "▼ More filters"}
-        </button>
-        <button
-          type="button"
-          onClick={clearAll}
-          style={{
-            border: "none",
-            background: "none",
-            padding: "6px 8px",
-            ...filterText,
-            color: ACCENT,
-            cursor: "pointer",
-            fontWeight: 600,
-            flexShrink: 0,
-            minHeight: 36,
-            boxSizing: "border-box",
-            lineHeight: 1.25,
-            alignSelf: "center",
-          }}
-        >
-          Clear all
-        </button>
-        <div style={{ ...TC.mono, color: LIGHT, whiteSpace: "nowrap", flexShrink: 0, padding: "0 4px", alignSelf: "center" }}>
-          {resultCount}
-          {totalCount != null && totalCount !== resultCount ? ` / ${totalCount}` : ""}
+          {/* Price */}
+          <div style={{ position: "relative" }}>
+            <PillButton id="price" label="Price" value={priceLabel} hasValue={hasPrice} />
+            {openMenu === "price" && (
+              <Dropdown width={280}>
+                <p style={{ ...TC.labelUC, margin: "0 0 10px" }}>Price range (€)</p>
+                <RangeInputs
+                  minVal={f.priceMin}
+                  maxVal={f.priceMax}
+                  onApply={(min, max) => { patch({ priceMin: min, priceMax: max }); setOpenMenu(null); }}
+                  onClear={() => { patch({ priceMin: "", priceMax: "" }); setOpenMenu(null); }}
+                  presets={[
+                    ["Under €50k", "0", "50000"],
+                    ["€50–150k", "50000", "150000"],
+                    ["€150–500k", "150000", "500000"],
+                  ]}
+                />
+              </Dropdown>
+            )}
+          </div>
+
+          {/* Size */}
+          <div style={{ position: "relative" }}>
+            <PillButton id="size" label="Size" value={sizeLabel} hasValue={hasSize} />
+            {openMenu === "size" && (
+              <Dropdown width={300}>
+                <p style={{ ...TC.labelUC, margin: "0 0 10px" }}>Size range (m²)</p>
+                <RangeInputs
+                  minVal={f.areaMin}
+                  maxVal={f.areaMax}
+                  onApply={(min, max) => { patch({ areaMin: min, areaMax: max }); setOpenMenu(null); }}
+                  onClear={() => { patch({ areaMin: "", areaMax: "" }); setOpenMenu(null); }}
+                  presets={[
+                    ["Under 1,000", "0", "1000"],
+                    ["1,000–10,000", "1000", "10000"],
+                    ["1–10 ha", "10000", "100000"],
+                    ["10+ ha", "100000", ""],
+                  ]}
+                />
+              </Dropdown>
+            )}
+          </div>
+
+          {/* Type */}
+          <div style={{ position: "relative" }}>
+            <PillButton id="type" label="Type" value={typeLabel} hasValue={hasType} />
+            {openMenu === "type" && (
+              <Dropdown width={260}>
+                <p style={{ ...TC.labelUC, margin: "0 0 10px" }}>Listing type</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  {TYPES.map((t) => {
+                    const sel = (f.landType || "all") === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => { patch({ landType: t.id }); setOpenMenu(null); }}
+                        style={{
+                          textAlign: "left",
+                          background: sel ? CANVAS : "transparent",
+                          border: `1px solid ${sel ? INK : "transparent"}`,
+                          padding: "10px 12px",
+                          borderRadius: 8,
+                          cursor: "pointer",
+                          fontFamily: FF,
+                          fontSize: 13,
+                          color: INK,
+                          fontWeight: sel ? 500 : 400,
+                        }}
+                      >
+                        {t.label}
+                        <span style={{ display: "block", fontSize: 12, color: MID, marginTop: 2, fontWeight: 400 }}>
+                          {t.desc}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Dropdown>
+            )}
+          </div>
+
+          {/* Buildable toggle */}
+          <button
+            type="button"
+            onClick={() => patch({ buildableOnly: !f.buildableOnly })}
+            style={{
+              ...pillBase,
+              gap: 8,
+              background: f.buildableOnly ? ACCENT_WASH : WHITE,
+              borderColor: f.buildableOnly ? ACCENT : LINE,
+              color: f.buildableOnly ? ACCENT : INK,
+            }}
+          >
+            <span
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: 3,
+                border: `1.5px solid ${f.buildableOnly ? ACCENT : MID}`,
+                background: f.buildableOnly ? ACCENT : "transparent",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              {f.buildableOnly && (
+                <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+                  <polyline points="2 6.5 5 9.5 10 3.5" stroke={WHITE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </span>
+            Buildable only
+          </button>
+
+          <div style={{ flex: 1 }} />
+
+          {/* More filters */}
+          <button
+            type="button"
+            onClick={() => setMoreOpen((v) => !v)}
+            style={{
+              ...pillBase,
+              background: INK,
+              color: WHITE,
+              borderColor: INK,
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="7" y1="12" x2="17" y2="12" />
+              <line x1="10" y1="18" x2="14" y2="18" />
+            </svg>
+            More filters
+            {moreCount > 0 && (
+              <span
+                style={{
+                  background: ACCENT,
+                  color: WHITE,
+                  borderRadius: 999,
+                  minWidth: 18,
+                  height: 18,
+                  padding: "0 5px",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginLeft: 2,
+                }}
+              >
+                {moreCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Status row */}
+        <div style={{ marginTop: 10, padding: "0 6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ ...TC.secondary }}>
+            <strong style={{ color: INK, fontWeight: 500 }}>{Number(resultCount).toLocaleString()}</strong>
+            {totalCount != null && totalCount !== resultCount ? (
+              <span style={{ color: MID }}> of {Number(totalCount).toLocaleString()}</span>
+            ) : null}
+            <span style={{ color: MID }}> plots{hasRegion ? ` in ${regionLabel}` : ""}</span>
+          </div>
+          {anyActive && (
+            <button
+              type="button"
+              onClick={clearAll}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: ACCENT,
+                fontFamily: FF,
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: "pointer",
+                padding: "4px 8px",
+                borderRadius: 6,
+              }}
+            >
+              Reset all
+            </button>
+          )}
         </div>
       </div>
 
-      {pdmOpen && (
-        <div style={{ padding: "0 12px 10px", borderTop: `1px solid ${LIGHTER}` }}>
-          <p
-            style={{
-              ...TC.label,
-              color: MID,
-              margin: "8px 0 8px",
-              lineHeight: 1.45,
-            }}
-            title="Municipal plan land-use classes (RJIGT-style). Dashed border = suggested for your current Use filters."
-          >
-            Zoning / PDM classes.
-          </p>
-          <div
-            style={{
-              maxHeight: 180,
-              overflowY: "auto",
-              padding: 8,
-              border: `1px solid ${LIGHTER}`,
-              borderRadius: 8,
-              background: BG2,
-            }}
-          >
-            {["rustic", "urban"].map((group) => {
-              const keys = group === "rustic" ? PDM_RUSTIC_KEYS : PDM_URBAN_KEYS;
-              const title = group === "rustic" ? "Solo Rústico" : "Solo Urbano";
-              const suggested = pdmKeysSuggestedForUses(f.useCategories || []);
-              const useOn = (f.useCategories || []).length > 0;
-              return (
-                <div key={group} style={{ marginBottom: keys.length ? 10 : 0 }}>
-                  <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>{title}</span>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {keys.map((key) => {
-                      const meta = PDM_KEY_META[key];
-                      if (!meta) return null;
-                      const on = (f.pdmTags || []).includes(key);
-                      const sug = useOn && suggested.has(key);
-                      return (
-                        <button
-                          type="button"
-                          key={key}
-                          onClick={() => togglePdmTag(key)}
-                          title={key}
-                          style={{
-                            padding: "4px 9px",
-                            borderRadius: 99,
-                            border: `1px ${sug && !on ? "dashed" : "solid"} ${on ? ORANGE : LIGHTER}`,
-                            background: on ? `${ORANGE}12` : WHITE,
-                            color: on ? ORANGE : MID,
-                            ...filterText,
-                            fontWeight: on ? 600 : 500,
-                            cursor: "pointer",
-                          }}
-                        >
-                          {meta.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {moreOpen && (
-        <div style={{ padding: "0 12px 12px", borderTop: `1px solid ${LIGHTER}`, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12, marginTop: 10 }}>
-            <div>
-              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Restrictions</span>
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <ToggleRow label="Buildable only" on={!!f.buildableOnly} onToggle={() => patch({ buildableOnly: !f.buildableOnly })} />
-                <ToggleRow label="Exclude RAN" on={!!f.excludeRAN} onToggle={() => patch({ excludeRAN: !f.excludeRAN })} />
-                <ToggleRow label="Exclude REN" on={!!f.excludeREN} onToggle={() => patch({ excludeREN: !f.excludeREN })} />
-                <ToggleRow label="Exclude protected" on={!!f.excludeProtected} onToggle={() => patch({ excludeProtected: !f.excludeProtected })} />
-              </div>
-            </div>
-            <div>
-              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Land type</span>
-              <Segmented
-                options={[
-                  ["all", "All"],
-                  ["rustic", "Rustic"],
-                  ["urban", "Urban"],
-                  ["mixed", "Mixed"],
-                ]}
-                value={f.landType || "all"}
-                onChange={(v) => patch({ landType: v })}
-              />
-              <span style={{ ...TC.labelUC, color: MID, display: "block", marginTop: 10, marginBottom: 6 }}>Ruin</span>
-              <Segmented
-                options={[
-                  ["all", "All"],
-                  ["has", "Has ruin"],
-                  ["none", "No ruin"],
-                ]}
-                value={f.ruin || "all"}
-                onChange={(v) => patch({ ruin: v })}
-              />
-            </div>
-            <div>
-              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Price (€)</span>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Min"
-                  value={f.priceMin || ""}
-                  onChange={(e) => patch({ priceMin: e.target.value })}
-                  style={{ flex: 1, ...filterInput }}
-                />
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Max"
-                  value={f.priceMax || ""}
-                  onChange={(e) => patch({ priceMax: e.target.value })}
-                  style={{ flex: 1, ...filterInput }}
-                />
-              </div>
-              <span style={{ ...TC.labelUC, color: MID, display: "block", marginTop: 10, marginBottom: 6 }}>Size (m²)</span>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Min"
-                  value={f.areaMin || ""}
-                  onChange={(e) => patch({ areaMin: e.target.value })}
-                  style={{ flex: 1, ...filterInput }}
-                />
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Max"
-                  value={f.areaMax || ""}
-                  onChange={(e) => patch({ areaMax: e.target.value })}
-                  style={{ flex: 1, ...filterInput }}
-                />
-              </div>
-            </div>
-            <div>
-              <span style={{ ...TC.labelUC, color: MID, display: "block", marginBottom: 6 }}>Sort</span>
-              <select
-                value={f.sortBy || "match"}
-                onChange={(e) => patch({ sortBy: e.target.value })}
-                style={{ width: "100%", ...filterInput, background: BG2 }}
-              >
-                <option value="match">Match (search order)</option>
-                <option value="score-desc">Score · high first</option>
-                <option value="price-asc">Price · low first</option>
-                <option value="price-desc">Price · high first</option>
-              </select>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 10,
-              alignItems: "flex-end",
-              padding: "8px 0 2px",
-              borderTop: `1px solid ${LIGHTER}`,
-            }}
-          >
-            {[
-              { key: "fire", label: "Fire", options: ["Any", "Low", "Moderate", "High"] },
-              { key: "ren", label: "REN", options: ["Any", "No REN", "REN partial"] },
-              { key: "ran", label: "RAN", options: ["Any", "No RAN", "RAN partial"] },
-              { key: "score", label: "Score", options: ["Any", "60+", "75+", "85+", "90+"] },
-            ].map((blk) => (
-              <div key={blk.key} style={{ minWidth: 0 }}>
-                <div style={{ ...TC.labelUC, color: MID, marginBottom: 4 }}>{blk.label}</div>
-                <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-                  {blk.options.map((o) => (
-                    <button
-                      type="button"
-                      key={o}
-                      onClick={() => patch({ [blk.key]: f[blk.key] === o && o !== "Any" ? "Any" : o })}
-                      style={{
-                        background: f[blk.key] === o ? INK : BG2,
-                        border: `1px solid ${f[blk.key] === o ? INK : LIGHTER}`,
-                        borderRadius: 99,
-                        padding: "4px 10px",
-                        ...TC.label,
-                        fontSize: "var(--type-caption)",
-                        color: f[blk.key] === o ? WHITE : MID,
-                        cursor: "pointer",
-                        fontWeight: f[blk.key] === o ? 600 : 500,
-                      }}
-                    >
-                      {o}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      )}
+      <MoreFiltersDrawer
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        f={f}
+        patch={patch}
+        togglePdmTag={togglePdmTag}
+        resultCount={resultCount}
+        clearMore={() => {
+          patch({
+            pdmTags: [],
+            excludeRAN: false,
+            excludeREN: false,
+            excludeProtected: false,
+            ruin: "all",
+            fire: "Any",
+            ren: "Any",
+            ran: "Any",
+            score: "Any",
+            sortBy: "match",
+          });
+        }}
+      />
     </div>
+  );
+}
+
+/** Right-side slide-in drawer for advanced filters — matches prototype layout. */
+function MoreFiltersDrawer({ open, onClose, f, patch, togglePdmTag, resultCount, clearMore }) {
+  const [country, setCountry] = useState("PT");
+  const [amenity, setAmenity] = useState({ beach: "", cafe: "", market: "", transport: "", hospital: "", school: "" });
+
+  useEffect(() => {
+    if (!open) return;
+    function onEsc(e) { if (e.key === "Escape") onClose(); }
+    document.addEventListener("keydown", onEsc);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onEsc);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open, onClose]);
+
+  const sectionTitle = { ...TC.labelUC, color: MID, display: "block", marginBottom: 12 };
+
+  const chip = (on) => ({
+    padding: "6px 12px",
+    borderRadius: 999,
+    border: `1px solid ${on ? INK : "transparent"}`,
+    background: on ? INK : CANVAS,
+    color: on ? WHITE : INK,
+    fontFamily: FF,
+    fontSize: 12,
+    fontWeight: 500,
+    cursor: "pointer",
+  });
+
+  const COUNTRIES = [
+    { id: "PT", label: "🇵🇹 Portugal", soon: false },
+    { id: "ES", label: "🇪🇸 Spain", soon: true },
+    { id: "GR", label: "🇬🇷 Greece", soon: true },
+    { id: "NL", label: "🇳🇱 Netherlands", soon: true },
+  ];
+
+  // Land status checkboxes: ruin is a single value in state ("all"|"has"|"none"); show both as checkboxes.
+  const setRuin = (next) => patch({ ruin: f.ruin === next ? "all" : next });
+
+  const LAND_USE = [
+    { key: "AGRICOLA", label: "Agricultural" },
+    { key: "FLORESTAL_PRODUCAO", label: "Forest (prod.)" },
+    { key: "FLORESTAL_CONSERVACAO", label: "Forest (cons.)" },
+    { key: "USO_MULTIPLO", label: "Mixed agri-forest" },
+    { key: "NATURAL", label: "Natural" },
+    { key: "CULTURAL", label: "Cultural" },
+    { key: "RECURSOS_GEOLOGICOS", label: "Geol. resources" },
+  ];
+  const SOLO_URBANO = [
+    { key: "CENTRAL", label: "Central urban" },
+    { key: "HABITACIONAL", label: "Housing zone" },
+    { key: "BAIXA_DENSIDADE", label: "Low density" },
+    { key: "ATIVIDADES_ECONOMICAS", label: "Economic" },
+    { key: "VERDE_URBANO", label: "Urban green" },
+    { key: "TURISTICO_URBANO", label: "Tourism" },
+    { key: "RESIDENCIAL", label: "Residential" },
+    { key: "MISTO", label: "Mixed use" },
+  ];
+  const AMENITIES = [
+    { key: "beach", emoji: "🏖️", label: "Beach" },
+    { key: "cafe", emoji: "☕", label: "Café" },
+    { key: "market", emoji: "🛒", label: "Supermarket" },
+    { key: "transport", emoji: "🚌", label: "Transport" },
+    { key: "hospital", emoji: "🏥", label: "Hospital" },
+    { key: "school", emoji: "🎓", label: "School" },
+  ];
+  const SORTS = [
+    { id: "price-asc", label: "Price low → high" },
+    { id: "price-desc", label: "Price high → low" },
+    { id: "score-desc", label: "Score · high first" },
+    { id: "match", label: "Match" },
+  ];
+
+  function CheckRow({ label, on, onToggle }) {
+    return (
+      <button
+        type="button"
+        onClick={onToggle}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "9px 0",
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          fontFamily: FF,
+          fontSize: 14,
+          color: INK,
+          textAlign: "left",
+          width: "100%",
+        }}
+      >
+        <span
+          style={{
+            width: 16,
+            height: 16,
+            borderRadius: 4,
+            border: `1.5px solid ${on ? ACCENT : MID}`,
+            background: on ? ACCENT : "transparent",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          {on && (
+            <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+              <polyline points="2 6.5 5 9.5 10 3.5" stroke={WHITE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </span>
+        {label}
+      </button>
+    );
+  }
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(17,17,17,0.35)",
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
+          transition: "opacity 0.2s",
+          zIndex: 950,
+        }}
+      />
+
+      <aside
+        role="dialog"
+        aria-label="More filters"
+        aria-hidden={!open}
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: 460,
+          maxWidth: "100vw",
+          background: WHITE,
+          transform: open ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.25s ease",
+          zIndex: 951,
+          display: "flex",
+          flexDirection: "column",
+          boxShadow: "-8px 0 40px rgba(0,0,0,0.10)",
+        }}
+      >
+        <div style={{ padding: "18px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${LINE}` }}>
+          <h2 style={{ ...T.heading, margin: 0 }}>More filters</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: MID,
+              fontSize: 22,
+              lineHeight: 1,
+              padding: "4px 8px",
+              borderRadius: 6,
+              fontFamily: FF,
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px 22px" }}>
+          {/* Country */}
+          <div style={{ marginBottom: 24, display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ ...TC.labelUC, color: MID }}>Country</span>
+            <span style={{ ...TC.secondary, color: INK }}>🇵🇹 Portugal</span>
+            <span style={{ ...TC.secondary, color: INK4 }}>· Spain, Greece, Netherlands coming</span>
+          </div>
+
+          {/* Land status */}
+          <div style={{ marginBottom: 28 }}>
+            <span style={sectionTitle}>Land status</span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <CheckRow label="Has ruin" on={f.ruin === "has"} onToggle={() => setRuin("has")} />
+              <CheckRow label="No ruin" on={f.ruin === "none"} onToggle={() => setRuin("none")} />
+              <CheckRow label="Exclude RAN (agricultural reserve)" on={!!f.excludeRAN} onToggle={() => patch({ excludeRAN: !f.excludeRAN })} />
+              <CheckRow label="Exclude REN (ecological reserve)" on={!!f.excludeREN} onToggle={() => patch({ excludeREN: !f.excludeREN })} />
+              <CheckRow label="Exclude all protected areas" on={!!f.excludeProtected} onToggle={() => patch({ excludeProtected: !f.excludeProtected })} />
+            </div>
+          </div>
+
+          {/* Distance to amenities */}
+          <div style={{ marginBottom: 28 }}>
+            <span style={sectionTitle}>Distance to amenities</span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {AMENITIES.map((a) => (
+                <div
+                  key={a.key}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto",
+                    gap: 12,
+                    alignItems: "center",
+                    padding: "9px 0",
+                    fontSize: 13,
+                    color: INK,
+                    borderBottom: `1px solid ${LINE2}`,
+                  }}
+                >
+                  <span><span style={{ marginRight: 6 }}>{a.emoji}</span>{a.label}</span>
+                  <input
+                    type="text"
+                    placeholder="Any"
+                    value={amenity[a.key]}
+                    onChange={(e) => setAmenity({ ...amenity, [a.key]: e.target.value })}
+                    style={{
+                      width: 90,
+                      background: CANVAS,
+                      border: `1px solid ${LINE}`,
+                      borderRadius: 6,
+                      padding: "6px 10px",
+                      fontSize: 12,
+                      fontFamily: FF,
+                      color: INK,
+                      textAlign: "right",
+                      outline: "none",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Land use (CRUS) */}
+          <div style={{ marginBottom: 28 }}>
+            <span style={sectionTitle}>Land use (CRUS)</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {LAND_USE.map((c) => {
+                const on = (f.pdmTags || []).includes(c.key);
+                return (
+                  <button key={c.key} type="button" onClick={() => togglePdmTag(c.key)} style={chip(on)}>
+                    {c.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Solo urbano */}
+          <div style={{ marginBottom: 28 }}>
+            <span style={sectionTitle}>Solo urbano</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {SOLO_URBANO.map((c) => {
+                const on = (f.pdmTags || []).includes(c.key);
+                return (
+                  <button key={c.key} type="button" onClick={() => togglePdmTag(c.key)} style={chip(on)}>
+                    {c.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Sort */}
+          <div>
+            <span style={sectionTitle}>Sort by</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {SORTS.map((s) => {
+                const on = (f.sortBy || "match") === s.id;
+                return (
+                  <button key={s.id} type="button" onClick={() => patch({ sortBy: s.id })} style={chip(on)}>
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${LINE}`, display: "flex", justifyContent: "space-between", alignItems: "center", background: WHITE }}>
+          <button
+            type="button"
+            onClick={() => { clearMore(); setAmenity({ beach: "", cafe: "", market: "", transport: "", hospital: "", school: "" }); }}
+            style={{
+              background: "transparent",
+              border: `1px solid ${LINE}`,
+              borderRadius: 999,
+              padding: "9px 18px",
+              fontFamily: FF,
+              fontSize: 13,
+              fontWeight: 500,
+              color: INK,
+              cursor: "pointer",
+            }}
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              background: INK,
+              color: WHITE,
+              border: "none",
+              borderRadius: 999,
+              padding: "9px 22px",
+              fontFamily: FF,
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
+          >
+            Show {Number(resultCount).toLocaleString()} plots
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }
 
@@ -4999,6 +5487,8 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
   const [activeICP,setActiveICP]=useState(null);
   /** Empty chat: show Location vs Use paths only (reduces button clutter). */
   const [chatEmptyBranch,setChatEmptyBranch]=useState<"location"|"use">("use");
+  /** Chips already clicked this session — never re-suggest. Reset on new search. */
+  const [usedChips,setUsedChips]=useState<Set<string>>(new Set());
   const messagesEndRef=useRef(null);
   const ignoreNextEmptyDrawSelectionRef=useRef(false);
   const FREE_LIMIT=10;
@@ -5502,112 +5992,102 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
     send("Prefab or modular self-build land in Portugal");
   }
 
-  function chattyFollowupReply(text){
+  function chattyFollowupReply(text, used){
     const t = (text || "").toLowerCase();
     const baseCount = mapResults.kind==="listings" ? (mapResults.headlineCount||mapResults.plots?.length||0) : 0;
+    const usedSet: Set<string> = used || new Set();
 
-    // Refine — narrows the result set with a believable count
-    if (/under\s*€?\s*\d+k?|below\s*€/.test(t)) {
+    // After a Refine click, suggest next-step actions — process / analysis / comparison.
+    // Pick 3 that the user hasn't clicked this session.
+    const NEXT_STEPS = [
+      "Run an AI analysis on the top match",
+      "What's the licensing process?",
+      "Compare top 3 on €/m²",
+      "Which have the cleanest title?",
+      "What permits will I need?",
+      "How do I verify the cadastre?",
+    ];
+    const nextChips = NEXT_STEPS.filter(c => !usedSet.has(c)).slice(0, 3);
+    const nextGroup = nextChips.length ? [{label:"Try next", chips:nextChips}] : [];
+
+    // Refine responses — tight, count-aware
+    if (/under\s*€|below\s*€/.test(t)) {
       const cut = Math.max(3, Math.round(baseCount * 0.42));
-      return {text:`Tightening on price. About ${cut} plots remain in that band — the top match is the 7.2ha quinta near Reguengos at €185k, then an olive grove in Arraiolos. Want me to focus on the top 5, or pull the rest off the map?`, followups:[
-        {label:"Refine", chips:["Show top 5 only","Just the cheapest 3","Add water rights filter"]},
-        {label:"Go deeper", chips:["Compare them on €/m²","Which has the cleanest title?"]},
-      ]};
+      return {text:`Tightening on price — about ${cut} plots remain in that band. Top match is a 7.2ha quinta near Reguengos at €185k.`, followups: nextGroup};
     }
-    if (/min\s*\d+ha|over\s*\d+ha|\d+ha\+/.test(t)) {
-      const cut = Math.max(3, Math.round(baseCount * 0.35));
-      return {text:`Filtered to that size band — ${cut} plots match. Smallest is 5.2ha, largest sits at 14ha. Most of these are in inner Alentejo where land is cheaper per hectare. Want me to rank them by €/ha or by match score?`, followups:[
-        {label:"Refine", chips:["Rank by €/ha","Rank by match score","Add road access filter"]},
-      ]};
+    if (/coast/.test(t)) {
+      return {text:`Filtered to within 20km of the coast — ${Math.max(3,Math.round(baseCount*0.28))} plots remain. Mostly the western Alentejo strip and Algarve hinterland.`, followups: nextGroup};
     }
-    if (/flood|risk\s*zone|ren/.test(t)) {
-      return {text:`Pulled the flood-prone parcels out — 4 plots removed, mostly along the lower Sado and Tejo. The remaining set has clean REN and no overlap with the 100-year flood boundary.`, followups:[
-        {label:"Refine", chips:["Also exclude RAN","Show only with full title"]},
-        {label:"Go deeper", chips:["Which had the worst risk?"]},
-      ]};
+    if (/airport|km from a town|within \d+min|near\s*(évora|lisbon|porto)|walking distance/.test(t)) {
+      return {text:`Filtered by proximity. ${Math.max(3,Math.round(baseCount*0.55))} plots match — Évora and Reguengos are the main anchors, three within walking distance of a village.`, followups: nextGroup};
     }
-    if (/within\s*\d+\s*min|near\s*(évora|lisbon|porto)/.test(t)) {
-      return {text:`Filtered by drive time. 14 plots within 30 min of a real town — Évora and Reguengos are the main anchors. Three of them are within walking distance of a village centre, which usually helps with utilities and tourism licensing.`, followups:[
-        {label:"Refine", chips:["Only walking distance to village","Within 15 min of Évora"]},
-      ]};
+    if (/with existing ruin|reconstructible/.test(t)) {
+      return {text:`${Math.max(2,Math.round(baseCount*0.18))} plots have an existing ruin on title. Three of them are explicitly reconstructible under PDM Article 34b — same footprint, up to +30% extension.`, followups: nextGroup};
+    }
+    if (/bare land/.test(t)) {
+      return {text:`Filtered to bare land — ${Math.max(3,Math.round(baseCount*0.6))} plots remain. Cleaner buildability path, no demolition costs.`, followups: nextGroup};
+    }
+    if (/water rights|south-facing|borehole/.test(t)) {
+      return {text:`Narrowed to plots with that attribute — ${Math.max(3,Math.round(baseCount*0.3))} parcels worth a closer look.`, followups: nextGroup};
     }
 
-    // Go deeper
+    // Next-step replies — terminal turns, no further chips
+    if (/permit|licen[sc]|process/.test(t)) {
+      return {text:`For a rural tourism build in Alentejo you'll typically need a PIP, the licença de construção, and a Turismo de Portugal licence post-build. Total timeline: roughly 14-20 months from CPCV to opening.`, followups:[]};
+    }
+    if (/cadastre|verify.*title|cleanest title/.test(t)) {
+      return {text:`Cadastre verification is two steps: pull the certidão predial from the Conservatória, then cross-check against the matriz from Finanças. I can run a full BUPI check on a specific plot for €89.`, followups:[]};
+    }
     if (/compare.*€\/m|€\/m²|price per/.test(t)) {
-      return {text:`Quick comparison of the top 3 on €/m²:\n\n• **Quinta near Reguengos** — €25.7/m² (€185k / 7.2ha). Best per-m² rate, has borehole + ribeira.\n• **Olive grove, Arraiolos** — €20.0/m² (€220k / 11ha). Cheapest per-m², but larger commitment.\n• **Cork land, Montemor** — €24.1/m² (€140k / 5.8ha). Smallest cheque, seasonal stream only.\n\nThe Arraiolos plot wins on raw €/m², but the Reguengos one is more buildable for tourism.`, followups:[
-        {label:"Go deeper", chips:["Run a full report on Reguengos","What would tourism build cost?","Show me water rights detail"]},
-      ]};
+      return {text:`Top 3 on €/m²:\n\n• **Quinta near Reguengos** — €25.7/m² (€185k / 7.2ha)\n• **Olive grove, Arraiolos** — €20.0/m² (€220k / 11ha)\n• **Cork land, Montemor** — €24.1/m² (€140k / 5.8ha)\n\nArraiolos wins on raw €/m²; Reguengos is more buildable for tourism.`, followups:[]};
     }
-    if (/solar|panel|grid/.test(t) && /potential|these|on/.test(t)) {
-      return {text:`Solar-wise: two of the three top plots are workable. The Beja plain plot is the strongest — 2km from a 60kV substation, southern exposure, no protected zoning. The Reguengos quinta has good orientation but the substation is 11km off, so grid connection cost would dominate the project. The Montemor cork land is restricted under REN for energy infra.`, followups:[
-        {label:"Go deeper", chips:["Run a solar feasibility on Beja","Cost to connect Reguengos?"]},
-      ]};
-    }
-    if (/tourism\s*pdm|pdm\s*zon/.test(t)) {
-      return {text:`Two of them are explicitly cleared for rural tourism under PDM Article 34b — Reguengos and Arraiolos. Montemor sits in a stricter agricultural zone, so a tourism build would need a PDM amendment, which usually means 12-18 months of municipal review. I'd start with the first two.`, followups:[
-        {label:"Process", chips:["What's the licensing path for Article 34b?","Who handles the municipal review?"]},
-      ]};
-    }
-    if (/which.*tourism\s*rebuild|allow.*rebuild/.test(t)) {
-      return {text:`Three of the ruins on this list are explicitly reconstructible under PDM rules — they keep the original footprint and allow up to +30% extension. The other ruins are either pre-1951 with no construction record (harder path) or sit in REN zones where rebuild isn't permitted at all.`, followups:[
-        {label:"Go deeper", chips:["Show the 3 reconstructible ruins","What proves a pre-1951 footprint?"]},
-      ]};
+    if (/run an ai analysis|ai analysis/.test(t)) {
+      return {text:`Pick a plot from the map or list and I'll run the full Land AI analysis — zoning, cadastre, REN/RAN overlap, buildability score. €89 per plot.`, followups:[]};
     }
 
-    // Process
-    if (/permit|licen[sc]/.test(t)) {
-      return {text:`For a rural tourism build in Alentejo you'll typically need: (1) a PIP — pedido de informação prévia — to confirm the municipality is open to the use, (2) the licença de construção once the project is drawn up, and (3) a turismo rural licence from Turismo de Portugal once the build is signed off. The first two run in parallel with the architect; the tourism licence is post-construction. Total timeline: roughly 14-20 months from CPCV to opening.`, followups:[
-        {label:"Process", chips:["How much does a PIP cost?","Do I need a Portuguese architect?","Find a tourism-licensing lawyer"]},
-      ]};
-    }
-    if (/cadastre|verify.*title|title\s*chain/.test(t)) {
-      return {text:`Cadastre verification is two steps: pull the certidão predial from the Conservatória do Registo Predial (proves who owns it and what's registered), then cross-check against the matriz from the Finanças (proves what's taxed). Mismatches are common — sometimes the registered area differs from the tax area by 10-20%. I can run a full BUPI check for €89 if you want this on a specific plot.`, followups:[
-        {label:"Process", chips:["Run BUPI on top match","What if the areas don't match?"]},
-      ]};
-    }
-
-    // Generic chatty fallback for anything else
-    return {text:`Got it — looking into that. Give me a moment to pull the relevant signal across the current shortlist.`, followups:[]};
+    // Generic chatty fallback
+    return {text:`Got it — looking into that.`, followups: nextGroup};
   }
 
   function sendFollowup(text){
+    setUsedChips(prev => { const next = new Set(prev); next.add(text); return next; });
     setMessages(m=>[...m,{role:"user",text}]);
     setIsTyping(true);
+    const usedSnapshot = new Set(usedChips); usedSnapshot.add(text);
     setTimeout(()=>{
       setIsTyping(false);
       setMessages(m=>{
-        // Never two chip-replies in a row — if the previous assistant turn had chips, this one ends in plain text
-        const prevAssistant = [...m].reverse().find((x:any)=>x.role==="assistant");
-        const prevHadChips = !!(prevAssistant && prevAssistant.followups && prevAssistant.followups.length);
-        const r = chattyFollowupReply(text);
-        const showChips = !prevHadChips && r.followups && r.followups.length > 0;
-        const closing = showChips ? r.text : `${r.text}\n\nRefine in chat below or start a new search.`;
-        return [...m,{role:"assistant",text:closing,followups: showChips ? r.followups : undefined}];
+        const r = chattyFollowupReply(text, usedSnapshot);
+        return [...m,{role:"assistant",text:r.text,followups: r.followups && r.followups.length ? r.followups : undefined}];
       });
     },650);
   }
 
-  function buildFollowups(query){
+  function buildFollowups(query, used){
     const q = (query || "").toLowerCase();
-    const refine = [];
-    if (!/€|eur|under|below/.test(q)) refine.push("Under €150k only");
-    if (!/ha\b|hectar|m²/.test(q)) refine.push("Min 5ha");
-    refine.push("Exclude flood zones");
-    if (!/évora|lisbon|porto|alentejo|douro|algarve|óbidos/.test(q)) refine.push("Within 30min of a town");
-    const deeper = [];
-    if (/ruin|reconstruct/.test(q)) deeper.push("Which allow tourism rebuild?");
-    else deeper.push("Compare top 3 on €/m²");
-    deeper.push("Solar potential on these?");
-    deeper.push("Which have tourism PDM zoning?");
-    const process = [
-      "What permits will I need?",
-      "How do I verify the cadastre?",
-    ];
-    return [
-      {label:"Refine", chips:refine.slice(0,4)},
-      {label:"Go deeper", chips:deeper.slice(0,3)},
-      {label:"Process", chips:process},
-    ];
+    const usedSet: Set<string> = used || new Set();
+
+    // High-variance attributes only — never duplicate the filter bar (size, exact price, region, type).
+    const PRICE: string[] = ["Under €150k only","Under €100k only","Under €75k only"];
+    const SPATIAL: string[] = ["Close to coast","Within 20km of a town","Within 30min of Évora","Walking distance to a village"];
+    const CHARACTER: string[] = ["With existing ruin","Bare land only","With water rights","South-facing"];
+
+    const pickFresh = (arr: string[], regex: RegExp | null) =>
+      arr.find(c => !usedSet.has(c) && (!regex || !regex.test(q)));
+
+    const chips: string[] = [];
+    const price = pickFresh(PRICE, /€|eur|under|below/);
+    if (price) chips.push(price);
+    const spatial = pickFresh(SPATIAL, /coast|near\b|within|min from|km from|évora|lisbon|porto/);
+    if (spatial) chips.push(spatial);
+    const character = pickFresh(CHARACTER, /ruin|bare|water rights|south-facing/);
+    if (character) chips.push(character);
+
+    // Top up if any bucket was empty (still skipping anything already clicked)
+    const all = [...PRICE, ...SPATIAL, ...CHARACTER].filter(c => !usedSet.has(c) && !chips.includes(c));
+    while (chips.length < 3 && all.length) chips.push(all.shift()!);
+
+    return chips.length ? [{label:"Refine", chips:chips.slice(0,3)}] : [];
   }
 
   function send(text){
@@ -5616,7 +6096,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
       setMessages(m=>[...m,{role:"user",text},{role:"assistant",text:"You've reached your free search limit.",showUpgrade:true}]);
       setInput("");return;
     }
-    if(isSearch)setSearchCount(c=>c+1);
+    if(isSearch){setSearchCount(c=>c+1);setUsedChips(new Set());}
     clearPlotFocus();
     setMessages(m=>[...m.filter(x=>!x.isPlotCtx),{role:"user",text}]);
     setInput("");setIsTyping(true);
@@ -5632,10 +6112,10 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
       const plots = expandPlotsForSearchResults(CHAT_PLOTS, n, text);
       setMessages(m=>[...m,{
         role:"assistant",
-        text:`Found ${plots.length} plots matching your criteria.`,
+        text:`${plots.length} plots.`,
         showResults:true,
         resultCount:plots.length,
-        followups:buildFollowups(text),
+        followups:buildFollowups(text, new Set()),
       }]);
       setMapResults({
         kind:"listings",
@@ -5906,15 +6386,15 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                     {msg.showUpgrade&&(
                       <button onClick={()=>requestUpgrade?.(null)} style={{marginTop:6,background:"none",border:`1px solid ${LINE}`,borderRadius:99,padding:"5px 12px",...TC.label,color:ACCENT,cursor:"pointer",fontFamily:FF,display:"block",fontWeight:500}}>View plans →</button>
                     )}
-                    {msg.followups&&Array.isArray(msg.followups)&&(
+                    {msg.followups&&Array.isArray(msg.followups)&&msg.followups.length>0&&(
                       <div style={{marginTop:14,display:"flex",flexDirection:"column",gap:10}}>
                         {msg.followups.map((g:any,gi:number)=>(
                           <div key={gi}>
-                            <div style={{fontFamily:FF,fontSize:"10px",fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:INK4,marginBottom:6}}>{g.label}</div>
+                            <div style={{fontFamily:FF,fontSize:"11px",fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:INK3,marginBottom:8}}>{g.label}</div>
                             <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
                               {g.chips.map((c:string,ci:number)=>(
                                 <button key={ci} type="button" onClick={()=>sendFollowup(c)}
-                                  style={{padding:"6px 11px",borderRadius:999,border:`1px solid ${LINE}`,background:PAPER,fontFamily:FF,fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",transition:"all 0.12s"}}
+                                  style={{padding:"7px 12px",borderRadius:999,border:`0.5px solid ${LINE}`,background:PAPER,fontFamily:FF,fontSize:"12px",fontWeight:500,color:INK2,cursor:"pointer",transition:"all 0.12s"}}
                                   onMouseEnter={e=>{e.currentTarget.style.borderColor=ACCENT;e.currentTarget.style.background=ACCENT_WASH;e.currentTarget.style.color=ACCENT;}}
                                   onMouseLeave={e=>{e.currentTarget.style.borderColor=LINE;e.currentTarget.style.background=PAPER;e.currentTarget.style.color=INK2;}}>
                                   {c}
