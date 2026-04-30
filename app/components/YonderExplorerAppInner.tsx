@@ -6207,7 +6207,7 @@ function ChatMapView({upgraded,requestUpgrade,onAddToProject,onCommitPlotsToPipe
                 {activeProject?.name || "Yonder"}
               </div>
               <div style={{fontFamily:FF,fontSize:"22px",fontWeight:600,color:INK,lineHeight:1.25,marginBottom:6}}>
-                What should we look at next?
+                Find land, know land.
               </div>
               <div style={{fontFamily:FF,fontSize:"14px",color:INK3,marginBottom:18,lineHeight:1.45}}>
                 Search, analyze, or ask about any plot in Iberia.
